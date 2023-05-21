@@ -1,0 +1,44 @@
+// vuetify
+
+@font-face {
+  font-family: "Roboto";
+  font-display: swap;
+  src: url("./font/Poppins-Medium.ttf") format("truetype");
+}
+
+// sizing
+@for $i from 1 through 150 {
+  .height-#{$i} {
+    height: 4px * $i;
+  }
+  .width-#{$i} {
+    width: 4px * $i;
+  }
+}
+
+// cursor
+.pointer {
+  &:hover {
+    cursor: pointer;
+  }
+  &--link {
+    &:hover {
+      color: #917800;
+      text-decoration: underline;
+    }
+  }
+}
+
+// scroll bar
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+::-webkit-scrollbar-thumb {
+  background: #ddb900;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #917800;
+}
