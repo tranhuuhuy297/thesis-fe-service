@@ -170,7 +170,7 @@
             </template>
           </v-select>
           <span v-if="keywordParam[param.name]" class="mx-1">-</span>
-          <div v-if="keywordParam[param.name]">
+          <div v-if="keywordParam[param.name]" style="min-width: 30%">
             <v-select
               v-if="keywordParam[param.name]?.listValue"
               v-model="param.value"
@@ -220,22 +220,22 @@ function handleAddText() {
 
 // style
 const keywordStyle = {
-  Layouts: ["Album Cover"],
-  Textures: ["3d Fractals"],
-  Colors: ["Apricot Color"],
-  Artist: ["Adrian Donoghue"],
-  Camera: ["100mm"],
-  Era: ["1100s"],
-  Themes: ["Academicism"],
-  Styles: ["3d"],
-  Techniques: ["16 Bit"],
-  Lighting: ["Backlighting"],
-  "Movies, Games": ["American Horror Story"],
-  Architecture: ["Afrocentric Interior Design"],
-  Fashion: ["Academia Outfit"],
-  Emojis: ["⏰"],
-  Characters: ["Absent Mindned Professor"],
-  Background: ["A stone Route To The Moon"],
+  Layouts: ["Album Cover", "Anatomical Drawing"],
+  Textures: ["3d Fractals", "Agate"],
+  Colors: ["Apricot Color", "Aqua Colors"],
+  Artist: ["Adrian Donoghue", "Adrian Tomine"],
+  Camera: ["100mm", "14mm"],
+  Era: ["1100s", "1200s"],
+  Themes: ["Academicism", "Acid Pixie"],
+  Styles: ["3d", "Abstract Art"],
+  Techniques: ["16 Bit", "3d Printed"],
+  Lighting: ["Backlighting", "Blacklight"],
+  "Movies, Games": ["American Horror Story", "Animal Crossing"],
+  Architecture: ["Afrocentric Interior Design", "Antebellum Architecture"],
+  Fashion: ["Academia Outfit", "Androgynous Outfit"],
+  Emojis: ["⏰", "☀️"],
+  Characters: ["Absent Mindned Professor", "African"],
+  Background: ["A stone Route To The Moon", "Airport"],
 };
 const listKeyWordStyle = computed(() => {
   return Object.keys(keywordStyle);

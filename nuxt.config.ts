@@ -13,4 +13,9 @@ export default defineNuxtConfig({
       title: "PromptBuilder",
     },
   },
+  runtimeConfig: {
+    public: {
+      baseURL: process.env.BASE_URL || "http://localhost:5001/api",
+    },
+  },
 });

@@ -59,7 +59,7 @@ definePageMeta({
 
 svg text {
   text-transform: uppercase;
-  animation: stroke 5s;
+  animation: stroke 3s;
   stroke-width: 2;
   stroke: #333333;
 }

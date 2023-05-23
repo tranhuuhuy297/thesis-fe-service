@@ -4,6 +4,7 @@
     <div class="mt-1">Let me help you create and share AI Art Prompts</div>
     <div class="mt-7">Email</div>
     <v-text-field
+      v-model="gmail"
       class="mt-1"
       variant="outlined"
       hide-details
@@ -12,6 +13,7 @@
     ></v-text-field>
     <div class="mt-4">Password</div>
     <v-text-field
+      v-model="password"
       class="mt-1"
       variant="outlined"
       hide-details
@@ -25,7 +27,8 @@
       size="x-large"
       variant="flat"
       color="primary"
-      text="Sign In"
+      text="Log In"
+      @click="handleLogin"
     />
     <!-- <div
       class="mt-10 text-primary-3 font-weight-bold pointer"
@@ -45,8 +48,33 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { sha256 } from "ohash";
+import { useUserStore } from "~/stores/User";
+
 definePageMeta({
   layout: "authen",
 });
+const gmail = ref("");
+const password = ref("");
+const config = useRuntimeConfig();
+const baseURL = `${config.public.baseURL}/user`;
+
+const userStore = useUserStore();
+
+async function handleLogin() {
+  const { data } = await useFetch(`${baseURL}/login`, {
+    method: "POST",
+    body: {
+      gmail: gmail,
+      password: sha256(password.value),
+    },
+  });
+  const { result, code, msg } = data.value;
+  if (code === CODE_SUCCESS) {
+    userStore.setUser({ gmail: gmail.value });
+    window.localStorage.setItem("thesis-token", result["access_token"]);
+    navigateTo({ path: "/builder" });
+  }
+}
 </script>
