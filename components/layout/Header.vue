@@ -43,17 +43,18 @@
       </div>
       <v-btn
         variant="flat"
-        class="mr-4 font-weight-bold text-text-1 rounded-xl"
+        class="mr-4 font-weight-bold text-text-1 rounded-lg"
         text="Upload"
         size="large"
-        color="success"
+        prepend-icon="mdi-upload"
+        color="primary"
       ></v-btn>
       <v-btn
         v-if="token === undefined || token === 'undefined'"
-        class="mr-4 font-weight-bold text-text-1"
-        color="primary"
+        class="mr-4 font-weight-bold rounded-lg"
         text="Log in"
         size="large"
+        variant="outlined"
         @click="navigateTo({ path: '/login' })"
       />
       <v-btn
