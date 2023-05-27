@@ -212,7 +212,7 @@
       </div>
     </div>
   </div>
-  <div class="mt-4 rounded-lg bg-bg-1 pa-4">
+  <div class="mt-2 rounded-lg bg-bg-1 pa-4">
     <BuilderStyle v-if="suggestButton === 'STYLE'"></BuilderStyle>
     <BuilderParam v-if="suggestButton === 'PARAM'"></BuilderParam>
   </div>

@@ -1,9 +1,10 @@
 <template>
   <div class="text-h3 font-weight-bold">
     Prompt <span class="text-primary-2">Stats</span>
+    <div class="mt-2 text-h6">Search for the best prompts</div>
   </div>
-  <div class="mt-4 text-h5">
-    <v-tabs v-model="currentTab" class="mt-8" color="text-1">
+  <div class="mt-2 text-h5">
+    <v-tabs v-model="currentTab" class="mt-6" color="text-1">
       <v-tab :value="1" :class="{ 'font-weight-bold': currentTab === 1 }">
         Newest
       </v-tab>
@@ -15,24 +16,36 @@
     <v-window v-model="currentTab" class="flex-grow-1 mt-4">
       <div v-if="currentTab === 1" class="d-flex ml-2">
         <div class="w-25 mr-2">
-          <StatsImage img-src="image/test.png"></StatsImage>
-          <StatsImage img-src="image/logo.png"></StatsImage>
-          <StatsImage img-src="image/logo.png"></StatsImage>
+          <div
+            v-for="(prompt, index) in newestPromptCol0"
+            :key="`${index}_prompt_col0`"
+          >
+            <StatsImage :prompt="prompt"></StatsImage>
+          </div>
         </div>
         <div class="w-25 mr-2">
-          <StatsImage img-src="image/background.jpg"></StatsImage>
-          <StatsImage img-src="image/logo.png"></StatsImage>
-          <StatsImage img-src="image/test.png"></StatsImage>
+          <div
+            v-for="(prompt, index) in newestPromptCol1"
+            :key="`${index}_prompt_col1`"
+          >
+            <StatsImage :prompt="prompt"></StatsImage>
+          </div>
         </div>
         <div class="w-25 mr-2">
-          <StatsImage img-src="image/logo.png"></StatsImage>
-          <StatsImage img-src="image/test.png"></StatsImage>
-          <StatsImage img-src="image/background.jpg"></StatsImage>
+          <div
+            v-for="(prompt, index) in newestPromptCol2"
+            :key="`${index}_prompt_col2`"
+          >
+            <StatsImage :prompt="prompt"></StatsImage>
+          </div>
         </div>
         <div class="w-25 mr-2">
-          <StatsImage img-src="image/test.png"></StatsImage>
-          <StatsImage img-src="image/background.jpg"></StatsImage>
-          <StatsImage img-src="image/logo.png"></StatsImage>
+          <div
+            v-for="(prompt, index) in newestPromptCol3"
+            :key="`${index}_prompt_col3`"
+          >
+            <StatsImage :prompt="prompt"></StatsImage>
+          </div>
         </div>
       </div>
     </v-window>
@@ -40,5 +53,89 @@
 </template>
 
 <script setup>
+import { usePromptStore } from "~/stores/Prompt";
+
 const currentTab = ref(1);
+const config = useRuntimeConfig();
+const baseURL = `${config.public.baseURL}/prompt`;
+
+const promptStore = usePromptStore();
+
+const page = ref(0);
+const size = ref(30);
+const textSearch = ref("");
+
+const route = useRoute();
+
+onMounted(() => {
+  textSearch.value = route.query?.textSearch;
+});
+
+if (!promptStore.isLoadedPrompt) {
+  handleGetListPrompt(0, 30);
+  page.value = 0;
+  size.value = 30;
+}
+
+async function handleGetListPrompt(page, size, textSearch) {
+  const { data, pending } = await useLazyFetch(`${baseURL}`, {
+    method: "GET",
+    query: textSearch
+      ? { page: page, size: size, search: textSearch }
+      : {
+          page: page,
+          size: size,
+        },
+  });
+  const { result, code, msg } = data.value;
+  if (code === CODE_SUCCESS) {
+    const validPrompt = result.filter((prompt) => {
+      return prompt.image_src;
+    });
+    const newestListPrompt = [...promptStore.newestListPrompt, ...validPrompt];
+    promptStore.setNewestListPrompt(newestListPrompt);
+  }
+}
+
+const newestPromptCol0 = computed(() => {
+  return promptStore.newestListPrompt.filter((prompt, index) => {
+    if (index % 4 === 0) {
+      return prompt;
+    }
+  });
+});
+const newestPromptCol1 = computed(() => {
+  return promptStore.newestListPrompt.filter((prompt, index) => {
+    if (index % 4 === 1) {
+      return prompt;
+    }
+  });
+});
+const newestPromptCol2 = computed(() => {
+  return promptStore.newestListPrompt.filter((prompt, index) => {
+    if (index % 4 === 2) {
+      return prompt;
+    }
+  });
+});
+const newestPromptCol3 = computed(() => {
+  return promptStore.newestListPrompt.filter((prompt, index) => {
+    if (index % 4 === 3) {
+      return prompt;
+    }
+  });
+});
+
+onMounted(() => {
+  function handleScroll() {
+    if (
+      document?.documentElement?.clientHeight + window?.scrollY >=
+      document?.documentElement?.scrollHeight
+    ) {
+      page.value += 1;
+      handleGetListPrompt(page.value, size.value, textSearch.value);
+    }
+  }
+  window?.addEventListener("scroll", handleScroll);
+});
 </script>

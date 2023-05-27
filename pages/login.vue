@@ -73,7 +73,7 @@ async function handleLogin() {
   const { result, code, msg } = data.value;
   if (code === CODE_SUCCESS) {
     userStore.setUser({ gmail: gmail.value });
-    window.localStorage.setItem("thesis-token", result["access_token"]);
+    window?.localStorage.setItem("thesis-token", result["access_token"]);
     navigateTo({ path: "/builder" });
   }
 }

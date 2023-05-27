@@ -1,5 +1,5 @@
 <template>
-  <div class="d-flex">
+  <div class="d-flex px-4">
     <div class="text-h5 font-weight-bold text-text-2 w-100 align-self-center">
       Style
     </div>
@@ -14,7 +14,7 @@
       ></v-select>
     </div>
   </div>
-  <div class="my-4">
+  <div class="mt-2">
     <div v-if="styleName === 'Layouts'" class="d-flex flex-wrap">
       <div class="w-25 pa-4">
         <img src="~/assets/image_style/layouts/album_cover.png" class="w-100" />
