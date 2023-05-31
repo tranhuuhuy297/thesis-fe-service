@@ -28,6 +28,7 @@
       variant="flat"
       color="primary"
       text="Log In"
+      :loading="isLoadingLogin"
       @click="handleLogin"
     />
     <!-- <div
@@ -62,7 +63,10 @@ const baseURL = `${config.public.baseURL}/user`;
 
 const userStore = useUserStore();
 
+const isLoadingLogin = ref(false);
+
 async function handleLogin() {
+  isLoadingLogin.value = true;
   const { data } = await useFetch(`${baseURL}/login`, {
     method: "POST",
     body: {
@@ -71,10 +75,12 @@ async function handleLogin() {
     },
   });
   const { result, code, msg } = data.value;
+  isLoadingLogin.value = false;
   if (code === CODE_SUCCESS) {
-    userStore.setUser({ gmail: gmail.value });
-    window?.localStorage.setItem("thesis-token", result["access_token"]);
-    navigateTo({ path: "/builder" });
+    userStore.setUser(result);
+    document.cookie = `token=${result["access_token"]}`;
+    document.cookie = `exp=${result["exp"]}`;
+    navigateTo({ path: "/upload" });
   }
 }
 </script>

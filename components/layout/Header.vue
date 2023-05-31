@@ -28,19 +28,19 @@
     </div>
     <div class="d-flex align-center ml-16">
       <div
-        class="mr-8 pointer pointer--link"
+        class="mr-6 pointer pointer--link"
         @click="navigateTo({ path: '/builder' })"
       >
         Builder
       </div>
       <div
-        class="mr-8 pointer pointer--link"
+        class="mr-6 pointer pointer--link"
         @click="navigateTo({ path: '/stats' })"
       >
         Stats
       </div>
       <div
-        class="mr-8 pointer pointer--link"
+        class="mr-6 pointer pointer--link"
         @click="navigateTo({ path: '/resources' })"
       >
         Resources
@@ -51,9 +51,10 @@
       >
         Generator
       </div>
+      <v-divider vertical class="mr-3"></v-divider>
       <v-btn
-        v-if="token === undefined || token === 'undefined'"
-        class="mr-2 font-weight-bold text-text-1 rounded-lg"
+        v-if="!token"
+        class="mr-3 font-weight-bold text-text-1 rounded-lg"
         size="large"
         text="Log In"
         color="primary"
@@ -61,15 +62,39 @@
         @click="navigateTo({ path: '/login' })"
       >
       </v-btn>
-      <v-btn
-        v-else
-        variant="outlined"
-        class="mr-2 font-weight-bold text-text-1"
-        color="primary"
-        text="Log out"
-        size="large"
-        @click="handleLogOut"
-      />
+      <v-menu v-if="token">
+        <template v-slot:activator="{ props }">
+          <v-btn
+            class="mr-3"
+            v-bind="props"
+            variant="text"
+            icon="mdi-account-circle-outline"
+          >
+          </v-btn>
+        </template>
+        <v-list>
+          <v-list-item
+            v-for="(item, index) in [
+              {
+                name: 'Profile',
+                icon: 'mdi-face-man-profile',
+                navigateTo: '/profile',
+              },
+              {
+                name: 'Log Out',
+                icon: 'mdi-logout-variant',
+                navigateTo: '/logout',
+              },
+            ]"
+            :key="index"
+            :value="index"
+          >
+            <div @click="handleAction(item)">
+              <v-icon :icon="item.icon" class="mr-2"></v-icon> {{ item.name }}
+            </div>
+          </v-list-item>
+        </v-list>
+      </v-menu>
       <v-btn
         variant="flat"
         class="font-weight-bold text-text-1 rounded-lg"
@@ -77,6 +102,7 @@
         size="large"
         prepend-icon="mdi-upload"
         color="primary"
+        @click="navigateTo('/upload')"
       ></v-btn>
     </div>
   </div>
@@ -85,13 +111,14 @@
 <script setup>
 import { usePromptStore } from "~/stores/Prompt";
 
-const token = ref(null);
 const textSearch = ref("");
+const token = ref("");
 
 const route = useRoute();
 
 onMounted(() => {
   textSearch.value = route?.query?.textSearch;
+  token.value = getCookie("token");
 });
 
 const config = useRuntimeConfig();
@@ -117,14 +144,17 @@ async function handleSearch() {
     navigateTo({ path: "/stats", query: { textSearch: textSearch.value } });
   }
 }
-onMounted(() => {
-  token.value = window?.localStorage.getItem("thesis-token");
-});
 
-function handleLogOut() {
-  window?.localStorage.setItem("thesis-token", undefined);
-  token.value = "";
-  navigateTo({ path: "/login" });
+function handleAction(item) {
+  if (item.navigateTo !== "/logout") {
+    navigateTo(item.navigateTo);
+  } else {
+    document.cookie = "token=;";
+    document.cookie = "exp=;";
+    nextTick(() => {
+      navigateTo("/login");
+    });
+  }
 }
 </script>
 

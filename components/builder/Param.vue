@@ -1,25 +1,24 @@
 <template>
-  <div class="text-h5 font-weight-bold text-text-2 w-100 align-self-center">
-    Param
+  <div class="d-flex px-4">
+    <div class="text-h5 font-weight-bold text-text-2 w-100 align-self-center">
+      Param
+    </div>
+    <div class="d-flex">
+      <v-autocomplete
+        v-model="paramName"
+        :items="paramStore.getNameListParam"
+        variant="outlined"
+        density="compact"
+        hide-details
+        style="width: 300px"
+      ></v-autocomplete>
+    </div>
   </div>
-  <div class="d-flex">
-    <v-select
-      v-model="paramName"
-      :items="Object.keys(keywordParam)"
-      variant="outlined"
-      density="compact"
-      hide-details
-      style="width: 300px"
-    ></v-select>
-  </div>
+  <div class="mt-2"></div>
 </template>
 
 <script setup>
+import { useParamStore } from "~/stores/Param";
+const paramStore = useParamStore();
 const paramName = ref("");
-const keywordParam = {
-  Version: { shortName: "--v", listValue: ["5", "4", "3", "2", "1"] },
-  "Aspect Ratio": { shortName: "--ar", listValue: null, placeHolder: "16:9" },
-  Chaos: { shortName: "--chaos", listValue: null, placeHolder: "0-100" },
-  "Image Weight": { shortName: "--iw", listValue: null, placeHolder: "0.5-2" },
-};
 </script>

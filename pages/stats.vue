@@ -71,11 +71,15 @@ onMounted(() => {
   textSearch.value = route.query?.textSearch;
 });
 
-if (!promptStore.isLoadedPrompt) {
-  handleGetListPrompt(0, 30);
-  page.value = 0;
-  size.value = 30;
-}
+onMounted(() => {
+  nextTick(() => {
+    if (!promptStore.isLoadedPrompt) {
+      handleGetListPrompt(0, 30);
+      page.value = 0;
+      size.value = 30;
+    }
+  });
+});
 
 async function handleGetListPrompt(page, size, textSearch) {
   const { data, pending } = await useLazyFetch(`${baseURL}`, {
@@ -87,7 +91,7 @@ async function handleGetListPrompt(page, size, textSearch) {
           size: size,
         },
   });
-  const { result, code, msg } = data.value;
+  const { result, code, msg } = data?.value;
   if (code === CODE_SUCCESS) {
     const validPrompt = result.filter((prompt) => {
       return prompt.image_src;

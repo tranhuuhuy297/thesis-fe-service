@@ -3,25 +3,28 @@
     Prompt <span class="text-primary-2">Builder</span>
   </div>
   <div class="mt-2 text-h6">Create best prompts with suggestions</div>
-  <div class="mt-4 d-flex justify-center align-center px-10">
-    <v-btn
-      prepend-icon="mdi-reload"
-      variant="outlined"
-      color="error"
-      size="large"
-      text="Reset"
-      @click="handleReset"
-    />
+  <div class="mt-4 d-flex justify-center align-center flex-column px-10">
     <div class="el-prompt pa-4 mx-2" style="word-wrap: break-word">
-      {{ prompt }}
+      <span v-if="prompt">{{ prompt }}</span>
+      <span v-else class="text-bg-3 font-italic">
+        Your builder prompt will be right here
+      </span>
     </div>
-    <v-btn
-      variant="outlined"
-      prepend-icon="mdi-content-copy"
-      size="large"
-      text="Copy"
-      @click="handleCopy"
-    />
+    <div class="d-flex mt-2">
+      <v-btn
+        prepend-icon="mdi-reload"
+        color="error"
+        text="Reset"
+        @click="handleReset"
+        class="mr-2"
+      />
+      <v-btn
+        color="success"
+        prepend-icon="mdi-content-copy"
+        text="Copy"
+        @click="handleCopy"
+      />
+    </div>
   </div>
   <div
     class="mt-4 rounded-lg bg-bg-1 pa-2 d-flex"
@@ -30,11 +33,11 @@
     <div class="w-25 pa-2 ma-1 el-prompt rounded-lg">
       <div class="d-flex justify-space-between align-center">
         <v-btn
-          :variant="suggestButton === 'IMAGE_LINK' ? 'elevated' : 'outlined'"
-          :color="suggestButton === 'IMAGE_LINK' ? 'primary-2' : ''"
+          :variant="suggestButton === 'ImageLink' ? 'elevated' : 'outlined'"
+          :color="suggestButton === 'ImageLink' ? 'primary-2' : ''"
           text="Image link"
           prepend-icon="mdi-link-variant"
-          @click="suggestButton = 'IMAGE_LINK'"
+          @click="suggestButton = 'ImageLink'"
         ></v-btn>
         <v-btn
           variant="flat"
@@ -67,11 +70,11 @@
     <div class="w-25 pa-2 ma-1 el-prompt rounded-lg">
       <div class="d-flex justify-space-between align-center">
         <v-btn
-          :variant="suggestButton === 'TEXT' ? 'elevated' : 'outlined'"
-          :color="suggestButton === 'TEXT' ? 'primary-2' : ''"
+          :variant="suggestButton === 'Text' ? 'elevated' : 'outlined'"
+          :color="suggestButton === 'Text' ? 'primary-2' : ''"
           text="Text"
           prepend-icon="mdi-text"
-          @click="suggestButton = 'TEXT'"
+          @click="suggestButton = 'Text'"
         ></v-btn>
         <v-btn
           variant="flat"
@@ -103,11 +106,11 @@
     <div class="w-25 pa-2 ma-1 el-prompt rounded-lg">
       <div class="d-flex justify-space-between align-center">
         <v-btn
-          :variant="suggestButton === 'STYLE' ? 'elevated' : 'outlined'"
-          :color="suggestButton === 'STYLE' ? 'primary-2' : ''"
+          :variant="suggestButton === 'Style' ? 'elevated' : 'outlined'"
+          :color="suggestButton === 'Style' ? 'primary-2' : ''"
           text="Style"
           prepend-icon="mdi-palette-outline"
-          @click="suggestButton = 'STYLE'"
+          @click="suggestButton = 'Style'"
         ></v-btn>
         <v-btn
           variant="flat"
@@ -124,35 +127,44 @@
           :key="`image_link_${index}`"
           class="mb-1 d-flex align-center"
         >
-          <v-select
+          <v-autocomplete
             v-model="style.name"
-            :items="listKeyWordStyle"
+            :items="styleStore?.getNameListStyle"
             variant="outlined"
             density="compact"
             hide-details
-            @update:modelValue="style.value = ''"
-          ></v-select>
-          <span v-if="keywordStyle[style.name]" class="mx-1">-</span>
-          <v-select
-            v-if="keywordStyle[style.name]"
+            @update:modelValue="
+              style.value = '';
+              handleGetListBuilderValue(style.name);
+            "
+          ></v-autocomplete>
+          <span v-if="styleStore?.listBuilderValue[style.name]" class="mx-1">
+            -
+          </span>
+          <v-autocomplete
+            v-if="styleStore?.listBuilderValue[style.name]"
             v-model="style.value"
-            :items="keywordStyle[style.name]"
+            :items="
+              styleStore?.listBuilderValue[style.name]
+                .map((item) => item.name)
+                .sort()
+            "
             variant="outlined"
             density="compact"
             hide-details
             bg-color="bg-2"
-          ></v-select>
+          ></v-autocomplete>
         </div>
       </div>
     </div>
     <div class="w-25 pa-2 ma-1 el-prompt rounded-lg">
       <div class="d-flex justify-space-between align-center">
         <v-btn
-          :variant="suggestButton === 'PARAM' ? 'elevated' : 'outlined'"
-          :color="suggestButton === 'PARAM' ? 'primary-2' : ''"
+          :variant="suggestButton === 'Param' ? 'elevated' : 'outlined'"
+          :color="suggestButton === 'Param' ? 'primary-2' : ''"
           text="Param"
           prepend-icon="mdi-wrench-cog-outline"
-          @click="suggestButton = 'PARAM'"
+          @click="suggestButton = 'Param'"
         ></v-btn>
         <v-btn
           variant="flat"
@@ -169,9 +181,9 @@
           :key="`image_link_${index}`"
           class="mb-1 d-flex align-center"
         >
-          <v-select
+          <v-autocomplete
             v-model="param.name"
-            :items="listKeyWordParam"
+            :items="paramStore?.getNameListParam"
             variant="outlined"
             density="compact"
             hide-details
@@ -184,10 +196,10 @@
                 {{ keywordParam[param.name]?.shortName }}
               </span>
             </template>
-          </v-select>
+          </v-autocomplete>
           <span v-if="keywordParam[param.name]" class="mx-1">-</span>
           <div v-if="keywordParam[param.name]" style="min-width: 30%">
-            <v-select
+            <v-autocomplete
               v-if="keywordParam[param.name]?.listValue"
               v-model="param.value"
               :items="keywordParam[param.name]?.listValue"
@@ -196,7 +208,7 @@
               hide-details
               bg-color="bg-2"
             >
-            </v-select>
+            </v-autocomplete>
             <v-text-field
               v-else
               v-model.trim="param.value"
@@ -213,17 +225,80 @@
     </div>
   </div>
   <div class="mt-2 rounded-lg bg-bg-1 pa-4">
-    <BuilderStyle v-if="suggestButton === 'STYLE'"></BuilderStyle>
-    <BuilderParam v-if="suggestButton === 'PARAM'"></BuilderParam>
+    <BuilderText v-if="suggestButton === 'Text'"></BuilderText>
+    <BuilderStyle v-if="suggestButton === 'Style'"></BuilderStyle>
+    <BuilderParam v-if="suggestButton === 'Param'"></BuilderParam>
   </div>
 </template>
 
 <script setup>
-const suggestButton = ref("STYLE");
+import { useStyleStore } from "~/stores/Style";
+const styleStore = useStyleStore();
+import { useParamStore } from "~/stores/Param";
+const paramStore = useParamStore();
+
+const config = useRuntimeConfig();
+const baseURL = `${config.public.baseURL}`;
+
+onMounted(() => {
+  nextTick(() => {
+    handleGetListStyle();
+    handleGetListParam();
+  });
+});
+
+async function handleGetListStyle() {
+  const { data } = await useLazyFetch(`${baseURL}/builder_type`, {
+    method: "GET",
+    params: {
+      page: 0,
+      size: 100,
+      parent_type: "Style",
+    },
+  });
+  const { result, code, msg } = data.value;
+  if (code === CODE_SUCCESS) {
+    styleStore.setListStyle(result);
+  }
+}
+
+async function handleGetListBuilderValue(builderType) {
+  if (builderType in styleStore.listBuilderValue) return;
+  const { data } = await useLazyFetch(`${baseURL}/builder_value`, {
+    method: "GET",
+    params: {
+      page: 0,
+      size: 1000,
+      builder_type_name: builderType,
+    },
+  });
+  const { result, code, msg } = data.value;
+  if (code === CODE_SUCCESS) {
+    styleStore.setListBuilderValue(builderType, result);
+  }
+}
+
+async function handleGetListParam() {
+  const { data } = await useLazyFetch(`${baseURL}/builder_type`, {
+    method: "GET",
+    params: {
+      page: 0,
+      size: 100,
+      parent_type: "Param",
+    },
+  });
+  const { result, code, msg } = data.value;
+  if (code === CODE_SUCCESS) {
+    paramStore.setListParam(result);
+  }
+}
+
+const suggestButton = ref("Style");
 
 const prompt = ref("");
 function handleCopy() {
   navigator.clipboard.writeText(prompt.value);
+  useNuxtApp().$toast.success("Copy to clipboard!");
 }
 function handleReset() {
   listImageLink.value = [{ ...imageLinkTemplate }];
@@ -247,24 +322,7 @@ function handleAddText() {
 }
 
 // style
-const keywordStyle = {
-  Layouts: ["Album Cover", "Anatomical Drawing"],
-  Textures: ["3d Fractals", "Agate"],
-  Colors: ["Apricot Color", "Aqua Colors"],
-  Artist: ["Adrian Donoghue", "Adrian Tomine"],
-  Camera: ["100mm", "14mm"],
-  Era: ["1100s", "1200s"],
-  Themes: ["Academicism", "Acid Pixie"],
-  Styles: ["3d", "Abstract Art"],
-  Techniques: ["16 Bit", "3d Printed"],
-  Lighting: ["Backlighting", "Blacklight"],
-  "Movies, Games": ["American Horror Story", "Animal Crossing"],
-  Architecture: ["Afrocentric Interior Design", "Antebellum Architecture"],
-  Fashion: ["Academia Outfit", "Androgynous Outfit"],
-  Emojis: ["⏰", "☀️"],
-  Characters: ["Absent Mindned Professor", "African"],
-  Background: ["A stone Route To The Moon", "Airport"],
-};
+const keywordStyle = {};
 const listKeyWordStyle = computed(() => {
   return Object.keys(keywordStyle);
 });
@@ -275,12 +333,7 @@ function handleAddStyle() {
 }
 
 // Param
-const keywordParam = {
-  Version: { shortName: "--v", listValue: ["5", "4", "3", "2", "1"] },
-  "Aspect Ratio": { shortName: "--ar", listValue: null, placeHolder: "16:9" },
-  Chaos: { shortName: "--chaos", listValue: null, placeHolder: "0-100" },
-  "Image Weight": { shortName: "--iw", listValue: null, placeHolder: "0.5-2" },
-};
+const keywordParam = {};
 const listKeyWordParam = computed(() => {
   return Object.keys(keywordParam);
 });

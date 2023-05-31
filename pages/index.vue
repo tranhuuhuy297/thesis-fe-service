@@ -33,6 +33,7 @@
           text="Upload"
           prepend-icon="mdi-upload"
           size="x-large"
+          @click="navigateTo('/upload')"
         />
       </div>
     </div>

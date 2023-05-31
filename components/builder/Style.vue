@@ -1,71 +1,98 @@
 <template>
-  <div class="d-flex px-4">
-    <div class="text-h5 font-weight-bold text-text-2 w-100 align-self-center">
-      Style
-    </div>
-    <div class="d-flex">
-      <v-select
+  <div class="d-flex justify-end align-center">
+    <div style="width: 400px">
+      <v-autocomplete
         v-model="styleName"
-        :items="Object.keys(keywordStyle)"
+        :items="styleStore?.getNameListStyle"
         variant="outlined"
         density="compact"
         hide-details
-        style="width: 300px"
-      ></v-select>
+        @update:modelValue="handleGetListBuilderValue(styleName)"
+      ></v-autocomplete>
     </div>
   </div>
-  <div class="mt-2">
-    <div v-if="styleName === 'Layouts'" class="d-flex flex-wrap">
-      <div class="w-25 pa-4">
-        <img src="~/assets/image_style/layouts/album_cover.png" class="w-100" />
-        <div class="d-flex justify-center bg-bg-2">Album Cover</div>
+  <div class="mt-4 ml-2 d-flex">
+    <div class="w-25 mr-2">
+      <div
+        v-for="(image, index) in listImageBuilderValue0"
+        :key="`${index}_image_col0`"
+      >
+        <BuilderImage :builder-value="image" />
       </div>
-      <div class="w-25 pa-4">
-        <img
-          src="~/assets/image_style/layouts/anatomical_drawing.png"
-          class="w-100"
-        />
-        <div class="d-flex justify-center bg-bg-2">Anatomical Drawing</div>
+    </div>
+    <div class="w-25 mr-2">
+      <div
+        v-for="(image, index) in listImageBuilderValue1"
+        :key="`${index}_image_col1`"
+      >
+        <BuilderImage :builder-value="image" />
       </div>
-      <div class="w-25 pa-4">
-        <img
-          src="~/assets/image_style/layouts/character_design.png"
-          class="w-100"
-        />
-        <div class="d-flex justify-center bg-bg-2">Character Designr</div>
+    </div>
+    <div class="w-25 mr-2">
+      <div
+        v-for="(image, index) in listImageBuilderValue2"
+        :key="`${index}_image_col2`"
+      >
+        <BuilderImage :builder-value="image" />
       </div>
-      <div class="w-25 pa-4">
-        <img src="~/assets/image_style/layouts/game_assets.png" class="w-100" />
-        <div class="d-flex justify-center bg-bg-2">Game Assets</div>
+    </div>
+    <div class="w-25 mr-2">
+      <div
+        v-for="(image, index) in listImageBuilderValue3"
+        :key="`${index}_image_col3`"
+      >
+        <BuilderImage :builder-value="image" />
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-const keywordStyle = {
-  Layouts: [
-    "Album Cover",
-    "Anatomical Drawing",
-    "Character Design",
-    "Game Assets",
-  ],
-  Textures: ["3d Fractals", "Agate"],
-  Colors: ["Apricot Color", "Aqua Colors"],
-  Artist: ["Adrian Donoghue", "Adrian Tomine"],
-  Camera: ["100mm", "14mm"],
-  Era: ["1100s", "1200s"],
-  Themes: ["Academicism", "Acid Pixie"],
-  Styles: ["3d", "Abstract Art"],
-  Techniques: ["16 Bit", "3d Printed"],
-  Lighting: ["Backlighting", "Blacklight"],
-  "Movies, Games": ["American Horror Story", "Animal Crossing"],
-  Architecture: ["Afrocentric Interior Design", "Antebellum Architecture"],
-  Fashion: ["Academia Outfit", "Androgynous Outfit"],
-  Emojis: ["⏰", "☀️"],
-  Characters: ["Absent Mindned Professor", "African"],
-  Background: ["A stone Route To The Moon", "Airport"],
-};
-
 const styleName = ref("");
+
+import { useStyleStore } from "~/stores/Style";
+const styleStore = useStyleStore();
+
+function getListImageBuilderValue(items, colNumber) {
+  if (!items) return;
+  return items.filter((image, index) => {
+    if (index % 4 === colNumber) {
+      return image;
+    }
+  });
+}
+function handleGetListImageByModule() {
+  const listBuilderValue = styleStore.listBuilderValue[styleName.value];
+  listImageBuilderValue0.value = getListImageBuilderValue(listBuilderValue, 0);
+  listImageBuilderValue1.value = getListImageBuilderValue(listBuilderValue, 1);
+  listImageBuilderValue2.value = getListImageBuilderValue(listBuilderValue, 2);
+  listImageBuilderValue3.value = getListImageBuilderValue(listBuilderValue, 3);
+}
+
+const listImageBuilderValue0 = ref([]);
+const listImageBuilderValue1 = ref([]);
+const listImageBuilderValue2 = ref([]);
+const listImageBuilderValue3 = ref([]);
+
+const config = useRuntimeConfig();
+const baseURL = `${config.public.baseURL}`;
+async function handleGetListBuilderValue(builderType) {
+  if (builderType in styleStore.listBuilderValue) {
+    handleGetListImageByModule();
+    return;
+  }
+  const { data } = await useLazyFetch(`${baseURL}/builder_value`, {
+    method: "GET",
+    params: {
+      page: 0,
+      size: 1000,
+      builder_type_name: builderType,
+    },
+  });
+  const { result, code, msg } = data.value;
+  if (code === CODE_SUCCESS) {
+    styleStore.setListBuilderValue(builderType, result);
+    handleGetListImageByModule();
+  }
+}
 </script>
