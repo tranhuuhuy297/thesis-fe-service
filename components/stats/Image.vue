@@ -8,10 +8,14 @@
   </div>
   <v-dialog v-model="isShowDialog">
     <v-card variant="outlined" class="bg-bg-1 mx-auto" max-width="1000">
-      <v-card-text class="d-flex">
+      <v-card-title class="d-flex justify-end">
+        <v-btn icon="mdi-close" variant="text" @click="isShowDialog = false">
+        </v-btn>
+      </v-card-title>
+      <v-card-text class="d-flex mt-0 pt-0 mb-2">
         <div
           class="rounded-lg w-50 d-flex align-center"
-          style="width: 40%; border: 2px solid black"
+          style="max-width: 40%; max-height: 70vh; border: 2px solid black"
         >
           <v-img
             :src="`https://${prompt?.image_src}`"
