@@ -1,15 +1,15 @@
 <template>
-  <div class="d-flex justify-end align-center">
-    <div style="width: 400px">
-      <v-autocomplete
-        v-model="styleName"
-        :items="styleStore?.getNameListStyle"
-        variant="outlined"
-        density="compact"
-        hide-details
-        @update:modelValue="handleGetListBuilderValue(styleName)"
-      ></v-autocomplete>
-    </div>
+  <div class="d-flex justify-space-between align-center px-2">
+    <div class="text-h5 font-weight-bold text-text-2 w-100">Style</div>
+    <v-autocomplete
+      v-model="styleName"
+      :items="styleStore?.getNameListStyle"
+      variant="outlined"
+      density="compact"
+      hide-details
+      @update:modelValue="handleGetListBuilderValue(styleName)"
+      style="width: 500px"
+    ></v-autocomplete>
   </div>
   <div class="mt-4 ml-2 d-flex">
     <div class="w-25 mr-2">

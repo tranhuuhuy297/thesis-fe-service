@@ -3,8 +3,8 @@
     Prompt <span class="text-primary-2">Stats</span>
     <div class="mt-2 text-h6">Search for the best prompts</div>
   </div>
-  <div class="mt-2 text-h5">
-    <v-tabs v-model="currentTab" class="mt-6" color="text-1">
+  <div class="mt-8 text-h5">
+    <v-tabs v-model="currentTab" color="text-1">
       <v-tab :value="1" :class="{ 'font-weight-bold': currentTab === 1 }">
         Newest
       </v-tab>

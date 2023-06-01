@@ -3,8 +3,11 @@
     Prompt <span class="text-primary-2">Builder</span>
   </div>
   <div class="mt-2 text-h6">Create best prompts with suggestions</div>
-  <div class="mt-4 d-flex justify-center align-center flex-column px-10">
-    <div class="el-prompt pa-4 mx-2" style="word-wrap: break-word">
+  <div class="mt-8 d-flex justify-center align-center flex-column px-10">
+    <div
+      class="el-prompt pa-4 mx-2 w-100 d-flex justify-center rounded-lg"
+      style="word-wrap: break-word"
+    >
       <span v-if="prompt">{{ prompt }}</span>
       <span v-else class="text-bg-3 font-italic">
         Your builder prompt will be right here
@@ -297,6 +300,7 @@ const suggestButton = ref("Style");
 
 const prompt = ref("");
 function handleCopy() {
+  if (!prompt.value) return;
   navigator.clipboard.writeText(prompt.value);
   useNuxtApp().$toast.success("Copy to clipboard!");
 }

@@ -5,7 +5,9 @@ export default defineNuxtPlugin((nuxtApp) => {
   nuxtApp.vueApp.use(Vue3Toastify, {
     autoClose: 1000,
     position: toast.POSITION.BOTTOM_RIGHT,
-    transition: toast.TRANSITIONS.ZOOM,
+    transition: toast.TRANSITIONS.BOUNCE,
+    theme: "colored",
+    hideProgressBar: true,
   });
 
   return {

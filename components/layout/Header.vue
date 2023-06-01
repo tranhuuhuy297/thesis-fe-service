@@ -151,9 +151,9 @@ function handleAction(item) {
   } else {
     document.cookie = "token=;";
     document.cookie = "exp=;";
-    nextTick(() => {
+    setTimeout(() => {
       navigateTo("/login");
-    });
+    }, 200);
   }
 }
 </script>

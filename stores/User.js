@@ -4,14 +4,14 @@ export const useUserStore = defineStore("userStore", {
   state: () => ({
     username: "",
     gmail: "",
-    token: "",
+    id: "",
   }),
   getters: {},
   actions: {
     setUser(user) {
       this.username = user.username;
       this.gmail = user.gmail;
-      this.token = user.token;
+      this.id = user.id;
     },
   },
 });
