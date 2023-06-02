@@ -6,8 +6,8 @@
       class="pointer mb-2 img"
     />
   </div>
-  <v-dialog v-model="isShowDialog">
-    <v-card variant="outlined" class="bg-bg-1 mx-auto" max-width="1000">
+  <v-dialog v-model="isShowDialog" persistent>
+    <v-card class="bg-bg-1 mx-auto" max-width="1000">
       <v-card-title class="d-flex justify-end">
         <v-btn icon="mdi-close" variant="text" @click="isShowDialog = false">
         </v-btn>
@@ -52,6 +52,7 @@
             hide-details
             class="mt-1"
             bg-color="bg-1"
+            readonly
           ></v-autocomplete>
         </div>
       </v-card-text>
@@ -119,8 +120,9 @@ async function handleDeletePrompt() {
       Authorization: `Bearer ${getCookie("token")}`,
     },
   });
-  const { result, code, msg } = data.value;
   isLoadingDelete.value = false;
+  if (!data.value) return;
+  const { result, code, msg } = data.value;
   if (code === CODE_SUCCESS) {
     useNuxtApp().$toast.success("Delete successfully!");
     isShowDeleteDialog.value = false;

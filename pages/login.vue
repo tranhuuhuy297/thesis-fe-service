@@ -74,13 +74,14 @@ async function handleLogin() {
       password: sha256(password.value),
     },
   });
-  const { result, code, msg } = data.value;
   isLoadingLogin.value = false;
+  if (!data.value) return;
+  const { result, code, msg } = data.value;
   if (code === CODE_SUCCESS) {
     userStore.setUser(result);
     document.cookie = `token=${result["access_token"]}`;
     document.cookie = `exp=${result["exp"]}`;
-    navigateTo({ path: "/upload" });
+    navigateTo({ path: "/profile" });
   }
 }
 </script>

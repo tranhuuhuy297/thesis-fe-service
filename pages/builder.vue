@@ -5,16 +5,17 @@
   <div class="mt-2 text-h6">Create best prompts with suggestions</div>
   <div class="mt-8 d-flex justify-center align-center flex-column px-10">
     <div
-      class="el-prompt pa-4 mx-2 w-100 d-flex justify-center rounded-lg"
-      style="word-wrap: break-word"
+      class="el-prompt pa-4 mx-2 d-flex justify-center rounded-lg"
+      style="word-wrap: break-word; width: 80%"
     >
       <span v-if="prompt">{{ prompt }}</span>
-      <span v-else class="text-bg-3 font-italic">
+      <span v-else class="text-bg-3">
         Your builder prompt will be right here
       </span>
     </div>
     <div class="d-flex mt-2">
       <v-btn
+        variant="flat"
         prepend-icon="mdi-reload"
         color="error"
         text="Reset"
@@ -22,6 +23,7 @@
         class="mr-2"
       />
       <v-btn
+        variant="flat"
         color="success"
         prepend-icon="mdi-content-copy"
         text="Copy"
@@ -259,6 +261,7 @@ async function handleGetListStyle() {
       parent_type: "Style",
     },
   });
+  if (!data.value) return;
   const { result, code, msg } = data.value;
   if (code === CODE_SUCCESS) {
     styleStore.setListStyle(result);
@@ -275,6 +278,7 @@ async function handleGetListBuilderValue(builderType) {
       builder_type_name: builderType,
     },
   });
+  if (!data.value) return;
   const { result, code, msg } = data.value;
   if (code === CODE_SUCCESS) {
     styleStore.setListBuilderValue(builderType, result);
@@ -290,6 +294,7 @@ async function handleGetListParam() {
       parent_type: "Param",
     },
   });
+  if (!data.value) return;
   const { result, code, msg } = data.value;
   if (code === CODE_SUCCESS) {
     paramStore.setListParam(result);

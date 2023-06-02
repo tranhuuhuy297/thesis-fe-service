@@ -17,8 +17,8 @@
     ></v-file-input>
     <div
       class="rounded-lg pointer d-flex align-center justify-center"
-      style="width: 40%; border: 2px solid black"
-      @click="test"
+      style="min-width: 30%; max-width: 40%; border: 2px solid black"
+      @click="handleSelectFile"
     >
       <span v-if="!file">
         <v-icon icon="mdi-image" class="mr-1"> </v-icon>Upload your image here
@@ -31,7 +31,7 @@
       :thickness="2"
     ></v-divider>
     <div class="flex-grow-1 text-text-1">
-      <div class="text-h5">Prompt</div>
+      <div class="">Prompt</div>
       <v-textarea
         v-model.trim="prompt"
         variant="outlined"
@@ -40,7 +40,7 @@
         bg-color="bg-1"
         class="mt-1"
       />
-      <div class="text-h5 mt-4">Negative Prompt</div>
+      <div class="mt-4">Negative Prompt</div>
       <v-textarea
         v-model.trim="negativePrompt"
         variant="outlined"
@@ -49,7 +49,7 @@
         bg-color="bg-1"
         class="mt-1"
       />
-      <div class="text-h5 mt-4">Model</div>
+      <div class="mt-4">Model</div>
       <v-autocomplete
         v-model="model"
         :items="['midjourney', 'stable-diffustion']"
@@ -59,7 +59,6 @@
         bg-color="bg-1"
       ></v-autocomplete>
       <v-btn
-        flat
         color="primary"
         size="x-large"
         class="mt-6"
@@ -113,7 +112,7 @@
 </template>
 
 <script setup>
-function test() {
+function handleSelectFile() {
   document.getElementById("file").click();
 }
 
@@ -160,6 +159,7 @@ async function handleUploadPrompt() {
     }
   );
   isLoadingUpload.value = false;
+  if (!data.value) return;
   const { result, code, msg } = data.value;
   if (code === CODE_SUCCESS) {
     useNuxtApp().$toast.success("Upload successfully!");
@@ -187,11 +187,10 @@ const page = ref(0);
 const size = ref(20);
 onMounted(() => {
   nextTick(() => {
-    if (!userPromptStore.isLoadedUserPrompt) {
-      page.value = 0;
-      size.value = 20;
-      handleGetListUserPrompt();
-    }
+    page.value = 0;
+    size.value = 20;
+    userPromptStore.setListUserPrompt([]);
+    handleGetListUserPrompt();
   });
   function handleScroll() {
     if (
@@ -216,6 +215,7 @@ async function handleGetListUserPrompt() {
       Authorization: `Bearer ${getCookie("token")}`,
     },
   });
+  if (!data.value) return;
   const { result, code, msg } = data.value;
   if (code === CODE_SUCCESS) {
     const listUserPrompt = [...userPromptStore.listUserPrompt, ...result];

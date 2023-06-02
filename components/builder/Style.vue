@@ -89,6 +89,7 @@ async function handleGetListBuilderValue(builderType) {
       builder_type_name: builderType,
     },
   });
+  if (!data.value) return;
   const { result, code, msg } = data.value;
   if (code === CODE_SUCCESS) {
     styleStore.setListBuilderValue(builderType, result);

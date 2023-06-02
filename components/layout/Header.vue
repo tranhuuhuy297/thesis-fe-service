@@ -96,7 +96,6 @@
         </v-list>
       </v-menu>
       <v-btn
-        variant="flat"
         class="font-weight-bold text-text-1 rounded-lg"
         text="Upload"
         size="large"
@@ -134,6 +133,7 @@ async function handleSearch() {
         search: textSearch.value,
       },
     });
+    if (!data.value) return;
     const { result, code, msg } = data.value;
     if (code === CODE_SUCCESS) {
       const validPrompt = result.filter((prompt) => {
@@ -146,14 +146,14 @@ async function handleSearch() {
 }
 
 function handleAction(item) {
-  if (item.navigateTo !== "/logout") {
-    navigateTo(item.navigateTo);
-  } else {
+  if (item.navigateTo === "/logout") {
     document.cookie = "token=;";
     document.cookie = "exp=;";
     setTimeout(() => {
       navigateTo("/login");
     }, 200);
+  } else {
+    navigateTo(item.navigateTo);
   }
 }
 </script>

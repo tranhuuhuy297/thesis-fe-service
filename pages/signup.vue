@@ -2,7 +2,15 @@
   <div class="width-90" style="min-width: 400px">
     <div class="text-h4 font-weight-bold">Sign Up</div>
     <div class="mt-1">Enter your details to get started</div>
-    <div class="mt-7">Email</div>
+    <div class="mt-7">Username</div>
+    <v-text-field
+      class="mt-1"
+      variant="outlined"
+      hide-details
+      prepend-inner-icon="mdi-account-outline"
+      placeholder="Type your username here..."
+    ></v-text-field>
+    <div class="mt-4">Email</div>
     <v-text-field
       class="mt-1"
       variant="outlined"

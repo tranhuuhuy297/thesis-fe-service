@@ -61,6 +61,7 @@ async function handleSearch() {
         search: textSearch.value,
       },
     });
+    if (!data.value) return;
     const { result, code, msg } = data.value;
     if (code === CODE_SUCCESS) {
       const validPrompt = result.filter((prompt) => {

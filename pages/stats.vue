@@ -62,7 +62,7 @@ const baseURL = `${config.public.baseURL}/prompt`;
 const promptStore = usePromptStore();
 
 const page = ref(0);
-const size = ref(30);
+const size = ref(20);
 const textSearch = ref("");
 
 const route = useRoute();
@@ -73,24 +73,24 @@ onMounted(() => {
 
 onMounted(() => {
   nextTick(() => {
-    if (!promptStore.isLoadedPrompt) {
-      handleGetListPrompt(0, 30);
-      page.value = 0;
-      size.value = 30;
-    }
+    promptStore.setNewestListPrompt([]);
+    page.value = 0;
+    size.value = 20;
+    handleGetListPrompt();
   });
 });
 
-async function handleGetListPrompt(page, size, textSearch) {
+async function handleGetListPrompt() {
   const { data, pending } = await useLazyFetch(`${baseURL}`, {
     method: "GET",
-    query: textSearch
-      ? { page: page, size: size, search: textSearch }
+    query: textSearch.value
+      ? { page: page.value, size: size.value, search: textSearch.value }
       : {
-          page: page,
-          size: size,
+          page: page.value,
+          size: size.value,
         },
   });
+  if (!data.value) return;
   const { result, code, msg } = data?.value;
   if (code === CODE_SUCCESS) {
     const validPrompt = result.filter((prompt) => {
@@ -137,7 +137,7 @@ onMounted(() => {
       document?.documentElement?.scrollHeight
     ) {
       page.value += 1;
-      handleGetListPrompt(page.value, size.value, textSearch.value);
+      handleGetListPrompt();
     }
   }
   window?.addEventListener("scroll", handleScroll);

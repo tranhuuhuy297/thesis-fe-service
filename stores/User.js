@@ -5,6 +5,7 @@ export const useUserStore = defineStore("userStore", {
     username: "",
     gmail: "",
     id: "",
+    image_src: "",
   }),
   getters: {},
   actions: {
@@ -12,6 +13,7 @@ export const useUserStore = defineStore("userStore", {
       this.username = user.username;
       this.gmail = user.gmail;
       this.id = user.id;
+      this.image_src = user.image_src;
     },
   },
 });
