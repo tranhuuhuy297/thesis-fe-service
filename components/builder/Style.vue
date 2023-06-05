@@ -11,8 +11,8 @@
       style="width: 500px"
     ></v-autocomplete>
   </div>
-  <div class="mt-4 ml-2 d-flex">
-    <div class="w-25 mr-2">
+  <div class="mt-4 d-flex">
+    <div class="w-20 mx-2">
       <div
         v-for="(image, index) in listImageBuilderValue0"
         :key="`${index}_image_col0`"
@@ -20,7 +20,7 @@
         <BuilderImage :builder-value="image" />
       </div>
     </div>
-    <div class="w-25 mr-2">
+    <div class="w-20 mx-2">
       <div
         v-for="(image, index) in listImageBuilderValue1"
         :key="`${index}_image_col1`"
@@ -28,7 +28,7 @@
         <BuilderImage :builder-value="image" />
       </div>
     </div>
-    <div class="w-25 mr-2">
+    <div class="w-20 mx-2">
       <div
         v-for="(image, index) in listImageBuilderValue2"
         :key="`${index}_image_col2`"
@@ -36,10 +36,18 @@
         <BuilderImage :builder-value="image" />
       </div>
     </div>
-    <div class="w-25 mr-2">
+    <div class="w-20 mx-2">
       <div
         v-for="(image, index) in listImageBuilderValue3"
         :key="`${index}_image_col3`"
+      >
+        <BuilderImage :builder-value="image" />
+      </div>
+    </div>
+    <div class="w-20 mx-2">
+      <div
+        v-for="(image, index) in listImageBuilderValue4"
+        :key="`${index}_image_col4`"
       >
         <BuilderImage :builder-value="image" />
       </div>
@@ -56,7 +64,7 @@ const styleStore = useStyleStore();
 function getListImageBuilderValue(items, colNumber) {
   if (!items) return;
   return items.filter((image, index) => {
-    if (index % 4 === colNumber) {
+    if (index % 5 === colNumber) {
       return image;
     }
   });
@@ -67,12 +75,14 @@ function handleGetListImageByModule() {
   listImageBuilderValue1.value = getListImageBuilderValue(listBuilderValue, 1);
   listImageBuilderValue2.value = getListImageBuilderValue(listBuilderValue, 2);
   listImageBuilderValue3.value = getListImageBuilderValue(listBuilderValue, 3);
+  listImageBuilderValue4.value = getListImageBuilderValue(listBuilderValue, 4);
 }
 
 const listImageBuilderValue0 = ref([]);
 const listImageBuilderValue1 = ref([]);
 const listImageBuilderValue2 = ref([]);
 const listImageBuilderValue3 = ref([]);
+const listImageBuilderValue4 = ref([]);
 
 const config = useRuntimeConfig();
 const baseURL = `${config.public.baseURL}`;

@@ -14,6 +14,7 @@
         hide-details
         prepend-inner-icon="mdi-magnify"
         placeholder="Search AI images"
+        :loading="isLoadingSearch"
         @keydown.enter="handleSearch"
       >
       </v-text-field>
@@ -51,8 +52,12 @@ const textSearch = ref("");
 const config = useRuntimeConfig();
 const baseURL = `${config.public.baseURL}/prompt`;
 const promptStore = usePromptStore();
+
+const isLoadingSearch = ref(false);
+
 async function handleSearch() {
   if (textSearch.value) {
+    isLoadingSearch.value = true;
     const { data, pending } = await useLazyFetch(`${baseURL}`, {
       method: "GET",
       query: {
@@ -61,6 +66,7 @@ async function handleSearch() {
         search: textSearch.value,
       },
     });
+    isLoadingSearch.value = false;
     if (!data.value) return;
     const { result, code, msg } = data.value;
     if (code === CODE_SUCCESS) {

@@ -14,8 +14,8 @@
     </v-tabs>
     <v-divider style="margin-top: 1px"></v-divider>
     <v-window v-model="currentTab" class="flex-grow-1 mt-4">
-      <div v-if="currentTab === 1" class="d-flex ml-2">
-        <div class="w-25 mr-2">
+      <div v-if="currentTab === 1" class="d-flex">
+        <div class="w-20 mx-1">
           <div
             v-for="(prompt, index) in newestPromptCol0"
             :key="`${index}_prompt_col0`"
@@ -23,7 +23,7 @@
             <StatsImage :prompt="prompt"></StatsImage>
           </div>
         </div>
-        <div class="w-25 mr-2">
+        <div class="w-20 mx-1">
           <div
             v-for="(prompt, index) in newestPromptCol1"
             :key="`${index}_prompt_col1`"
@@ -31,7 +31,7 @@
             <StatsImage :prompt="prompt"></StatsImage>
           </div>
         </div>
-        <div class="w-25 mr-2">
+        <div class="w-20 mx-1">
           <div
             v-for="(prompt, index) in newestPromptCol2"
             :key="`${index}_prompt_col2`"
@@ -39,10 +39,18 @@
             <StatsImage :prompt="prompt"></StatsImage>
           </div>
         </div>
-        <div class="w-25 mr-2">
+        <div class="w-20 mx-1">
           <div
             v-for="(prompt, index) in newestPromptCol3"
             :key="`${index}_prompt_col3`"
+          >
+            <StatsImage :prompt="prompt"></StatsImage>
+          </div>
+        </div>
+        <div class="w-20 mx-1">
+          <div
+            v-for="(prompt, index) in newestPromptCol4"
+            :key="`${index}_prompt_col4`"
           >
             <StatsImage :prompt="prompt"></StatsImage>
           </div>
@@ -103,28 +111,35 @@ async function handleGetListPrompt() {
 
 const newestPromptCol0 = computed(() => {
   return promptStore.newestListPrompt.filter((prompt, index) => {
-    if (index % 4 === 0) {
+    if (index % 5 === 0) {
       return prompt;
     }
   });
 });
 const newestPromptCol1 = computed(() => {
   return promptStore.newestListPrompt.filter((prompt, index) => {
-    if (index % 4 === 1) {
+    if (index % 5 === 1) {
       return prompt;
     }
   });
 });
 const newestPromptCol2 = computed(() => {
   return promptStore.newestListPrompt.filter((prompt, index) => {
-    if (index % 4 === 2) {
+    if (index % 5 === 2) {
       return prompt;
     }
   });
 });
 const newestPromptCol3 = computed(() => {
   return promptStore.newestListPrompt.filter((prompt, index) => {
-    if (index % 4 === 3) {
+    if (index % 5 === 3) {
+      return prompt;
+    }
+  });
+});
+const newestPromptCol4 = computed(() => {
+  return promptStore.newestListPrompt.filter((prompt, index) => {
+    if (index % 5 === 4) {
       return prompt;
     }
   });
@@ -142,4 +157,16 @@ onMounted(() => {
   }
   window?.addEventListener("scroll", handleScroll);
 });
+
+watch(
+  () => currentTab.value,
+  (newVal, oldVal) => {
+    if (newVal != 1) promptStore.setNewestListPrompt([]);
+    else {
+      page.value = 0;
+      size.value = 20;
+      handleGetListPrompt();
+    }
+  }
+);
 </script>

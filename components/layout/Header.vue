@@ -22,6 +22,7 @@
         hide-details
         prepend-inner-icon="mdi-magnify"
         placeholder="Search AI images"
+        :loading="isLoadingSearch"
         @keydown.enter="handleSearch"
       >
       </v-text-field>
@@ -39,12 +40,12 @@
       >
         Stats
       </div>
-      <div
+      <!-- <div
         class="mr-6 pointer pointer--link"
         @click="navigateTo({ path: '/resources' })"
       >
         Resources
-      </div>
+      </div> -->
       <div
         class="mr-6 pointer pointer--link"
         @click="navigateTo({ path: '/generator' })"
@@ -123,9 +124,14 @@ onMounted(() => {
 const config = useRuntimeConfig();
 const baseURL = `${config.public.baseURL}/prompt`;
 const promptStore = usePromptStore();
+
+const isLoadingSearch = ref(false);
+
 async function handleSearch() {
+  promptStore.setNewestListPrompt([]);
   if (textSearch.value) {
-    const { data, pending } = await useLazyFetch(`${baseURL}`, {
+    isLoadingSearch.value = true;
+    const { data } = await useLazyFetch(`${baseURL}`, {
       method: "GET",
       query: {
         page: 0,
@@ -133,6 +139,7 @@ async function handleSearch() {
         search: textSearch.value,
       },
     });
+    isLoadingSearch.value = false;
     if (!data.value) return;
     const { result, code, msg } = data.value;
     if (code === CODE_SUCCESS) {

@@ -26,7 +26,7 @@
       />
       <div class="mt-4">Email</div>
       <v-text-field
-        :model-value="userStore.gmail"
+        v-model.trim="userStore.gmail"
         class="mt-1 w-75"
         variant="outlined"
         bg-color="bg-3"

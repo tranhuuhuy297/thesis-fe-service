@@ -15,16 +15,17 @@
     </div>
     <div class="d-flex mt-2">
       <v-btn
-        variant="flat"
+        variant="text"
         prepend-icon="mdi-reload"
         color="error"
         text="Reset"
         @click="handleReset"
-        class="mr-2"
+        class="mr-2 font-weight-bold"
       />
       <v-btn
-        variant="flat"
+        variant="text"
         color="success"
+        class="font-weight-bold"
         prepend-icon="mdi-content-copy"
         text="Copy"
         @click="handleCopy"
