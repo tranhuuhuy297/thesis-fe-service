@@ -17,7 +17,7 @@
     ></v-file-input>
     <div
       class="rounded-lg pointer d-flex align-center justify-center"
-      style="min-width: 30%; max-width: 40%; border: 2px solid black"
+      style="width: 40%; border: 2px solid black"
       @click="handleSelectFile"
     >
       <span v-if="!file">
@@ -65,6 +65,7 @@
         text="Upload"
         prepend-icon="mdi-upload"
         block
+        variant="flat"
         :loading="isLoadingUpload"
         @click="handleUploadPrompt"
       ></v-btn>
@@ -112,6 +113,9 @@
 </template>
 
 <script setup>
+import { useUserStore } from "~/stores/User";
+import { useUserPromptStore } from "~/stores/UserPrompt";
+
 function handleSelectFile() {
   document.getElementById("file").click();
 }
@@ -133,7 +137,6 @@ watch(
     }
   }
 );
-import { useUserStore } from "~/stores/User";
 const userStore = useUserStore();
 
 const isLoadingUpload = ref(false);
@@ -180,7 +183,6 @@ function handleReset() {
   file.value = null;
 }
 
-import { useUserPromptStore } from "~/stores/UserPrompt";
 const userPromptStore = useUserPromptStore();
 
 const page = ref(0);

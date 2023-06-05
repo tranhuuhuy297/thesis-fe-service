@@ -16,6 +16,13 @@
   }
 }
 
+:root {
+  --toastify-color-error: #e62929 !important;
+  --toastify-color-info: #3081e2 !important;
+  --toastify-color-success: #34c77b !important;
+  --toastify-font-family: "Roboto" !important;
+}
+
 // cursor
 .pointer {
   &:hover {

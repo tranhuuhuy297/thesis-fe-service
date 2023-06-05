@@ -15,7 +15,7 @@
     </div>
     <div class="d-flex mt-2">
       <v-btn
-        variant="text"
+        variant="flat"
         prepend-icon="mdi-reload"
         color="error"
         text="Reset"
@@ -23,7 +23,7 @@
         class="mr-2 font-weight-bold"
       />
       <v-btn
-        variant="text"
+        variant="flat"
         color="success"
         class="font-weight-bold"
         prepend-icon="mdi-content-copy"
@@ -239,8 +239,8 @@
 
 <script setup>
 import { useStyleStore } from "~/stores/Style";
-const styleStore = useStyleStore();
 import { useParamStore } from "~/stores/Param";
+const styleStore = useStyleStore();
 const paramStore = useParamStore();
 
 const config = useRuntimeConfig();

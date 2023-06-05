@@ -16,6 +16,7 @@
         placeholder="Search AI images"
         :loading="isLoadingSearch"
         @keydown.enter="handleSearch"
+        style="border: 1px solid black"
       >
       </v-text-field>
       <div class="d-flex justify-center mt-2">
@@ -42,10 +43,10 @@
 </template>
 
 <script setup>
+import { usePromptStore } from "~/stores/Prompt";
 definePageMeta({
   layout: "empty",
 });
-import { usePromptStore } from "~/stores/Prompt";
 
 const textSearch = ref("");
 
