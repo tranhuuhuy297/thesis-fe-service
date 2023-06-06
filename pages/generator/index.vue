@@ -77,6 +77,7 @@ function handleCopy(prompt) {
 
 <style scoped>
 .prompt-gen:hover {
-  color: #34cc7b !important;
+  background-color: #34cc7b !important;
+  font-weight: 600 !important;
 }
 </style>
