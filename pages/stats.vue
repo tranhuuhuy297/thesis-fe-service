@@ -15,7 +15,7 @@
     <v-divider style="margin-top: 1px"></v-divider>
     <v-window v-model.trim="currentTab" class="flex-grow-1 mt-4">
       <div v-if="currentTab === 1" class="d-flex">
-        <div class="w-20 mx-1">
+        <div class="mx-1" style="width: 20%">
           <div
             v-for="(prompt, index) in newestPromptCol0"
             :key="`${index}_prompt_col0`"
@@ -23,7 +23,7 @@
             <StatsImage :prompt="prompt"></StatsImage>
           </div>
         </div>
-        <div class="w-20 mx-1">
+        <div class="mx-1" style="width: 20%">
           <div
             v-for="(prompt, index) in newestPromptCol1"
             :key="`${index}_prompt_col1`"
@@ -31,7 +31,7 @@
             <StatsImage :prompt="prompt"></StatsImage>
           </div>
         </div>
-        <div class="w-20 mx-1">
+        <div class="mx-1" style="width: 20%">
           <div
             v-for="(prompt, index) in newestPromptCol2"
             :key="`${index}_prompt_col2`"
@@ -39,7 +39,7 @@
             <StatsImage :prompt="prompt"></StatsImage>
           </div>
         </div>
-        <div class="w-20 mx-1">
+        <div class="mx-1" style="width: 20%">
           <div
             v-for="(prompt, index) in newestPromptCol3"
             :key="`${index}_prompt_col3`"
@@ -47,7 +47,7 @@
             <StatsImage :prompt="prompt"></StatsImage>
           </div>
         </div>
-        <div class="w-20 mx-1">
+        <div class="mx-1" style="width: 20%">
           <div
             v-for="(prompt, index) in newestPromptCol4"
             :key="`${index}_prompt_col4`"

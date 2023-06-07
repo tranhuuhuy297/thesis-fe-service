@@ -6,7 +6,7 @@
   >
     <div
       style="width: 40%; border: 1px solid black"
-      class="d-flex justify-space-between pa-2"
+      class="d-flex justify-space-between pa-2 bg-bg-1"
     >
       {{ item }}
       <span class="font-weight-bold">
@@ -21,6 +21,7 @@
         :items="['yes', 'no']"
         density="compact"
         variant="outlined"
+        bg-color="bg-1"
         hide-details
       ></v-select>
       <v-text-field
@@ -37,6 +38,7 @@
         :items="['5', '4', '5', '2', '1']"
         density="compact"
         variant="outlined"
+        bg-color="bg-1"
         hide-details
       >
       </v-select>
