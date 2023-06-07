@@ -40,7 +40,7 @@
           <div
             v-for="(prompt, index) in semanticSearchResult"
             :key="`semantic_${index}`"
-            style="border: 1px solid black"
+            style="border: 1px solid black; margin-bottom: 1px"
             class="pa-1 prompt pointer"
           >
             {{ prompt }}
