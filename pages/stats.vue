@@ -4,7 +4,7 @@
     <div class="mt-2 text-h6">Search for the best prompts</div>
   </div>
   <div class="mt-8 text-h5">
-    <v-tabs v-model="currentTab" color="text-1">
+    <v-tabs v-model.trim="currentTab" color="text-1">
       <v-tab :value="1" :class="{ 'font-weight-bold': currentTab === 1 }">
         Newest
       </v-tab>
@@ -13,7 +13,7 @@
       </v-tab>
     </v-tabs>
     <v-divider style="margin-top: 1px"></v-divider>
-    <v-window v-model="currentTab" class="flex-grow-1 mt-4">
+    <v-window v-model.trim="currentTab" class="flex-grow-1 mt-4">
       <div v-if="currentTab === 1" class="d-flex">
         <div class="w-20 mx-1">
           <div

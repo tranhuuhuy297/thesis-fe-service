@@ -6,7 +6,7 @@
       class="pointer mb-2 img"
     />
   </div>
-  <v-dialog v-model="isShowDialog" persistent>
+  <v-dialog v-model.trim="isShowDialog" persistent>
     <v-card class="bg-bg-1 mx-auto" max-width="1000">
       <v-card-title class="d-flex justify-end">
         <v-btn icon="mdi-close" variant="text" @click="isShowDialog = false">
@@ -56,7 +56,7 @@
           ></v-autocomplete>
         </div>
       </v-card-text>
-      <v-card-actions v-if="isShowDelete" class="d-flex justify-end mr-4 mb-2">
+      <v-card-actions v-if="isShowDelete" class="d-flex justify-end">
         <v-btn
           variant="text"
           text="Close"
@@ -74,7 +74,7 @@
       </v-card-actions>
     </v-card>
   </v-dialog>
-  <v-dialog v-model="isShowDeleteDialog" width="300px" persistent>
+  <v-dialog v-model.trim="isShowDeleteDialog" width="auto" persistent>
     <v-card>
       <v-card-text>
         <div class="text-h6 font-weight-bold">
@@ -82,7 +82,7 @@
         </div>
         <div>Are you sure to delete this prompt?</div>
       </v-card-text>
-      <v-card-actions class="d-flex justify-end mr-4 mb-2">
+      <v-card-actions class="d-flex justify-end">
         <v-btn variant="text" @click="isShowDeleteDialog = false">Cancel</v-btn>
         <v-btn
           variant="flat"

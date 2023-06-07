@@ -1,96 +1,96 @@
 <template>
-  <div class="d-flex justify-space-between align-center px-2">
-    <div class="text-h5 font-weight-bold text-text-2 w-100">Style</div>
+  <div class="d-flex justify-end">
+    <div style="width: 70%"></div>
     <v-autocomplete
-      v-model="styleName"
-      :items="styleStore?.getNameListStyle"
+      v-model.trim="styleName"
+      :items="styleStore.listNameStyle"
       variant="outlined"
       density="compact"
       hide-details
+      bg-color="bg-1"
       @update:modelValue="handleGetListBuilderValue(styleName)"
-      style="width: 500px"
     ></v-autocomplete>
   </div>
-  <div class="mt-4 d-flex">
-    <div class="w-20 mx-2">
-      <div
-        v-for="(image, index) in listImageBuilderValue0"
-        :key="`${index}_image_col0`"
-      >
-        <BuilderImage :builder-value="image" />
-      </div>
-    </div>
-    <div class="w-20 mx-2">
-      <div
-        v-for="(image, index) in listImageBuilderValue1"
-        :key="`${index}_image_col1`"
-      >
-        <BuilderImage :builder-value="image" />
-      </div>
-    </div>
-    <div class="w-20 mx-2">
-      <div
-        v-for="(image, index) in listImageBuilderValue2"
-        :key="`${index}_image_col2`"
-      >
-        <BuilderImage :builder-value="image" />
-      </div>
-    </div>
-    <div class="w-20 mx-2">
-      <div
-        v-for="(image, index) in listImageBuilderValue3"
-        :key="`${index}_image_col3`"
-      >
-        <BuilderImage :builder-value="image" />
-      </div>
-    </div>
-    <div class="w-20 mx-2">
-      <div
-        v-for="(image, index) in listImageBuilderValue4"
-        :key="`${index}_image_col4`"
-      >
-        <BuilderImage :builder-value="image" />
+  <div class="d-flex flex-wrap mt-2">
+    <div
+      v-for="(image, index) in styleStore.listBuilderValue[styleName]"
+      :key="index"
+      class="pa-2 pointer img"
+      style="width: 20%"
+      @click="
+        isShowWeight = true;
+        styleSelected = image?.name;
+      "
+    >
+      <v-img :src="`https://${image.image_src}`" cover></v-img>
+      <div class="bg-bg-1 pa-1" style="border-radius: 0 0 5px 5px">
+        {{ image?.name }}
       </div>
     </div>
   </div>
+  <v-dialog v-model.trim="isShowWeight" persistent width="auto">
+    <v-card>
+      <v-card-text>
+        <div class="text-h6 font-weight-bold">
+          <span class="text-info">Weight</span>
+        </div>
+        <div class="d-flex align-center">
+          <div>{{ styleSelected }}</div>
+          <span class="font-weight-bold mx-2">::</span>
+          <v-text-field
+            v-model.trim="styleWeight"
+            variant="outlined"
+            hide-details
+            density="compact"
+            style="max-width: 80px"
+            @keydown.prevent.enter="handleAddWeight"
+          ></v-text-field>
+        </div>
+      </v-card-text>
+      <v-card-actions class="d-flex justify-end">
+        <v-btn variant="text" @click="isShowWeight = false">Cancel</v-btn>
+        <v-btn variant="flat" color="info" @click="handleAddWeight">
+          Add {{ styleName }}
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script setup>
-const styleName = ref("");
-
 import { useStyleStore } from "~/stores/Style";
 const styleStore = useStyleStore();
 
-function getListImageBuilderValue(items, colNumber) {
-  if (!items) return;
-  return items.filter((image, index) => {
-    if (index % 5 === colNumber) {
-      return image;
-    }
-  });
-}
-function handleGetListImageByModule() {
-  const listBuilderValue = styleStore.listBuilderValue[styleName.value];
-  listImageBuilderValue0.value = getListImageBuilderValue(listBuilderValue, 0);
-  listImageBuilderValue1.value = getListImageBuilderValue(listBuilderValue, 1);
-  listImageBuilderValue2.value = getListImageBuilderValue(listBuilderValue, 2);
-  listImageBuilderValue3.value = getListImageBuilderValue(listBuilderValue, 3);
-  listImageBuilderValue4.value = getListImageBuilderValue(listBuilderValue, 4);
-}
-
-const listImageBuilderValue0 = ref([]);
-const listImageBuilderValue1 = ref([]);
-const listImageBuilderValue2 = ref([]);
-const listImageBuilderValue3 = ref([]);
-const listImageBuilderValue4 = ref([]);
-
 const config = useRuntimeConfig();
 const baseURL = `${config.public.baseURL}`;
-async function handleGetListBuilderValue(builderType) {
-  if (builderType in styleStore.listBuilderValue) {
-    handleGetListImageByModule();
-    return;
+
+const styleName = ref("Layouts");
+
+onMounted(() => {
+  nextTick(() => {
+    handleGetListStyle();
+    handleGetListBuilderValue(styleName.value);
+  });
+});
+
+async function handleGetListStyle() {
+  const { data } = await useLazyFetch(`${baseURL}/builder_type`, {
+    method: "GET",
+    params: {
+      page: 0,
+      size: 100,
+      parent_type: "Style",
+    },
+  });
+  if (!data.value) return;
+  const { result, code, msg } = data.value;
+  if (code === CODE_SUCCESS) {
+    styleStore.setListStyle(result);
   }
+}
+
+async function handleGetListBuilderValue(builderType) {
+  if (builderType in styleStore.listBuilderValue) return;
   const { data } = await useLazyFetch(`${baseURL}/builder_value`, {
     method: "GET",
     params: {
@@ -103,7 +103,36 @@ async function handleGetListBuilderValue(builderType) {
   const { result, code, msg } = data.value;
   if (code === CODE_SUCCESS) {
     styleStore.setListBuilderValue(builderType, result);
-    handleGetListImageByModule();
   }
+}
+
+const listStyle = ref([]);
+const styleSelected = ref("");
+const styleWeight = ref(1);
+const isShowWeight = ref(false);
+
+function handleAddWeight() {
+  listStyle.value.push({
+    name: styleSelected.value,
+    weight: styleWeight.value,
+  });
+  isShowWeight.value = false;
+  styleWeight.value = 1;
+}
+
+const emit = defineEmits(["updateStyle"]);
+watch(
+  () => listStyle.value,
+  () => {
+    emit(
+      "updateStyle",
+      listStyle.value.filter((item) => item.value != "")
+    );
+  },
+  { deep: true }
+);
+
+function test() {
+  console.log("huy");
 }
 </script>

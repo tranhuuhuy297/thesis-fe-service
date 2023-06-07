@@ -3,399 +3,151 @@
     Prompt <span class="text-primary-2">Builder</span>
   </div>
   <div class="mt-2 text-h6">Create best prompt with suggestions</div>
-  <div class="mt-8 d-flex justify-center align-center flex-column px-10">
-    <div
-      class="el-prompt pa-4 mx-2 d-flex justify-center rounded-lg"
-      style="word-wrap: break-word; width: 80%"
-    >
-      <span v-if="prompt">{{ prompt }}</span>
-      <span v-else class="text-bg-3">
-        Your builder prompt will be right here
-      </span>
+  <div class="d-flex mt-8">
+    <div style="width: 40%; height: 100%">
+      <div
+        style="height: 100%"
+        class="bg-bg-2 rounded-lg pa-4 mr-4 d-flex flex-column"
+      >
+        <div class="flex-grow-1">
+          <span class="font-italic text-text-2 mr-2">/imagine </span>
+          <span>{{ prompt }}</span>
+        </div>
+        <div class="d-flex justify-space-between mt-4">
+          <v-btn color="error" text="Reset" @click="handleReset"></v-btn>
+          <v-btn
+            prepend-icon="mdi-content-copy"
+            color="success"
+            text="Copy"
+            @click="handleCopy"
+          ></v-btn>
+        </div>
+      </div>
+      <div class="bg-bg-2 rounded-lg pa-4 mr-4 mt-4">
+        <div class="text-text-1">Semantic Search</div>
+        <v-text-field
+          v-model.trim="semanticSearch"
+          prepend-inner-icon="mdi-text-search-variant"
+          variant="outlined"
+          density="compact"
+          placeholder="cat and rain"
+          bg-color="bg-1"
+        ></v-text-field>
+      </div>
     </div>
-    <div class="d-flex mt-2">
+    <div class="bg-bg-2 rounded-lg pa-4" style="width: 70%; height: 100%">
       <v-btn
-        variant="flat"
-        prepend-icon="mdi-reload"
-        color="error"
-        text="Reset"
-        @click="handleReset"
-        class="mr-2 font-weight-bold"
-      />
+        :variant="parentType === 'Image_Link' ? 'elevated' : 'outlined'"
+        :color="parentType === 'Image_Link' ? 'primary-2' : ''"
+        text="Image Link"
+        class="mr-1"
+        prepend-icon="mdi-link-variant"
+        @click="parentType = 'Image_Link'"
+      ></v-btn>
       <v-btn
-        variant="flat"
-        color="success"
-        class="font-weight-bold"
-        prepend-icon="mdi-content-copy"
-        text="Copy"
-        @click="handleCopy"
-      />
-    </div>
-  </div>
-  <div
-    class="mt-4 rounded-lg bg-bg-1 pa-2 d-flex"
-    style="max-height: calc(100vh - 300px)"
-  >
-    <div class="w-25 pa-2 ma-1 el-prompt rounded-lg">
-      <div class="d-flex justify-space-between align-center">
-        <v-btn
-          :variant="suggestButton === 'ImageLink' ? 'elevated' : 'outlined'"
-          :color="suggestButton === 'ImageLink' ? 'primary-2' : ''"
-          text="Image link"
-          prepend-icon="mdi-link-variant"
-          @click="suggestButton = 'ImageLink'"
-        ></v-btn>
-        <v-btn
-          variant="flat"
-          size="small"
-          color="info"
-          icon="mdi-plus"
-          @click="handleAddImageLink"
-        >
-        </v-btn>
-      </div>
-      <div class="mt-4 el-list">
-        <div
-          v-for="(imageLink, index) in listImageLink"
-          :key="`image_link_${index}`"
-          class="mb-1"
-        >
-          <v-text-field
-            v-model.trim="imageLink.value"
-            density="compact"
-            variant="outlined"
-            hide-details
-            placeholder="Type image link here"
-            bg-color="bg-2"
-          >
-          </v-text-field>
-          <img v-if="imageLink.value" :src="imageLink.value" class="w-50" />
-        </div>
+        :variant="parentType === 'Text' ? 'elevated' : 'outlined'"
+        :color="parentType === 'Text' ? 'primary-2' : ''"
+        text="Text"
+        class="mr-1"
+        prepend-icon="mdi-text"
+        @click="parentType = 'Text'"
+      ></v-btn>
+      <v-btn
+        :variant="parentType === 'Style' ? 'elevated' : 'outlined'"
+        :color="parentType === 'Style' ? 'primary-2' : ''"
+        text="Style"
+        class="mr-1"
+        prepend-icon="mdi-palette-outline"
+        @click="parentType = 'Style'"
+      ></v-btn>
+      <v-btn
+        :variant="parentType === 'Param' ? 'elevated' : 'outlined'"
+        :color="parentType === 'Param' ? 'primary-2' : ''"
+        text="Param"
+        prepend-icon="mdi-wrench-cog-outline"
+        @click="parentType = 'Param'"
+      ></v-btn>
+      <div class="mt-4">
+        <BuilderImageLink
+          v-if="parentType === 'Image_Link'"
+          @update-image-link="updateImageLink"
+        ></BuilderImageLink>
+        <BuilderText
+          v-if="parentType === 'Text'"
+          @update-text="updateText"
+        ></BuilderText>
+        <BuilderStyle
+          v-if="parentType === 'Style'"
+          @update-style="updateStyle"
+        ></BuilderStyle>
+        <BuilderParam
+          v-if="parentType === 'Param'"
+          @update-param="updateParam"
+        ></BuilderParam>
       </div>
     </div>
-    <div class="w-25 pa-2 ma-1 el-prompt rounded-lg">
-      <div class="d-flex justify-space-between align-center">
-        <v-btn
-          :variant="suggestButton === 'Text' ? 'elevated' : 'outlined'"
-          :color="suggestButton === 'Text' ? 'primary-2' : ''"
-          text="Text"
-          prepend-icon="mdi-text"
-          @click="suggestButton = 'Text'"
-        ></v-btn>
-        <v-btn
-          variant="flat"
-          size="small"
-          color="info"
-          icon="mdi-plus"
-          @click="handleAddText"
-        >
-        </v-btn>
-      </div>
-      <div class="mt-4 el-list">
-        <div
-          v-for="(text, index) in listText"
-          :key="`image_link_${index}`"
-          class="mb-1"
-        >
-          <v-text-field
-            v-model.trim="text.value"
-            density="compact"
-            variant="outlined"
-            hide-details
-            placeholder="Type description here"
-            bg-color="bg-2"
-          >
-          </v-text-field>
-        </div>
-      </div>
-    </div>
-    <div class="w-25 pa-2 ma-1 el-prompt rounded-lg">
-      <div class="d-flex justify-space-between align-center">
-        <v-btn
-          :variant="suggestButton === 'Style' ? 'elevated' : 'outlined'"
-          :color="suggestButton === 'Style' ? 'primary-2' : ''"
-          text="Style"
-          prepend-icon="mdi-palette-outline"
-          @click="suggestButton = 'Style'"
-        ></v-btn>
-        <v-btn
-          variant="flat"
-          size="small"
-          color="info"
-          icon="mdi-plus"
-          @click="handleAddStyle"
-        >
-        </v-btn>
-      </div>
-      <div class="mt-4 el-list">
-        <div
-          v-for="(style, index) in listStyle"
-          :key="`image_link_${index}`"
-          class="mb-1 d-flex align-center"
-        >
-          <v-autocomplete
-            v-model="style.name"
-            :items="styleStore?.getNameListStyle"
-            variant="outlined"
-            density="compact"
-            hide-details
-            @update:modelValue="
-              style.value = '';
-              handleGetListBuilderValue(style.name);
-            "
-          ></v-autocomplete>
-          <span v-if="styleStore?.listBuilderValue[style.name]" class="mx-1">
-            -
-          </span>
-          <v-autocomplete
-            v-if="styleStore?.listBuilderValue[style.name]"
-            v-model="style.value"
-            :items="
-              styleStore?.listBuilderValue[style.name]
-                .map((item) => item.name)
-                .sort()
-            "
-            variant="outlined"
-            density="compact"
-            hide-details
-            bg-color="bg-2"
-          ></v-autocomplete>
-        </div>
-      </div>
-    </div>
-    <div class="w-25 pa-2 ma-1 el-prompt rounded-lg">
-      <div class="d-flex justify-space-between align-center">
-        <v-btn
-          :variant="suggestButton === 'Param' ? 'elevated' : 'outlined'"
-          :color="suggestButton === 'Param' ? 'primary-2' : ''"
-          text="Param"
-          prepend-icon="mdi-wrench-cog-outline"
-          @click="suggestButton = 'Param'"
-        ></v-btn>
-        <v-btn
-          variant="flat"
-          size="small"
-          color="info"
-          icon="mdi-plus"
-          @click="handleAddParam"
-        >
-        </v-btn>
-      </div>
-      <div class="mt-4 el-list">
-        <div
-          v-for="(param, index) in listParam"
-          :key="`image_link_${index}`"
-          class="mb-1 d-flex align-center"
-        >
-          <v-autocomplete
-            v-model="param.name"
-            :items="paramStore?.getNameListParam"
-            variant="outlined"
-            density="compact"
-            hide-details
-            @update:modelValue="param.value = ''"
-          >
-            <template v-slot:selection="{ item }">
-              <span>{{ item.title }}</span>
-              <span>&nbsp;</span>
-              <span class="text-text-2">
-                {{ keywordParam[param.name]?.shortName }}
-              </span>
-            </template>
-          </v-autocomplete>
-          <span v-if="keywordParam[param.name]" class="mx-1">-</span>
-          <div v-if="keywordParam[param.name]" style="min-width: 30%">
-            <v-autocomplete
-              v-if="keywordParam[param.name]?.listValue"
-              v-model="param.value"
-              :items="keywordParam[param.name]?.listValue"
-              variant="outlined"
-              density="compact"
-              hide-details
-              bg-color="bg-2"
-            >
-            </v-autocomplete>
-            <v-text-field
-              v-else
-              v-model.trim="param.value"
-              density="compact"
-              variant="outlined"
-              hide-details
-              bg-color="bg-2"
-              :placeholder="keywordParam[param.name]?.placeHolder"
-            >
-            </v-text-field>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="mt-2 rounded-lg bg-bg-1 pa-4">
-    <BuilderText v-if="suggestButton === 'Text'"></BuilderText>
-    <BuilderStyle v-if="suggestButton === 'Style'"></BuilderStyle>
-    <BuilderParam v-if="suggestButton === 'Param'"></BuilderParam>
   </div>
 </template>
 
 <script setup>
-import { useStyleStore } from "~/stores/Style";
-import { useParamStore } from "~/stores/Param";
-const styleStore = useStyleStore();
-const paramStore = useParamStore();
+const imageLinkPrompt = ref("");
+const textPrompt = ref("");
+const stylePrompt = ref("");
+const paramPrompt = ref("");
 
-const config = useRuntimeConfig();
-const baseURL = `${config.public.baseURL}`;
-
-onMounted(() => {
-  nextTick(() => {
-    handleGetListStyle();
-    handleGetListParam();
-  });
+const prompt = computed(() => {
+  return `${imageLinkPrompt.value} ${textPrompt.value} ${stylePrompt.value} ${paramPrompt.value}`;
 });
 
-async function handleGetListStyle() {
-  const { data } = await useLazyFetch(`${baseURL}/builder_type`, {
-    method: "GET",
-    params: {
-      page: 0,
-      size: 100,
-      parent_type: "Style",
-    },
-  });
-  if (!data.value) return;
-  const { result, code, msg } = data.value;
-  if (code === CODE_SUCCESS) {
-    styleStore.setListStyle(result);
-  }
-}
-
-async function handleGetListBuilderValue(builderType) {
-  if (builderType in styleStore.listBuilderValue) return;
-  const { data } = await useLazyFetch(`${baseURL}/builder_value`, {
-    method: "GET",
-    params: {
-      page: 0,
-      size: 1000,
-      builder_type_name: builderType,
-    },
-  });
-  if (!data.value) return;
-  const { result, code, msg } = data.value;
-  if (code === CODE_SUCCESS) {
-    styleStore.setListBuilderValue(builderType, result);
-  }
-}
-
-async function handleGetListParam() {
-  const { data } = await useLazyFetch(`${baseURL}/builder_type`, {
-    method: "GET",
-    params: {
-      page: 0,
-      size: 100,
-      parent_type: "Param",
-    },
-  });
-  if (!data.value) return;
-  const { result, code, msg } = data.value;
-  if (code === CODE_SUCCESS) {
-    paramStore.setListParam(result);
-  }
-}
-
-const suggestButton = ref("Style");
-
-const prompt = ref("");
 function handleCopy() {
   if (!prompt.value) return;
   navigator.clipboard.writeText(prompt.value);
   useNuxtApp().$toast.success("Copy to clipboard!");
 }
+
 function handleReset() {
-  listImageLink.value = [{ ...imageLinkTemplate }];
-  listText.value = [{ ...textTemplate }];
-  listStyle.value = [{ ...styleTemplate }];
-  listParam.value = [{ ...paramTemplate }];
+  imageLinkPrompt.value = "";
+  textPrompt.value = "";
+  stylePrompt.value = "";
+  paramPrompt.value = "";
 }
 
-// image link
-const imageLinkTemplate = { value: "" };
-const listImageLink = ref([{ ...imageLinkTemplate }]);
-function handleAddImageLink() {
-  listImageLink.value.push({ ...imageLinkTemplate });
+const parentType = ref("Image_Link");
+
+const semanticSearch = ref("");
+
+//image link
+function updateImageLink(listImageLink) {
+  imageLinkPrompt.value = "";
+  for (const imageLink of listImageLink) {
+    imageLinkPrompt.value += `${imageLink}, `;
+  }
 }
 
-// text
-const textTemplate = { value: "", weight: "" };
-const listText = ref([{ ...textTemplate }]);
-function handleAddText() {
-  listText.value.push({ ...textTemplate });
-}
-
-// style
-const keywordStyle = {};
-const listKeyWordStyle = computed(() => {
-  return Object.keys(keywordStyle);
-});
-const styleTemplate = { name: "", value: "" };
-const listStyle = ref([{ ...styleTemplate }]);
-function handleAddStyle() {
-  listStyle.value.push({ ...styleTemplate });
-}
-
-// Param
-const keywordParam = {};
-const listKeyWordParam = computed(() => {
-  return Object.keys(keywordParam);
-});
-const paramTemplate = { name: "", value: "" };
-const listParam = ref([{ ...paramTemplate }]);
-function handleAddParam() {
-  listParam.value.push({ ...paramTemplate });
-}
-
-// computed prompt
-const computedPrompt = computed(() => {
-  let tempPrompt = [];
-  // Image link
-  for (const imageLink of listImageLink.value) {
-    if (imageLink.value) {
-      tempPrompt.push(imageLink.value);
+//text
+function updateText(listText) {
+  textPrompt.value = "";
+  for (const text of listText) {
+    if (text.negative) textPrompt.value += `--no ${text.value}, `;
+    else {
+      if (text.weight.toString() === "1" || !text.weight)
+        textPrompt.value += `${text.value}, `;
+      else textPrompt.value += `${text.value}::${text.weight}, `;
     }
   }
-  // Text
-  for (const textPrompt of listText.value) {
-    if (textPrompt.value) {
-      tempPrompt.push(textPrompt.value);
-    }
+}
+
+//style
+function updateStyle(listStyle) {
+  stylePrompt.value = "";
+  for (const style of listStyle) {
+    if (style.weight.toString() === "1") stylePrompt.value += `${style.name}, `;
+    else stylePrompt.value += `${style.name}::${style.weight}, `;
   }
-  for (const style of listStyle.value) {
-    if (style.name && style.value) {
-      tempPrompt.push(style.value);
-    }
-  }
-  let paramPrompt = [];
-  for (const param of listParam.value) {
-    if (param.name && param.value) {
-      paramPrompt.push(
-        `${keywordParam[param.name]["shortName"]} ${param.value}`
-      );
-    }
-  }
-  return tempPrompt.join(", ") + paramPrompt.join(" ");
-});
-watch(computedPrompt, (newVal) => {
-  prompt.value = newVal;
-});
+}
+
+//param
+function updateParam(listParam) {
+  paramPrompt.value = listParam;
+}
 </script>
-
-<style scoped>
-.el-prompt {
-  border: 1px solid black;
-  height: 100%;
-  overflow: hidden;
-}
-.el-list {
-  max-height: calc(100vh - 400px);
-  overflow-y: scroll;
-}
-</style>

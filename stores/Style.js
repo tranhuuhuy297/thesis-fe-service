@@ -5,16 +5,14 @@ export const useStyleStore = defineStore("styleStore", {
     listStyle: [],
     isLoadedStyle: false,
     listBuilderValue: {},
+    listNameStyle: [],
   }),
-  getters: {
-    getNameListStyle() {
-      return this.listStyle.map((item) => item.name).sort();
-    },
-  },
+  getters: {},
   actions: {
     setListStyle(listStyle) {
       this.listStyle = listStyle;
       this.isLoadedStyle = true;
+      this.listNameStyle = this.listStyle.map((item) => item.name).sort();
     },
     setListBuilderValue(builderType, listBuilderValue) {
       if (!builderType) return;

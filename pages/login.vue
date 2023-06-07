@@ -4,7 +4,7 @@
     <div class="mt-1">Let me help you create and share AI Art Prompts</div>
     <div class="mt-7">Email</div>
     <v-text-field
-      v-model="gmail"
+      v-model.trim="gmail"
       class="mt-1"
       variant="outlined"
       hide-details
@@ -13,7 +13,7 @@
     ></v-text-field>
     <div class="mt-4">Password</div>
     <v-text-field
-      v-model="password"
+      v-model.trim="password"
       class="mt-1"
       variant="outlined"
       hide-details

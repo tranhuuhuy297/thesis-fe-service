@@ -17,7 +17,7 @@
     <div class="flex-grow-1">
       <div>Username - <span class="font-italic text-bg-3">Can edit</span></div>
       <v-text-field
-        v-model.trim="username"
+        v-model.trim.trim="username"
         variant="outlined"
         hide-details
         bg-color="bg-1"
@@ -26,7 +26,7 @@
       />
       <div class="mt-4">Email</div>
       <v-text-field
-        v-model.trim="userStore.gmail"
+        v-model.trim.trim="userStore.gmail"
         class="mt-1 w-75"
         variant="outlined"
         bg-color="bg-3"
@@ -51,7 +51,7 @@
     </div>
   </div>
   <v-file-input
-    v-model="file"
+    v-model.trim="file"
     id="file"
     variant="outlined"
     density="comfortable"

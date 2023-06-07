@@ -9,7 +9,7 @@
         </svg>
       </div>
       <v-text-field
-        v-model="textSearch"
+        v-model.trim="textSearch"
         variant="outlined"
         hide-details
         prepend-inner-icon="mdi-magnify"

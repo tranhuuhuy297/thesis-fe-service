@@ -16,7 +16,7 @@
         </div>
       </div>
       <v-text-field
-        v-model="textSearch"
+        v-model.trim="textSearch"
         variant="outlined"
         density="comfortable"
         hide-details

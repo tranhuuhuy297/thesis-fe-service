@@ -5,7 +5,7 @@
   <div class="mt-2 text-h6">Random generate prompt with GPT2 tuning</div>
   <div class="mt-8 d-flex flex-column justify-center align-center">
     <v-text-field
-      v-model.trim="context"
+      v-model.trim.trim="context"
       variant="outlined"
       hide-details
       bg-color="bg-2"

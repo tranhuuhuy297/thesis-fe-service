@@ -5,7 +5,7 @@
   </div>
   <div class="mt-8 d-flex flex-grow-1">
     <v-file-input
-      v-model="file"
+      v-model.trim="file"
       id="file"
       variant="outlined"
       density="comfortable"
@@ -33,7 +33,7 @@
     <div class="flex-grow-1 text-text-1">
       <div class="">Prompt</div>
       <v-textarea
-        v-model.trim="prompt"
+        v-model.trim.trim="prompt"
         variant="outlined"
         hide-details
         placeholder="Type your prompt here..."
@@ -42,7 +42,7 @@
       />
       <div class="mt-4">Negative Prompt</div>
       <v-textarea
-        v-model.trim="negativePrompt"
+        v-model.trim.trim="negativePrompt"
         variant="outlined"
         hide-details
         placeholder="Type your negative prompt here..."
@@ -51,7 +51,7 @@
       />
       <div class="mt-4">Model</div>
       <v-autocomplete
-        v-model="model"
+        v-model.trim="model"
         :items="['midjourney', 'stable-diffustion']"
         variant="outlined"
         hide-details
