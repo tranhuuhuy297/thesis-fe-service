@@ -32,7 +32,20 @@
           density="compact"
           placeholder="cat and rain"
           bg-color="bg-1"
+          :loading="isLoadingSearch"
+          clearable
+          @keydown.prevent.enter="handleSearchSemantic"
         ></v-text-field>
+        <div style="max-height: 45vh; overflow-y: scroll">
+          <div
+            v-for="(prompt, index) in semanticSearchResult"
+            :key="`semantic_${index}`"
+            style="border: 1px solid black"
+            class="pa-1 prompt pointer"
+          >
+            {{ prompt }}
+          </div>
+        </div>
       </div>
     </div>
     <div class="bg-bg-2 rounded-lg pa-4" style="width: 70%; height: 100%">
@@ -103,7 +116,6 @@ const prompt = computed(() => {
 });
 
 function handleCopy() {
-  if (!prompt.value) return;
   navigator.clipboard.writeText(prompt.value);
   useNuxtApp().$toast.success("Copy to clipboard!");
 }
@@ -123,8 +135,6 @@ function handleReset() {
 }
 
 const parentType = ref("Image_Link");
-
-const semanticSearch = ref("");
 
 //image link
 function updateImageLink(listImageLink) {
@@ -160,4 +170,30 @@ function updateStyle(listStyle) {
 function updateParam(listParam) {
   paramPrompt.value = listParam;
 }
+
+const config = useRuntimeConfig();
+const baseURL = `${config.public.baseURL}`;
+const semanticSearch = ref("");
+const isLoadingSearch = ref(false);
+const semanticSearchResult = ref([]);
+async function handleSearchSemantic() {
+  isLoadingSearch.value = true;
+  semanticSearchResult.value = [];
+  const { data } = await useFetch(`${baseURL}/search`, {
+    method: "GET",
+    params: {
+      query: semanticSearch.value,
+    },
+  });
+  isLoadingSearch.value = false;
+  if (!data.value) return;
+  const { result, code, msg } = data.value;
+  semanticSearchResult.value = result;
+}
 </script>
+
+<style scoped>
+.prompt:hover {
+  background-color: #34cc7b !important;
+}
+</style>

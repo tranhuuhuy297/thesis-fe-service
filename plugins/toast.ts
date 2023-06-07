@@ -8,6 +8,7 @@ export default defineNuxtPlugin((nuxtApp) => {
     transition: toast.TRANSITIONS.BOUNCE,
     theme: "colored",
     hideProgressBar: true,
+    closeButton: false,
   });
 
   return {

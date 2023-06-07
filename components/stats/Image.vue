@@ -157,6 +157,10 @@ async function handleDeletePrompt() {
 }
 const userStore = useUserStore();
 async function handleUpvote() {
+  if (isUpvote.value) {
+    handleDownUpvote();
+    return;
+  }
   const { data } = await useFetch(`${baseURL}/upvote`, {
     method: "POST",
     body: {
@@ -169,9 +173,24 @@ async function handleUpvote() {
   });
   if (!data.value) return;
   const { result, code, msg } = data.value;
+  handleGetUpvote();
   if (code === CODE_SUCCESS) {
     useNuxtApp().$toast.success("Upvote successfully!");
-    handleGetUpvote();
+  }
+}
+
+async function handleDownUpvote() {
+  const { data } = await useFetch(`${baseURL}/upvote/${upvote.value?.id}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${getCookie("token")}`,
+    },
+  });
+  if (!data.value) return;
+  const { result, code, msg } = data.value;
+  handleGetUpvote();
+  if (code === CODE_SUCCESS) {
+    useNuxtApp().$toast.success("Downvote successfully!");
   }
 }
 
@@ -184,6 +203,7 @@ watch(
 
 const isUpvote = ref(false);
 const count = ref(0);
+const upvote = ref(null);
 async function handleGetUpvote() {
   const { data } = await useFetch(
     `${baseURL}/upvote/user/${userStore.id}/prompt/${props.prompt.id}`,
@@ -198,6 +218,7 @@ async function handleGetUpvote() {
   const { result, code, msg } = data.value;
   isUpvote.value = result.isUpvote;
   count.value = result.count;
+  upvote.value = result.upvote;
 }
 </script>
 
