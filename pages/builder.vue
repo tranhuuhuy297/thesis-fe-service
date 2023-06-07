@@ -70,10 +70,12 @@
       <div class="mt-4">
         <BuilderImageLink
           v-if="parentType === 'Image_Link'"
+          ref="builderImageLink"
           @update-image-link="updateImageLink"
         ></BuilderImageLink>
         <BuilderText
           v-if="parentType === 'Text'"
+          ref="builderText"
           @update-text="updateText"
         ></BuilderText>
         <BuilderStyle
@@ -82,6 +84,7 @@
         ></BuilderStyle>
         <BuilderParam
           v-if="parentType === 'Param'"
+          ref="builderParam"
           @update-param="updateParam"
         ></BuilderParam>
       </div>
@@ -105,11 +108,18 @@ function handleCopy() {
   useNuxtApp().$toast.success("Copy to clipboard!");
 }
 
+const builderImageLink = ref();
+const builderText = ref();
+const builderParam = ref();
 function handleReset() {
   imageLinkPrompt.value = "";
   textPrompt.value = "";
   stylePrompt.value = "";
   paramPrompt.value = "";
+  builderImageLink.value?.handleReset();
+  builderText.value?.handleReset();
+  builderParam.value?.handleReset();
+  useNuxtApp().$toast.warning("Reset created prompt!");
 }
 
 const parentType = ref("Image_Link");

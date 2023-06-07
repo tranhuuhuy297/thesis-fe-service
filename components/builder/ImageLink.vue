@@ -72,6 +72,11 @@ watch(
   },
   { deep: true }
 );
+
+defineExpose({ handleReset });
+function handleReset() {
+  listImageLink.value = [];
+}
 </script>
 
 <style scoped>

@@ -66,4 +66,8 @@ watch(
   },
   { deep: true }
 );
+defineExpose({ handleReset });
+function handleReset() {
+  listText.value = [];
+}
 </script>

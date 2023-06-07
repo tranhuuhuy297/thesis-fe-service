@@ -117,4 +117,9 @@ watch(
   },
   { deep: true }
 );
+
+defineExpose({ handleReset });
+function handleReset() {
+  listParam.value = [];
+}
 </script>

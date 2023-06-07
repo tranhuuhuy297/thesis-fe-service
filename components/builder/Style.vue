@@ -131,8 +131,4 @@ watch(
   },
   { deep: true }
 );
-
-function test() {
-  console.log("huy");
-}
 </script>
