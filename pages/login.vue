@@ -2,28 +2,28 @@
   <div class="width-100">
     <div class="text-h4 font-weight-bold">Log In</div>
     <div class="mt-1">Let me help you create and share AI Art Prompts</div>
-    <div class="mt-7">Email</div>
     <v-text-field
       v-model.trim="gmail"
-      class="mt-1"
+      class="mt-7"
       variant="outlined"
       hide-details
+      label="Email"
       prepend-inner-icon="mdi-email-outline"
       placeholder="xxx@gmail.com"
     ></v-text-field>
-    <div class="mt-4">Password</div>
     <v-text-field
       v-model.trim="password"
-      class="mt-1"
+      class="mt-6"
       variant="outlined"
       hide-details
       type="password"
+      label="Password"
       prepend-inner-icon="mdi-panda"
       placeholder="Abc@123"
     ></v-text-field>
     <v-btn
       block
-      class="mt-8 font-weight-bold text-text-1"
+      class="mt-8 font-weight-bold text-text-1 text-none"
       size="x-large"
       variant="flat"
       color="primary"
@@ -37,7 +37,7 @@
     >
       Forgot Password?
     </div> -->
-    <div class="mt-5">
+    <div class="mt-4">
       Don't have an account?
       <span
         class="text-primary-3 font-weight-bold pointer"

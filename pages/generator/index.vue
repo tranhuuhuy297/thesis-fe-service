@@ -15,7 +15,13 @@
       @keydown.prevent.enter="handleGenerate"
     >
       <template #append-inner>
-        <v-btn color="error" text="Reset" @click="handleReset"></v-btn>
+        <v-btn
+          color="error"
+          text="Reset"
+          @click="handleReset"
+          class="text-none"
+          prepend-icon="mdi-reload"
+        ></v-btn>
       </template>
     </v-text-field>
     <v-btn

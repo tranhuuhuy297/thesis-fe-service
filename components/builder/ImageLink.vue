@@ -38,8 +38,8 @@
         <v-btn variant="flat" color="error" @click="handleRemoveImage">
           Delete
         </v-btn>
-      </v-card-actions></v-card
-    >
+      </v-card-actions>
+    </v-card>
   </v-dialog>
 </template>
 

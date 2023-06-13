@@ -22,7 +22,7 @@
         <v-btn
           class="mr-4 font-weight-bold text-text-1 rounded-lg"
           color="primary"
-          text="Buidler"
+          text="Builder"
           size="x-large"
           variant="outlined"
           prepend-icon="mdi-cog"
@@ -32,9 +32,9 @@
           class="mr-4 font-weight-bold text-text-1 rounded-lg"
           color="primary"
           text="Upload"
-          prepend-icon="mdi-upload"
+          prepend-icon="mdi-camera"
           size="x-large"
-          @click="navigateTo('/upload')"
+          @click="navigateTo('/profile')"
         />
       </div>
     </div>

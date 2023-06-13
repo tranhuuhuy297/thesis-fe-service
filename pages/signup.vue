@@ -2,34 +2,33 @@
   <div class="width-90" style="min-width: 400px">
     <div class="text-h4 font-weight-bold">Sign Up</div>
     <div class="mt-1">Enter your details to get started</div>
-    <div class="mt-7">Username</div>
     <v-text-field
-      class="mt-1"
+      class="mt-7"
+      label="Username"
       variant="outlined"
       hide-details
       prepend-inner-icon="mdi-account-outline"
-      placeholder="Type your username here..."
     ></v-text-field>
-    <div class="mt-4">Email</div>
     <v-text-field
-      class="mt-1"
+      class="mt-6"
+      label="Email"
       variant="outlined"
       hide-details
       prepend-inner-icon="mdi-email-outline"
       placeholder="xxx@gmail.com"
     ></v-text-field>
-    <div class="mt-4">Password</div>
     <v-text-field
-      class="mt-1"
+      class="mt-6"
+      label="Password"
       variant="outlined"
       hide-details
       type="password"
       prepend-inner-icon="mdi-panda"
       placeholder="Abc@123"
     ></v-text-field>
-    <div class="mt-4">Confirm password</div>
     <v-text-field
-      class="mt-1"
+      class="mt-6"
+      label="Confirm password"
       variant="outlined"
       hide-details
       type="password"
@@ -38,13 +37,13 @@
     ></v-text-field>
     <v-btn
       block
-      class="mt-8 font-weight-bold text-text-1"
+      class="mt-8 font-weight-bold text-text-1 text-none"
       size="x-large"
       variant="flat"
       color="primary"
       text="Create Account"
     />
-    <div class="mt-5">
+    <div class="mt-4">
       Already have an account?
       <span
         class="text-primary-3 font-weight-bold pointer"

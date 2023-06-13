@@ -1,55 +1,117 @@
 <template>
   <div class="text-h3 font-weight-bold">
     User <span class="text-primary-2">Profile</span>
-    <div class="mt-2 text-h6">Update your profile information</div>
-  </div>
-  <div class="mt-8 d-flex pl-6">
-    <div class="w-25">
-      <v-img
-        :src="`https://${userStore.image_src}`"
-        style="max-width: 100%"
-        cover
-        class="pointer img"
-        @click="handleSelectFile"
-      ></v-img>
+    <div class="mt-2 text-h6">
+      Upload your prompt image <span class="text-primary-2">&</span> update your
+      information
     </div>
-    <v-divider vertical class="mx-8 border-opacity-50"></v-divider>
-    <div class="flex-grow-1">
-      <div>Username - <span class="font-italic text-bg-3">Can edit</span></div>
-      <v-text-field
-        v-model.trim.trim="username"
-        variant="outlined"
-        hide-details
-        bg-color="bg-1"
-        class="mt-1 w-75"
-        prepend-inner-icon="mdi-account-outline"
-      />
-      <div class="mt-4">Email</div>
-      <v-text-field
-        v-model.trim.trim="userStore.gmail"
-        class="mt-1 w-75"
-        variant="outlined"
-        bg-color="bg-3"
-        hide-details
-        prepend-inner-icon="mdi-email-outline"
-        readonly
-      ></v-text-field>
-      <div class="d-flex mt-8">
+  </div>
+  <div class="mt-8">
+    <div class="d-flex">
+      <v-btn
+        text="Upload"
+        color="primary"
+        size="large"
+        variant="flat"
+        prepend-icon="mdi-upload"
+        class="font-weight-bold text-text-1 rounded-lg"
+        @click="isShowDialog = true"
+      ></v-btn>
+    </div>
+    <v-divider class="my-4"></v-divider>
+    <div class="d-flex">
+      <div class="mx-1" style="width: 20%"></div>
+      <div class="mx-1" style="width: 20%"></div>
+      <div class="mx-1" style="width: 20%"></div>
+      <div class="mx-1" style="width: 20%"></div>
+      <div class="mx-1" style="width: 20%"></div>
+    </div>
+  </div>
+  <v-dialog v-model.trim="isShowDialog" width="auto" persistent>
+    <v-card>
+      <v-card-text>
+        <div class="text-h6 font-weight-bold">
+          <span class="text-info">Create prompt</span>
+        </div>
+        <div>1st step - You have to create prompt</div>
+        <v-textarea
+          v-model.trim="prompt"
+          class="mt-4"
+          variant="outlined"
+          density="compact"
+          auto-grow
+          autofocus
+          label="Prompt"
+        ></v-textarea>
+        <v-textarea
+          v-model.trim="negativePrompt"
+          variant="outlined"
+          density="compact"
+          label="Negative Prompt"
+          auto-grow
+          autofocus
+        ></v-textarea>
+      </v-card-text>
+      <v-card-actions class="d-flex justify-end">
         <v-btn
-          size="large"
-          color="info"
-          class="font-weight-bold mr-2"
-          @click="handleUpdateInformation"
-          :loading="isLoadingUpdate"
+          variant="text"
+          @click="
+            isShowDialog = false;
+            prompt = '';
+            negativePrompt = '';
+          "
+          >Cancel</v-btn
         >
-          Update account
+        <v-btn variant="flat" color="info" @click="handleCreatePrompt">
+          Next
         </v-btn>
-        <!-- <v-btn size="large" color="error" class="font-weight-bold text-text-1">
-          Delete account
-        </v-btn> -->
-      </div>
-    </div>
-  </div>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+  <v-dialog v-model.trim="isShowUpload" width="auto" persistent>
+    <v-card>
+      <v-card-text style="min-width: 50vw">
+        <div class="text-h6 font-weight-bold">
+          <span class="text-info">Upload image</span>
+        </div>
+        <div>Final step - Upload your image</div>
+        <div
+          class="w-100 mt-4 rounded-lg d-flex justify-center align-center pointer"
+          @click="handleSelectFile"
+        >
+          <div>
+            <v-btn
+              v-if="!fileImage"
+              prepend-icon="mdi-camera"
+              class="text-none"
+              text="Your image"
+              variant="outlined"
+            ></v-btn>
+            <v-img
+              :src="fileImage"
+              style="max-width: 50vw; max-height: 50vh"
+            ></v-img>
+          </div>
+        </div>
+      </v-card-text>
+      <v-card-actions class="d-flex justify-end">
+        <v-btn
+          variant="text"
+          @click="
+            isShowUpload = false;
+            file = null;
+            fileImage = null;
+          "
+        >
+          Cancel
+        </v-btn>
+
+        <v-btn variant="flat" color="info" @click="handleCreateImage">
+          Upload
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
   <v-file-input
     v-model.trim="file"
     id="file"
@@ -75,44 +137,31 @@ const config = useRuntimeConfig();
 const baseURL = `${config.public.baseURL}`;
 
 const file = ref("");
-const username = ref(userStore.username);
-const isLoadingUpdate = ref(false);
 
-async function handleUpdateInformation() {
-  isLoadingUpdate.value = true;
-  const formData = new FormData();
-  if (file.value[0]) {
-    formData.append("image", file.value[0]);
-  }
-  formData.append("username", username.value);
-  const { data } = await useFetch(
-    `${baseURL}/user/${userStore.id}/update_information`,
-    {
-      method: "PUT",
-      body: formData,
-      headers: {
-        Authorization: `Bearer ${getCookie("token")}`,
-      },
-    }
-  );
-  isLoadingUpdate.value = false;
-  if (!data.value) return;
-  const { result, code, msg } = data.value;
-  if (code === CODE_SUCCESS) {
-    useNuxtApp().$toast.success("Update successfully!");
-    setTimeout(() => {
-      document.cookie = "token=;";
-      document.cookie = "exp=;";
-      setTimeout(() => {
-        navigateTo("/login");
-      }, 200);
-    }, 500);
-  }
+// dialog
+const isShowDialog = ref(false);
+const prompt = ref("");
+const negativePrompt = ref();
+async function handleCreatePrompt() {
+  isShowUpload.value = true;
 }
+
+const isShowUpload = ref(false);
+async function handleCreateImage() {}
+
+const fileImage = ref(null);
+watch(
+  () => file.value,
+  () => {
+    if (file.value) {
+      const theReader = new FileReader();
+      theReader.onloadend = async () => {
+        fileImage.value = await theReader.result;
+      };
+      theReader.readAsDataURL(file.value[0]);
+    }
+  }
+);
 </script>
 
-<style scoped>
-.img:hover {
-  opacity: 0.8;
-}
-</style>
+<style scoped></style>

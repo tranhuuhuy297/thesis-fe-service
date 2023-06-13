@@ -14,23 +14,29 @@
           <span>{{ prompt }}</span>
         </div>
         <div class="d-flex justify-space-between mt-4">
-          <v-btn color="error" text="Reset" @click="handleReset"></v-btn>
+          <v-btn
+            color="error"
+            text="Reset"
+            @click="handleReset"
+            class="text-none"
+            prepend-icon="mdi-reload"
+          ></v-btn>
           <v-btn
             prepend-icon="mdi-content-copy"
             color="success"
             text="Copy"
+            class="text-none"
             @click="handleCopy"
           ></v-btn>
         </div>
       </div>
       <div class="bg-bg-2 rounded-lg pa-4 mr-4 mt-4">
-        <div class="text-text-1">Semantic Search</div>
         <v-text-field
           v-model.trim="semanticSearch"
           prepend-inner-icon="mdi-text-search-variant"
           variant="outlined"
           density="compact"
-          placeholder="cat and rain"
+          label="Semantic Search"
           bg-color="bg-1"
           :loading="isLoadingSearch"
           clearable

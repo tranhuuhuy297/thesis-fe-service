@@ -18,10 +18,10 @@
       <v-text-field
         v-model.trim="textSearch"
         variant="outlined"
+        label="Search AI Images"
         density="comfortable"
         hide-details
         prepend-inner-icon="mdi-magnify"
-        placeholder="Search AI images"
         :loading="isLoadingSearch"
         @keydown.enter="handleSearch"
       >
@@ -47,29 +47,32 @@
         Resources
       </div> -->
       <div
-        class="mr-6 pointer pointer--link"
+        class="pointer pointer--link"
         @click="navigateTo({ path: '/generator' })"
       >
         Generator
       </div>
-      <v-divider vertical class="mr-3"></v-divider>
+      <v-divider vertical class="mx-6 my-1"></v-divider>
       <v-btn
         v-if="!token"
-        class="mr-3 font-weight-bold text-text-1 rounded-lg"
+        class="font-weight-bold text-text-1 rounded-lg"
         size="large"
         text="Log In"
         color="primary"
-        variant="outlined"
+        variant="flat"
         @click="navigateTo({ path: '/login' })"
       >
       </v-btn>
       <v-menu v-if="token">
         <template v-slot:activator="{ props }">
           <v-btn
-            class="mr-3"
             v-bind="props"
             variant="text"
-            icon="mdi-account-circle-outline"
+            color="success"
+            size="large"
+            class="text-none font-weight-bold"
+            :text="userStore.username"
+            prepend-icon="mdi-account-arrow-down-outline"
           >
           </v-btn>
         </template>
@@ -96,20 +99,15 @@
           </v-list-item>
         </v-list>
       </v-menu>
-      <v-btn
-        class="font-weight-bold text-text-1 rounded-lg"
-        text="Upload"
-        size="large"
-        prepend-icon="mdi-upload"
-        color="primary"
-        @click="navigateTo('/upload')"
-      ></v-btn>
     </div>
   </div>
 </template>
 
 <script setup>
 import { usePromptStore } from "~/stores/Prompt";
+import { useUserStore } from "~/stores/User";
+
+const userStore = useUserStore();
 
 const textSearch = ref("");
 const token = ref("");

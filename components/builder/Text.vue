@@ -37,13 +37,14 @@
       variant="elevated"
       color="info"
       prepend-icon="mdi-plus-circle-outline"
-      class="mr-2"
+      class="mr-2 text-none"
       @click="listText.push({ ...textTemplate })"
     >
     </v-btn>
     <v-btn
       text="Add negative"
       variant="elevated"
+      class="text-none"
       color="primary"
       prepend-icon="mdi-plus-circle-outline"
       @click="listText.push({ ...textTemplate, negative: true })"
