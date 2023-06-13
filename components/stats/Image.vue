@@ -6,11 +6,20 @@
       class="pointer mb-2 img"
     />
     <v-btn
+      v-if="!isShowDelete"
       :icon="isUpvote ? 'mdi-heart' : 'mdi-heart-broken'"
-      :color="isUpvote ? 'error' : 'white'"
+      :color="isUpvote ? 'primary-2' : 'white'"
       style="position: absolute; top: 2px; right: 2px"
       variant="text"
       @click.stop="handleUpvote"
+    ></v-btn>
+    <v-btn
+      v-if="isShowDelete"
+      icon="mdi-delete"
+      color="error"
+      style="position: absolute; top: 2px; right: 2px"
+      variant="text"
+      @click.stop="isShowDeleteDialog = true"
     ></v-btn>
   </div>
   <v-dialog v-model.trim="isShowDialog" width="auto" persistent>
@@ -111,7 +120,23 @@ const isShowDialog = ref(false);
 const isShowDeleteDialog = ref(false);
 const isLoadingDelete = ref(false);
 
-async function handleDeletePrompt() {}
+async function handleDeletePrompt() {
+  isLoadingDelete.value = true;
+  const { data } = await useFetch(`${baseURL}/image/${props.prompt.id}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${getCookie("token")}`,
+    },
+  });
+  isLoadingDelete.value = false;
+  if (!data.value) return;
+  const { result, code, msg } = data.value;
+  if (code === CODE_SUCCESS) {
+    isShowDeleteDialog.value = false;
+    useNuxtApp().$toast.success("Delete successfully!");
+    emit("deletedPrompt");
+  }
+}
 const userStore = useUserStore();
 
 watch(

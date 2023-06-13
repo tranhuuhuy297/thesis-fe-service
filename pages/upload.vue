@@ -21,7 +21,11 @@
           v-for="(image, index) in imagesCol_0"
           :key="`${index}_imagesCol_0`"
         >
-          <v-img :src="`https://${image?.image_src}`"></v-img>
+          <StatsImage
+            :is-show-delete="true"
+            :prompt="image"
+            @deleted-prompt="handleGetImage"
+          ></StatsImage>
         </div>
       </div>
       <div class="mx-1 w-25">
@@ -29,7 +33,11 @@
           v-for="(image, index) in imagesCol_1"
           :key="`${index}_imagesCol_1`"
         >
-          <v-img :src="`https://${image?.image_src}`"></v-img>
+          <StatsImage
+            :is-show-delete="true"
+            :prompt="image"
+            @deleted-prompt="handleGetImage"
+          ></StatsImage>
         </div>
       </div>
       <div class="mx-1 w-25">
@@ -37,7 +45,11 @@
           v-for="(image, index) in imagesCol_2"
           :key="`${index}_imagesCol_2`"
         >
-          <v-img :src="`https://${image?.image_src}`"></v-img>
+          <StatsImage
+            :is-show-delete="true"
+            :prompt="image"
+            @deleted-prompt="handleGetImage"
+          ></StatsImage>
         </div>
       </div>
       <div class="mx-1 w-25">
@@ -45,7 +57,11 @@
           v-for="(image, index) in imagesCol_3"
           :key="`${index}_imagesCol_3`"
         >
-          <v-img :src="`https://${image?.image_src}`"></v-img>
+          <StatsImage
+            :is-show-delete="true"
+            :prompt="image"
+            @deleted-prompt="handleGetImage"
+          ></StatsImage>
         </div>
       </div>
     </div>
@@ -218,6 +234,9 @@ async function handleCreateImage() {
   const { data } = await useFetch(`${baseURL}/image`, {
     method: "POST",
     body: formData,
+    headers: {
+      Authorization: `Bearer ${getCookie("token")}`,
+    },
   });
   isLoadingCreateImage.value = false;
   if (!data.value) return;
@@ -254,9 +273,10 @@ const page = ref(0);
 const size = ref(20);
 
 async function handleGetImage() {
-  const { data } = await useFetch(`${baseURL}/image/user/${userStore.id}`, {
+  const { data } = await useFetch(`${baseURL}/image`, {
     method: "GET",
     params: {
+      user_id: userStore.id,
       page: page.value,
       size: size.value,
     },
