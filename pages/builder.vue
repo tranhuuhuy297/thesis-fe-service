@@ -15,17 +15,19 @@
         </div>
         <div class="d-flex justify-space-between mt-4">
           <v-btn
-            color="error"
+            color="primary"
             text="Reset"
             @click="handleReset"
-            class="text-none"
+            class="text-none text-text-1"
+            variant="flat"
             prepend-icon="mdi-reload"
           ></v-btn>
           <v-btn
             prepend-icon="mdi-content-copy"
             color="success"
             text="Copy"
-            class="text-none"
+            class="text-none text-text-1"
+            variant="flat"
             @click="handleCopy"
           ></v-btn>
         </div>

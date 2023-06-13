@@ -6,12 +6,11 @@
   <div class="mt-8">
     <div class="d-flex">
       <v-btn
-        text="Upload"
-        color="primary"
+        text="Select file"
+        color="info"
         size="large"
         variant="flat"
-        prepend-icon="mdi-camera"
-        class="font-weight-bold text-text-1 rounded-lg"
+        class="rounded-lg"
         @click="isShowDialog = true"
       ></v-btn>
     </div>

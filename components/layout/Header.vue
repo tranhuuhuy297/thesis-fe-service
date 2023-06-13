@@ -31,8 +31,9 @@
             prepend-icon="mdi-camera"
             variant="text"
             @click="navigateTo('/upload')"
-            >Upload</v-btn
           >
+            Upload
+          </v-btn>
         </template>
       </v-text-field>
     </div>
@@ -93,6 +94,11 @@
                 navigateTo: '/profile',
               },
               {
+                name: 'Statistic',
+                icon: 'mdi-chart-line',
+                navigateTo: '/user-statistics',
+              },
+              {
                 name: 'Log Out',
                 icon: 'mdi-logout-variant',
                 navigateTo: '/logout',
@@ -100,8 +106,9 @@
             ]"
             :key="index"
             :value="index"
+            @click="handleAction(item)"
           >
-            <div @click="handleAction(item)">
+            <div>
               <v-icon :icon="item.icon" class="mr-2"></v-icon> {{ item.name }}
             </div>
           </v-list-item>
