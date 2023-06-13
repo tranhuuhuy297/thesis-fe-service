@@ -81,7 +81,7 @@ async function handleLogin() {
     userStore.setUser(result);
     document.cookie = `token=${result["access_token"]}`;
     document.cookie = `exp=${result["exp"]}`;
-    navigateTo({ path: "/profile" });
+    navigateTo({ path: "/upload" });
   }
 }
 </script>

@@ -6,7 +6,7 @@ export default defineNuxtRouteMiddleware((to, from) => {
     const isLogin = getCookie("token");
     const expiredTime = getCookie("exp");
 
-    const listAuthenPath = ["/upload", "/profile"];
+    const listAuthenPath = ["/upload"];
 
     if (!isLogin) {
       if (listAuthenPath.includes(to.fullPath)) {
@@ -21,7 +21,7 @@ export default defineNuxtRouteMiddleware((to, from) => {
       const decoded_info = decodeJwt(isLogin);
       userStore.setUser(decoded_info);
       if (to.fullPath === "/login") {
-        return navigateTo("/profile");
+        return navigateTo("/upload");
       }
     }
   }

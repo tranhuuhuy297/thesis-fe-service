@@ -1,8 +1,8 @@
 <template>
   <div class="height-20 bg-bg-1 d-flex justify-space-between pa-2 px-8 scroll">
-    <div class="d-flex align-center flex-grow-1 pointer">
+    <div class="d-flex align-center flex-grow-1">
       <div
-        class="d-flex align-center rounded-lg bg-primary mr-4"
+        class="d-flex align-center rounded-lg bg-primary mr-4 pointer"
         @click="navigateTo({ path: '/' })"
       >
         <img
@@ -18,13 +18,22 @@
       <v-text-field
         v-model.trim="textSearch"
         variant="outlined"
-        label="Search AI Images"
+        placeholder="Search AI Images"
         density="comfortable"
         hide-details
         prepend-inner-icon="mdi-magnify"
         :loading="isLoadingSearch"
         @keydown.enter="handleSearch"
       >
+        <template #append-inner>
+          <v-divider vertical class="mr-3"></v-divider>
+          <v-btn
+            prepend-icon="mdi-camera"
+            variant="text"
+            @click="navigateTo('/upload')"
+            >Upload</v-btn
+          >
+        </template>
       </v-text-field>
     </div>
     <div class="d-flex align-center ml-16">
@@ -52,7 +61,7 @@
       >
         Generator
       </div>
-      <v-divider vertical class="mx-6 my-1"></v-divider>
+      <v-divider vertical class="mx-5 my-1"></v-divider>
       <v-btn
         v-if="!token"
         class="font-weight-bold text-text-1 rounded-lg"
@@ -67,12 +76,11 @@
         <template v-slot:activator="{ props }">
           <v-btn
             v-bind="props"
-            variant="text"
-            color="success"
+            variant="tonal"
+            color="info"
             size="large"
             class="text-none font-weight-bold"
-            :text="userStore.username"
-            prepend-icon="mdi-account-arrow-down-outline"
+            :text="`@${userStore.username}`"
           >
           </v-btn>
         </template>
@@ -101,6 +109,42 @@
       </v-menu>
     </div>
   </div>
+  <v-dialog
+    v-model.trim="isShowProfile"
+    width="auto"
+    min-width="400px"
+    persistent
+  >
+    <v-card>
+      <v-card-text>
+        <div class="text-h6 font-weight-bold">
+          <span class="text-info">User Profile</span>
+        </div>
+        <div>Update your information</div>
+        <div class="mt-4">
+          <v-text-field
+            :model-value="userStore.username"
+            variant="outlined"
+            label="Username"
+            bg-color="bg-1"
+          ></v-text-field>
+          <v-text-field
+            :model-value="userStore.gmail"
+            variant="outlined"
+            label="Email"
+            readonly
+            bg-color="bg-3"
+          ></v-text-field>
+        </div>
+      </v-card-text>
+      <v-card-actions class="d-flex justify-end">
+        <v-btn variant="text" @click="isShowProfile = false">Cancel</v-btn>
+        <v-btn variant="flat" color="info" @click="handleUpdateProfile">
+          Update
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script setup>
@@ -157,10 +201,15 @@ function handleAction(item) {
     setTimeout(() => {
       navigateTo("/login");
     }, 200);
+  } else if (item.navigateTo === "/profile") {
+    isShowProfile.value = true;
   } else {
     navigateTo(item.navigateTo);
   }
 }
+
+const isShowProfile = ref(false);
+async function handleUpdateProfile() {}
 </script>
 
 <style scoped>

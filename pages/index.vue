@@ -34,7 +34,7 @@
           text="Upload"
           prepend-icon="mdi-camera"
           size="x-large"
-          @click="navigateTo('/profile')"
+          @click="navigateTo('/upload')"
         />
       </div>
     </div>
