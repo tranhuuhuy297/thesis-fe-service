@@ -3,13 +3,21 @@
     Prompt <span class="text-primary-2">Stats</span>
     <div class="mt-2 text-h6">Search for the best images</div>
   </div>
-  <div class="mt-8 text-h5">
+  <div class="mt-8 text-h3">
     <v-tabs v-model.trim="currentTab" color="text-1">
-      <v-tab :value="1" :class="{ 'font-weight-bold': currentTab === 1 }">
+      <v-tab
+        :value="1"
+        :class="{ 'font-weight-bold': currentTab === 1 }"
+        class="text-none"
+      >
         Newest
       </v-tab>
-      <v-tab :value="2" :class="{ 'font-weight-bold': currentTab === 2 }">
-        Top Upvote
+      <v-tab
+        :value="2"
+        :class="{ 'font-weight-bold': currentTab === 2 }"
+        class="text-none"
+      >
+        Following
       </v-tab>
     </v-tabs>
     <v-divider style="margin-top: 1px"></v-divider>

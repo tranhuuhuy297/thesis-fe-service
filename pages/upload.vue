@@ -10,7 +10,7 @@
         color="info"
         size="large"
         variant="flat"
-        class="rounded-lg"
+        class="rounded-lg text-none"
         @click="isShowDialog = true"
       ></v-btn>
     </div>

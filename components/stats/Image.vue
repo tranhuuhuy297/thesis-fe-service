@@ -4,13 +4,16 @@
       :src="`https://${prompt?.image_src}`"
       cover
       class="pointer mb-2 img"
+      style="border: 1px solid black"
     />
     <v-btn
       v-if="!isShowDelete"
-      :icon="isUpvote ? 'mdi-heart' : 'mdi-heart-broken'"
+      :prepend-icon="isUpvote ? 'mdi-heart' : 'mdi-heart-broken'"
       :color="isUpvote ? 'primary-2' : 'white'"
       style="position: absolute; top: 2px; right: 2px"
-      variant="text"
+      :variant="isUpvote ? 'text' : 'flat'"
+      :text="countUpvote"
+      class="font-weight-bold"
       @click.stop="handleUpvote"
     ></v-btn>
     <v-btn
@@ -20,6 +23,13 @@
       style="position: absolute; top: 2px; right: 2px"
       variant="text"
       @click.stop="isShowDeleteDialog = true"
+    ></v-btn>
+    <v-btn
+      icon="mdi-download"
+      color="info"
+      style="position: absolute; bottom: 2px; right: 2px"
+      variant="text"
+      @click.stop="handleDownload"
     ></v-btn>
   </div>
   <v-dialog v-model.trim="isShowDialog" width="auto" persistent>
@@ -155,9 +165,15 @@ function handleCopyNegPrompt() {
 }
 
 const isUpvote = ref(false);
+const countUpvote = ref(0);
 
 onMounted(() => {
-  nextTick(() => (isUpvote.value = props.prompt.is_upvote));
+  nextTick(
+    () => (
+      (isUpvote.value = props.prompt.is_upvote),
+      (countUpvote.value = props.prompt.count_upvote)
+    )
+  );
 });
 
 function handleUpvote() {
@@ -171,13 +187,17 @@ function handleUpvote() {
       Authorization: `Bearer ${getCookie("token")}`,
     },
   });
+  if (isUpvote.value) countUpvote.value -= 1;
+  else countUpvote.value += 1;
   isUpvote.value = !isUpvote.value;
   useNuxtApp().$toast.success("Successfully!");
 }
+
+function handleDownload() {
+  if (process.client) {
+    window.open(`https://${props.prompt.image_src}`);
+  }
+}
 </script>
 
-<style scoped>
-.img:hover {
-  opacity: 0.8;
-}
-</style>
+<style scoped></style>

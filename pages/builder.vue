@@ -2,7 +2,7 @@
   <div class="text-h3 font-weight-bold">
     Prompt <span class="text-primary-2">Builder</span>
   </div>
-  <div class="mt-2 text-h6">Create best prompt with suggestions</div>
+  <div class="mt-2 text-h6">Create Midjourney prompt with suggestions</div>
   <div class="d-flex mt-8">
     <div style="width: 40%; height: 100%">
       <div
@@ -11,7 +11,7 @@
       >
         <div class="flex-grow-1">
           <span class="font-italic text-text-2 mr-2">/imagine </span>
-          <span>{{ prompt }}</span>
+          <span style="word-wrap: break-word">{{ prompt }}</span>
         </div>
         <div class="d-flex justify-space-between mt-4">
           <v-btn

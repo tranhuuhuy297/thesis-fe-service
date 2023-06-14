@@ -16,13 +16,28 @@
     <div
       v-for="(imageLink, index) in listImageLink"
       :key="index"
-      class="w-25 pa-2 pointer img"
-      @click="
-        selectedImageIndex = index;
-        isShowDelete = true;
-      "
+      class="w-25 pa-2"
+      style="position: relative"
     >
-      <v-img :src="imageLink" cover alt="image"></v-img>
+      <v-img
+        :src="imageLink"
+        lazy-src="nothing"
+        min-height="100px"
+        alt="image"
+        class="img"
+        style="border: 1px solid black"
+      ></v-img>
+      <v-btn
+        icon="mdi-delete"
+        color="error"
+        style="position: absolute; top: 2px; right: 2px"
+        variant="text"
+        @click.stop="
+          selectedImageIndex = index;
+          isShowDelete = true;
+        "
+      >
+      </v-btn>
     </div>
   </div>
   <v-dialog v-model.trim="isShowDelete" width="auto" persistent>
@@ -79,9 +94,4 @@ function handleReset() {
 }
 </script>
 
-<style scoped>
-.img:hover {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-</style>
+<style scoped></style>
