@@ -45,11 +45,19 @@
           @keydown.prevent.enter="handleSearchSemantic"
         ></v-text-field>
         <div style="max-height: 45vh; overflow-y: scroll">
+          <div class="d-flex justify-center">
+            <v-progress-circular
+              v-if="isLoadingSearch"
+              indeterminate
+              color="primary-2"
+            ></v-progress-circular>
+          </div>
           <div
             v-for="(prompt, index) in semanticSearchResult"
             :key="`semantic_${index}`"
             style="border: 1px solid black; margin-bottom: 1px"
             class="pa-1 prompt pointer"
+            @click="handleCopySuggestion(prompt)"
           >
             {{ prompt }}
           </div>
@@ -142,7 +150,7 @@ function handleReset() {
   useNuxtApp().$toast.warning("Reset created prompt!");
 }
 
-const parentType = ref("Image_Link");
+const parentType = ref("Style");
 
 //image link
 function updateImageLink(listImageLink) {
@@ -187,7 +195,7 @@ const semanticSearchResult = ref([]);
 async function handleSearchSemantic() {
   isLoadingSearch.value = true;
   semanticSearchResult.value = [];
-  const { data } = await useFetch(`${baseURL}/search`, {
+  const { data } = await useFetch(`${baseURL}/semantic-search`, {
     method: "GET",
     params: {
       query: semanticSearch.value,
@@ -196,7 +204,12 @@ async function handleSearchSemantic() {
   isLoadingSearch.value = false;
   if (!data.value) return;
   const { result, code, msg } = data.value;
-  semanticSearchResult.value = result;
+  semanticSearchResult.value = result.map((item) => item["metadata"]["prompt"]);
+}
+
+function handleCopySuggestion(prompt) {
+  navigator.clipboard.writeText(prompt);
+  useNuxtApp().$toast.success("Copy to clipboard!");
 }
 </script>
 

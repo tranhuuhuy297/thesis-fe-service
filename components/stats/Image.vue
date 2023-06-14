@@ -97,6 +97,11 @@
           <span class="text-error">Delete</span>
         </div>
         <div>Are you sure to delete this prompt?</div>
+        <v-img
+          class="mt-4"
+          :src="`https://${prompt.image_src}`"
+          style="max-width: 50vw; max-height: 50vh"
+        ></v-img>
       </v-card-text>
       <v-card-actions class="d-flex justify-end">
         <v-btn variant="text" @click="isShowDeleteDialog = false">Cancel</v-btn>

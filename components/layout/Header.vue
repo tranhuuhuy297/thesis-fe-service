@@ -28,11 +28,10 @@
         <template #append-inner>
           <v-divider vertical class="mr-3"></v-divider>
           <v-btn
-            prepend-icon="mdi-camera"
+            icon="mdi-camera"
             variant="text"
             @click="navigateTo('/upload')"
           >
-            Upload
           </v-btn>
         </template>
       </v-text-field>
