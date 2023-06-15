@@ -6,7 +6,7 @@ export default defineNuxtRouteMiddleware((to, from) => {
     const isLogin = getCookie("token");
     const expiredTime = getCookie("exp");
 
-    const listAuthenPath = ["/upload"];
+    const listAuthenPath = ["/upload", "/generator"];
 
     if (!isLogin) {
       if (listAuthenPath.includes(to.fullPath)) {
