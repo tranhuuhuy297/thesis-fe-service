@@ -4,18 +4,15 @@
     <div class="mt-1">Let me help you create and share AI Art Prompts</div>
     <v-text-field
       v-model.trim="gmail"
-      class="mt-7"
+      class="mt-6"
       variant="outlined"
-      hide-details
       label="Email"
       prepend-inner-icon="mdi-email-outline"
       placeholder="xxx@gmail.com"
     ></v-text-field>
     <v-text-field
       v-model.trim="password"
-      class="mt-6"
       variant="outlined"
-      hide-details
       type="password"
       label="Password"
       prepend-inner-icon="mdi-panda"
@@ -23,7 +20,7 @@
     ></v-text-field>
     <v-btn
       block
-      class="mt-8 font-weight-bold text-text-1 text-none"
+      class="font-weight-bold text-text-1 text-none"
       size="x-large"
       variant="flat"
       color="primary"
@@ -80,7 +77,7 @@ async function handleLogin() {
   if (code === CODE_SUCCESS) {
     userStore.setUser(result);
     document.cookie = `token=${result["access_token"]}`;
-    document.cookie = `exp=${result["exp"]}`;
+    document.cookie = `expire=${result["expire_time"]}`;
     navigateTo({ path: "/upload" });
   }
 }

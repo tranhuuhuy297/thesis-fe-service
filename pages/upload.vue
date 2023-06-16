@@ -170,12 +170,6 @@
   <v-file-input
     v-model.trim="file"
     id="file"
-    variant="outlined"
-    density="comfortable"
-    hide-details
-    bg-color="bg-2"
-    class="mx-4"
-    label="Image describe your prompt"
     style="display: none"
   ></v-file-input>
 </template>

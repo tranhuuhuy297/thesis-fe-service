@@ -4,19 +4,15 @@ export default defineNuxtRouteMiddleware((to, from) => {
   // console.log("init middleware", process.client);
   if (process.client) {
     const isLogin = getCookie("token");
-    const expiredTime = getCookie("exp");
+    const expiredTime = getCookie("expire");
 
     const listAuthenPath = ["/upload", "/generator"];
 
-    if (!isLogin) {
+    if (!isLogin || (isLogin && checkIsExpired(expiredTime))) {
       if (listAuthenPath.includes(to.fullPath)) {
         return navigateTo("/login");
       }
-    } else if (isLogin && checkIsExpired(expiredTime)) {
-      if (listAuthenPath.includes(to.fullPath)) {
-        return navigateTo("/login");
-      }
-    } else if (isLogin) {
+    } else {
       const userStore = useUserStore();
       const decoded_info = decodeJwt(isLogin);
       userStore.setUser(decoded_info);

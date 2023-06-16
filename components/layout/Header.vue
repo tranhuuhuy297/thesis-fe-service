@@ -203,7 +203,7 @@ async function handleSearch() {
 function handleAction(item) {
   if (item.navigateTo === "/logout") {
     document.cookie = "token=;";
-    document.cookie = "exp=;";
+    document.cookie = "expire=;";
     setTimeout(() => {
       navigateTo("/login");
     }, 200);
