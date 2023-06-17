@@ -64,7 +64,7 @@ const styleStore = useStyleStore();
 const config = useRuntimeConfig();
 const baseURL = `${config.public.baseURL}`;
 
-const styleName = ref("Layouts");
+const styleName = ref("");
 
 onMounted(() => {
   nextTick(() => {

@@ -13,9 +13,7 @@
       style="width: 80%"
     >
       <template #prepend-inner>
-        <div v-if="item.negative" style="width: 40px" class="font-weight-bold">
-          --no
-        </div>
+        <div v-if="item.negative" style="width: 40px">--no</div>
         <v-icon v-else icon="mdi-text" style="width: 40px"></v-icon>
         <v-divider vertical class="ml-2"></v-divider>
       </template>
