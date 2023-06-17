@@ -97,25 +97,30 @@
         @click="parentType = 'Param'"
       ></v-btn>
       <div class="mt-4">
-        <BuilderImageLink
-          v-if="parentType === 'Image_Link'"
-          ref="builderImageLink"
-          @update-image-link="updateImageLink"
-        ></BuilderImageLink>
-        <BuilderText
-          v-if="parentType === 'Text'"
-          ref="builderText"
-          @update-text="updateText"
-        ></BuilderText>
-        <BuilderStyle
-          v-if="parentType === 'Style'"
-          @update-style="updateStyle"
-        ></BuilderStyle>
-        <BuilderParam
-          v-if="parentType === 'Param'"
-          ref="builderParam"
-          @update-param="updateParam"
-        ></BuilderParam>
+        <div :class="{ none: parentType !== 'Image_Link' }">
+          <BuilderImageLink
+            ref="builderImageLink"
+            @update-image-link="updateImageLink"
+          ></BuilderImageLink>
+        </div>
+        <div :class="{ none: parentType !== 'Text' }">
+          <BuilderText
+            ref="builderText"
+            @update-text="updateText"
+          ></BuilderText>
+        </div>
+        <div :class="{ none: parentType !== 'Style' }">
+          <BuilderStyle
+            ref="builderStyle"
+            @update-style="updateStyle"
+          ></BuilderStyle>
+        </div>
+        <div :class="{ none: parentType !== 'Param' }">
+          <BuilderParam
+            ref="builderParam"
+            @update-param="updateParam"
+          ></BuilderParam>
+        </div>
       </div>
     </div>
   </div>
@@ -184,7 +189,19 @@ function updateStyle(listStyle) {
 
 //param
 function updateParam(listParam) {
-  paramPrompt.value = listParam;
+  paramPrompt.value = "";
+  for (const param of listParam.value) {
+    if (param.listValue) {
+      if (param.value === "no" || param.value === "") continue;
+      else {
+        paramPrompt.value += `${param.shortName} `;
+        continue;
+      }
+    }
+    if (param.value !== "") {
+      paramPrompt.value += `${param.shortName} ${param.value} `;
+    }
+  }
 }
 
 const config = useRuntimeConfig();
@@ -216,5 +233,9 @@ function handleCopySuggestion(prompt) {
 <style scoped>
 .prompt:hover {
   background-color: #34cc7b !important;
+}
+
+.none {
+  display: none !important;
 }
 </style>

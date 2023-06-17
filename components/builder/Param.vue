@@ -1,127 +1,67 @@
 <template>
-  <div
-    v-for="(item, index) in paramStore.listNameParam"
-    :key="index"
-    class="d-flex align-center mb-1"
-  >
-    <div
-      style="width: 40%; border: 1px solid black"
-      class="d-flex justify-space-between pa-2 bg-bg-1"
-    >
-      {{ item }}
-      <span class="font-weight-bold">
-        {{ paramStore.listShortName[item] }}
-      </span>
-    </div>
-    <v-divider class="mx-2" vertical></v-divider>
-    <div style="width: 30%">
-      <v-select
-        v-model="listParam[paramStore.listShortName[item]]"
-        v-if="yesNoSelectList.includes(item)"
-        :items="['yes', 'no']"
-        density="compact"
-        variant="outlined"
-        bg-color="bg-1"
-        hide-details
-      ></v-select>
-      <v-text-field
-        v-model="listParam[paramStore.listShortName[item]]"
-        v-else-if="!yesNoSelectList.includes(item) && item !== 'Version'"
-        variant="outlined"
-        bg-color="bg-1"
-        density="compact"
-        hide-details
-      ></v-text-field>
-      <v-select
-        v-model="listParam[paramStore.listShortName[item]]"
-        v-else-if="item === 'Version'"
-        :items="['5', '4', '5', '2', '1']"
-        density="compact"
-        variant="outlined"
-        bg-color="bg-1"
-        hide-details
-      >
-      </v-select>
-    </div>
+  <div v-for="(param, index) in listParam" :key="`param_${index}`" class="my-2">
+    <v-text-field
+      v-model="param.value"
+      v-if="!param.listValue"
+      variant="outlined"
+      hide-details
+      density="compact"
+      :bg-color="param.value ? 'primary' : 'white'"
+      :placeholder="param.min !== undefined ? `${param.min}-${param.max}` : ''"
+      :label="`${param.name} ${param.shortName}`"
+    ></v-text-field>
+    <v-select
+      v-else
+      v-model="param.value"
+      :items="param.listValue"
+      variant="outlined"
+      density="compact"
+      hide-details
+      :bg-color="param.value ? 'primary' : 'white'"
+      :label="`${param.name} ${param.shortName}`"
+    ></v-select>
   </div>
 </template>
 
 <script setup>
-import { useParamStore } from "~/stores/Param";
-const paramStore = useParamStore();
-
-const config = useRuntimeConfig();
-const baseURL = `${config.public.baseURL}`;
-
-const paramName = ref("");
-
-const yesNoSelectList = ref(["Upbeta", "Tile", "Anime Style", "Light Upscale"]);
-
-onMounted(() => {
-  nextTick(() => {
-    handleGetListParam();
-  });
-});
-
-async function handleGetListParam() {
-  const { data } = await useLazyFetch(`${baseURL}/builder_type`, {
-    method: "GET",
-    params: {
-      page: 0,
-      size: 100,
-      parent_type: "Param",
-    },
-  });
-  if (!data.value) return;
-  const { result, code, msg } = data.value;
-  if (code === CODE_SUCCESS) {
-    paramStore.setListParam(result);
-  }
-}
-
-async function handleGetListBuilderValue(builderType) {
-  if (builderType in paramStore.listBuilderValue) return;
-  const { data } = await useLazyFetch(`${baseURL}/builder_value`, {
-    method: "GET",
-    params: {
-      page: 0,
-      size: 1000,
-      builder_type_name: builderType,
-    },
-  });
-  if (!data.value) return;
-  const { result, code, msg } = data.value;
-  if (code === CODE_SUCCESS) {
-    paramStore.setListBuilderValue(builderType, result);
-  }
-}
+const listParam = ref([
+  { name: "Aspect Ratio", value: "", shortName: "--ar" },
+  { name: "Chaos", value: "", shortName: "--chaos", min: 0, max: 100 },
+  { name: "Image Weight", value: "", shortName: "--iw", min: 0, max: 2 },
+  { name: "Quality", value: "", shortName: "--q", min: 0.25, max: 1 },
+  { name: "Repeat", value: "", shortName: "--r", min: 0, max: 40 },
+  { name: "Seed", value: "", shortName: "--seed", min: 0, max: 4294967295 },
+  { name: "Stop", value: "", shortName: "--stop", min: 10, max: 100 },
+  { name: "Stylize", value: "", shortName: "--s", min: 0, max: 1000 },
+  {
+    name: "Anime Style",
+    value: "",
+    shortName: "--niji",
+    listValue: ["yes", "no"],
+  },
+  {
+    name: "Tile",
+    value: "",
+    value: "",
+    shortName: "--tile",
+    listValue: ["yes", "no"],
+  },
+]);
 
 const emit = defineEmits(["updateParam"]);
-const listParam = ref({});
 
 watch(
   () => listParam,
   () => {
-    let paramPrompt = "";
-    for (const param in listParam.value) {
-      if (listParam.value[param] === "yes") {
-        paramPrompt += `${param} `;
-        continue;
-      }
-      if (listParam.value[param] === "no") {
-        continue;
-      }
-      if (listParam.value[param]) {
-        paramPrompt += `${param} ${listParam.value[param]} `;
-      }
-    }
-    emit("updateParam", paramPrompt);
+    emit("updateParam", listParam);
   },
   { deep: true }
 );
 
 defineExpose({ handleReset });
 function handleReset() {
-  listParam.value = [];
+  for (const param of listParam.value) {
+    param.value = "";
+  }
 }
 </script>

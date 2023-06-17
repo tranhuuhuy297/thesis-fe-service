@@ -64,6 +64,7 @@ const listImageLink = ref([]);
 function handleAddImage() {
   if (!imageLink.value) return;
   listImageLink.value.unshift(imageLink.value);
+  console.log(listImageLink.value);
   imageLink.value = "";
 }
 

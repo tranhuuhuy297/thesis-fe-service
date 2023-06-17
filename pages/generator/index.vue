@@ -10,6 +10,7 @@
         variant="outlined"
         hide-details
         class="mb-4"
+        bg-color="bg-1"
         label="Subjects you want to generate"
         @keydown.prevent.enter="handleGenerate"
       >
