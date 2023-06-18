@@ -64,7 +64,7 @@ const styleStore = useStyleStore();
 const config = useRuntimeConfig();
 const baseURL = `${config.public.baseURL}`;
 
-const styleName = ref("");
+const styleName = ref("Artists");
 
 onMounted(() => {
   nextTick(() => {
@@ -96,7 +96,7 @@ async function handleGetListBuilderValue(builderType) {
     params: {
       page: 0,
       size: 1000,
-      builder_type_name: builderType,
+      builder_type: builderType,
     },
   });
   if (!data.value) return;

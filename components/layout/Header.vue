@@ -129,7 +129,7 @@
         <div>Update your information</div>
         <div class="mt-4">
           <v-text-field
-            :model-value="userStore.username"
+            v-model="username"
             variant="outlined"
             label="Username"
             bg-color="bg-1"
@@ -145,7 +145,12 @@
       </v-card-text>
       <v-card-actions class="d-flex justify-end">
         <v-btn variant="text" @click="isShowProfile = false">Cancel</v-btn>
-        <v-btn variant="flat" color="info" @click="handleUpdateProfile">
+        <v-btn
+          variant="flat"
+          color="info"
+          :loading="isLoadingUpdate"
+          @click="handleUpdateProfile"
+        >
           Update
         </v-btn>
       </v-card-actions>
@@ -170,7 +175,7 @@ onMounted(() => {
 });
 
 const config = useRuntimeConfig();
-const baseURL = `${config.public.baseURL}/prompt`;
+const baseURL = `${config.public.baseURL}`;
 const promptStore = usePromptStore();
 
 const isLoadingSearch = ref(false);
@@ -179,7 +184,7 @@ async function handleSearch() {
   promptStore.setNewestListPrompt([]);
   if (textSearch.value) {
     isLoadingSearch.value = true;
-    const { data } = await useLazyFetch(`${baseURL}`, {
+    const { data } = await useLazyFetch(`${baseURL}/prompt`, {
       method: "GET",
       query: {
         page: 0,
@@ -200,13 +205,17 @@ async function handleSearch() {
   }
 }
 
+function logout() {
+  document.cookie = "token=;";
+  document.cookie = "expire=;";
+  setTimeout(() => {
+    navigateTo("/login");
+  }, 200);
+}
+
 function handleAction(item) {
   if (item.navigateTo === "/logout") {
-    document.cookie = "token=;";
-    document.cookie = "expire=;";
-    setTimeout(() => {
-      navigateTo("/login");
-    }, 200);
+    logout();
   } else if (item.navigateTo === "/profile") {
     isShowProfile.value = true;
   } else {
@@ -215,7 +224,29 @@ function handleAction(item) {
 }
 
 const isShowProfile = ref(false);
-async function handleUpdateProfile() {}
+const isLoadingUpdate = ref(false);
+const username = ref(`${userStore.username}`);
+async function handleUpdateProfile() {
+  isLoadingUpdate.value = true;
+  const { data } = await useFetch(`${baseURL}/user/${userStore.id}`, {
+    method: "PUT",
+    body: {
+      username: username.value,
+    },
+    headers: {
+      Authorization: `Bearer ${getCookie("token")}`,
+    },
+  });
+  isLoadingUpdate.value = false;
+  if (!data.value) return;
+  const { result, code, msg } = data.value;
+  if (code === CODE_SUCCESS) {
+    useNuxtApp().$toast.success("Update profile successfully!");
+    setTimeout(() => {
+      logout();
+    }, 500);
+  }
+}
 </script>
 
 <style scoped>
