@@ -15,8 +15,7 @@
     <div
       v-for="(image, index) in styleStore.listBuilderValue[styleName]"
       :key="index"
-      class="pa-2 pointer img"
-      style="width: 20%"
+      class="pa-2 pointer w-25 img"
       @click="
         isShowWeight = true;
         styleSelected = image?.name;

@@ -42,40 +42,17 @@
 </template>
 
 <script setup>
-import { usePromptStore } from "~/stores/Prompt";
 definePageMeta({
   layout: "empty",
 });
 
 const textSearch = ref("");
 
-const config = useRuntimeConfig();
-const baseURL = `${config.public.baseURL}/prompt`;
-const promptStore = usePromptStore();
-
 const isLoadingSearch = ref(false);
 
 async function handleSearch() {
   if (textSearch.value) {
-    isLoadingSearch.value = true;
-    const { data, pending } = await useLazyFetch(`${baseURL}`, {
-      method: "GET",
-      query: {
-        page: 0,
-        size: 30,
-        search: textSearch.value,
-      },
-    });
-    isLoadingSearch.value = false;
-    if (!data.value) return;
-    const { result, code, msg } = data.value;
-    if (code === CODE_SUCCESS) {
-      const validPrompt = result.filter((prompt) => {
-        return prompt.image_src;
-      });
-      promptStore.setNewestListPrompt(validPrompt);
-    }
-    navigateTo({ path: "/stats", query: { textSearch: textSearch.value } });
+    navigateTo({ path: "/Feeds", query: { textSearch: textSearch.value } });
   }
 }
 </script>

@@ -21,11 +21,11 @@
           v-for="(image, index) in imagesCol_0"
           :key="`${index}_imagesCol_0`"
         >
-          <StatsImage
+          <FeedsImage
             :is-show-delete="true"
             :prompt="image"
             @deleted-prompt="handleGetImage"
-          ></StatsImage>
+          ></FeedsImage>
         </div>
       </div>
       <div class="mx-1 w-25">
@@ -33,11 +33,11 @@
           v-for="(image, index) in imagesCol_1"
           :key="`${index}_imagesCol_1`"
         >
-          <StatsImage
+          <FeedsImage
             :is-show-delete="true"
             :prompt="image"
             @deleted-prompt="handleGetImage"
-          ></StatsImage>
+          ></FeedsImage>
         </div>
       </div>
       <div class="mx-1 w-25">
@@ -45,11 +45,11 @@
           v-for="(image, index) in imagesCol_2"
           :key="`${index}_imagesCol_2`"
         >
-          <StatsImage
+          <FeedsImage
             :is-show-delete="true"
             :prompt="image"
             @deleted-prompt="handleGetImage"
-          ></StatsImage>
+          ></FeedsImage>
         </div>
       </div>
       <div class="mx-1 w-25">
@@ -57,11 +57,11 @@
           v-for="(image, index) in imagesCol_3"
           :key="`${index}_imagesCol_3`"
         >
-          <StatsImage
+          <FeedsImage
             :is-show-delete="true"
             :prompt="image"
             @deleted-prompt="handleGetImage"
-          ></StatsImage>
+          ></FeedsImage>
         </div>
       </div>
     </div>

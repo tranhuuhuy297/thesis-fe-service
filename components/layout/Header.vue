@@ -36,18 +36,12 @@
         </template>
       </v-text-field>
     </div>
-    <div class="d-flex align-center ml-16">
+    <div class="d-flex align-center ml-10">
       <div
         class="mr-6 pointer pointer--link"
         @click="navigateTo({ path: '/builder' })"
       >
         Builder
-      </div>
-      <div
-        class="mr-6 pointer pointer--link"
-        @click="navigateTo({ path: '/stats' })"
-      >
-        Stats
       </div>
       <!-- <div
         class="mr-6 pointer pointer--link"
@@ -56,10 +50,16 @@
         Resources
       </div> -->
       <div
-        class="pointer pointer--link"
+        class="pointer mr-6 pointer--link"
         @click="navigateTo({ path: '/generator' })"
       >
         Generator
+      </div>
+      <div
+        class="pointer pointer--link"
+        @click="navigateTo({ path: '/feeds' })"
+      >
+        Feeds
       </div>
       <v-divider vertical class="mx-5 my-1"></v-divider>
       <v-btn
@@ -159,9 +159,10 @@
 </template>
 
 <script setup>
-import { usePromptStore } from "~/stores/Prompt";
+import { useImageStore } from "~/stores/Image";
 import { useUserStore } from "~/stores/User";
 
+const imageStore = useImageStore();
 const userStore = useUserStore();
 
 const textSearch = ref("");
@@ -176,33 +177,12 @@ onMounted(() => {
 
 const config = useRuntimeConfig();
 const baseURL = `${config.public.baseURL}`;
-const promptStore = usePromptStore();
 
 const isLoadingSearch = ref(false);
 
-async function handleSearch() {
-  promptStore.setNewestListPrompt([]);
-  if (textSearch.value) {
-    isLoadingSearch.value = true;
-    const { data } = await useLazyFetch(`${baseURL}/prompt`, {
-      method: "GET",
-      query: {
-        page: 0,
-        size: 30,
-        search: textSearch.value,
-      },
-    });
-    isLoadingSearch.value = false;
-    if (!data.value) return;
-    const { result, code, msg } = data.value;
-    if (code === CODE_SUCCESS) {
-      const validPrompt = result.filter((prompt) => {
-        return prompt.image_src;
-      });
-      promptStore.setNewestListPrompt(validPrompt);
-    }
-    navigateTo({ path: "/stats", query: { textSearch: textSearch.value } });
-  }
+function handleSearch() {
+  navigateTo({ path: "/feeds", query: { textSearch: textSearch.value } });
+  handleGetListSemanticImage();
 }
 
 function logout() {
@@ -245,6 +225,20 @@ async function handleUpdateProfile() {
     setTimeout(() => {
       logout();
     }, 500);
+  }
+}
+
+async function handleGetListSemanticImage() {
+  const { data } = await useFetch(`${baseURL}/image/semantic-search`, {
+    method: "GET",
+    query: {
+      query: textSearch.value,
+    },
+  });
+  if (!data.value) return;
+  const { result, code, msg } = data.value;
+  if (code === CODE_SUCCESS) {
+    imageStore.setListImages(result.map((item) => item.metadata));
   }
 }
 </script>

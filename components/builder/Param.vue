@@ -6,7 +6,7 @@
       variant="outlined"
       hide-details
       density="compact"
-      :bg-color="param.value ? 'primary' : 'white'"
+      :bg-color="param.value ? 'bg-2' : 'white'"
       :placeholder="param.min !== undefined ? `${param.min}-${param.max}` : ''"
       :label="`${param.name} ${param.shortName}`"
     ></v-text-field>
@@ -17,7 +17,7 @@
       variant="outlined"
       density="compact"
       hide-details
-      :bg-color="param.value ? 'primary' : 'white'"
+      :bg-color="param.value ? 'bg-2' : 'white'"
       :label="`${param.name} ${param.shortName}`"
     ></v-select>
   </div>
