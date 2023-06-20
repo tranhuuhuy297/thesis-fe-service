@@ -171,9 +171,24 @@ const token = ref("");
 const route = useRoute();
 
 onMounted(() => {
-  textSearch.value = route?.query?.textSearch;
-  token.value = getCookie("token");
+  nextTick(() => {
+    token.value = getCookie("token");
+  });
 });
+
+watch(
+  () => route?.query?.textSearch,
+  (val) => {
+    if (val) textSearch.value = val;
+  }
+);
+
+watch(
+  () => textSearch.value,
+  (val) => {
+    if (val) imageStore.setTextSearch(val);
+  }
+);
 
 const config = useRuntimeConfig();
 const baseURL = `${config.public.baseURL}`;
@@ -238,7 +253,7 @@ async function handleGetListSemanticImage() {
   if (!data.value) return;
   const { result, code, msg } = data.value;
   if (code === CODE_SUCCESS) {
-    imageStore.setListImages(result.map((item) => item.metadata));
+    imageStore.setListImages(result);
   }
 }
 </script>

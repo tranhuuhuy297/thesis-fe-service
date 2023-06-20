@@ -3,7 +3,10 @@
     Prompt <span class="text-primary-2">Feeds</span>
     <div class="mt-2 text-h6">Exploring newest prompts</div>
   </div>
-  <div class="d-flex mt-8 text-h3">
+  <div v-if="isLoadingImage" class="mt-8 d-flex justify-center">
+    <v-progress-circular indeterminate color="primary"></v-progress-circular>
+  </div>
+  <div v-else class="d-flex mt-8 text-h3">
     <div class="mx-1 w-25">
       <div
         v-for="(prompt, index) in newestImages0"
@@ -47,16 +50,15 @@ const baseURL = `${config.public.baseURL}`;
 
 const page = ref(0);
 const size = ref(20);
-const textSearch = ref("");
 
 const route = useRoute();
 
+const textSearch = ref("");
 const imageStore = useImageStore();
 onMounted(() => {
   nextTick(() => {
-    textSearch.value = route.query?.textSearch;
-    if (textSearch.value) {
-      handleGetListSemanticImage();
+    if (imageStore.textSearch) {
+      textSearch.value = imageStore.textSearch;
     } else {
       page.value = 0;
       size.value = 20;
@@ -65,22 +67,46 @@ onMounted(() => {
   });
 });
 
+watch(
+  () => route?.query?.textSearch,
+  (val) => {
+    textSearch.value = val;
+  }
+);
+
+watch(
+  () => textSearch.value,
+  () => {
+    handleGetListSemanticImage();
+  }
+);
+
+const isLoadingImage = ref(false);
+
 async function handleGetListSemanticImage() {
+  isLoadingImage.value = true;
+  console.log(!textSearch.value);
+  if (!textSearch.value) {
+    handleGetListImage();
+    return;
+  }
   const { data } = await useFetch(`${baseURL}/image/search/semantic-search`, {
     method: "GET",
     query: {
       query: textSearch.value,
     },
   });
+  isLoadingImage.value = false;
   if (!data.value) return;
   const { result, code, msg } = data.value;
   if (code === CODE_SUCCESS) {
-    imageStore.setListImages(result.map((item) => item.metadata));
+    imageStore.setListImages(result);
   }
 }
 
 const listImages = ref([]);
 async function handleGetListImage() {
+  isLoadingImage.value = true;
   const { data } = await useFetch(`${baseURL}/image`, {
     method: "GET",
     query: {
@@ -88,10 +114,11 @@ async function handleGetListImage() {
       size: size.value,
     },
   });
+  isLoadingImage.value = false;
   if (!data.value) return;
   const { result, code, msg } = data.value;
   if (code === CODE_SUCCESS) {
-    listImages.value = result;
+    listImages.value.unshift(...result);
   }
 }
 

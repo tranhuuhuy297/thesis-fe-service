@@ -52,7 +52,7 @@ const isLoadingSearch = ref(false);
 
 async function handleSearch() {
   if (textSearch.value) {
-    navigateTo({ path: "/Feeds", query: { textSearch: textSearch.value } });
+    navigateTo({ path: "/feeds", query: { textSearch: textSearch.value } });
   }
 }
 </script>
