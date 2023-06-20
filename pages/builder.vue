@@ -212,7 +212,7 @@ const semanticSearchResult = ref([]);
 async function handleSearchSemantic() {
   isLoadingSearch.value = true;
   semanticSearchResult.value = [];
-  const { data } = await useFetch(`${baseURL}/prompt/semantic-search`, {
+  const { data } = await useFetch(`${baseURL}/prompt/search/semantic-search`, {
     method: "GET",
     params: {
       query: semanticSearch.value,

@@ -229,7 +229,7 @@ async function handleUpdateProfile() {
 }
 
 async function handleGetListSemanticImage() {
-  const { data } = await useFetch(`${baseURL}/image/semantic-search`, {
+  const { data } = await useFetch(`${baseURL}/image/search/semantic-search`, {
     method: "GET",
     query: {
       query: textSearch.value,

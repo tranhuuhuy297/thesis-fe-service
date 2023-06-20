@@ -55,7 +55,7 @@ const imageStore = useImageStore();
 onMounted(() => {
   nextTick(() => {
     textSearch.value = route.query?.textSearch;
-    if (textSearch.value != "") {
+    if (textSearch.value) {
       handleGetListSemanticImage();
     } else {
       page.value = 0;
@@ -66,7 +66,7 @@ onMounted(() => {
 });
 
 async function handleGetListSemanticImage() {
-  const { data } = await useFetch(`${baseURL}/image/semantic-search`, {
+  const { data } = await useFetch(`${baseURL}/image/search/semantic-search`, {
     method: "GET",
     query: {
       query: textSearch.value,

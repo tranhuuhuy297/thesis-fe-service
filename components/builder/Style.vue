@@ -21,7 +21,7 @@
         styleSelected = image?.name;
       "
     >
-      <v-img :src="`https://${image.image_src}`" cover></v-img>
+      <v-img :src="`${image.image_src}`" cover></v-img>
       <div class="bg-bg-1 pa-1" style="border-radius: 0 0 5px 5px">
         {{ image?.name }}
       </div>

@@ -1,7 +1,7 @@
 <template>
   <div style="position: relative" @click="isShowDialog = true">
     <v-img
-      :src="`https://${prompt?.image_src}`"
+      :src="`${prompt?.image_src}`"
       cover
       class="pointer mb-2 img"
       style="border: 1px solid black"
@@ -89,7 +89,7 @@
           </div>
           <v-divider vertical></v-divider>
           <v-img
-            :src="`https://${prompt.image_src}`"
+            :src="`${prompt.image_src}`"
             style="max-width: 30vw; max-height: 50vh"
           ></v-img>
         </div>
@@ -153,7 +153,7 @@
           </div>
           <v-divider vertical></v-divider>
           <v-img
-            :src="`https://${prompt.image_src}`"
+            :src="`${prompt.image_src}`"
             style="max-width: 30vw; max-height: 50vh"
           ></v-img>
         </div>
@@ -255,7 +255,7 @@ function handleUpvote() {
 
 function handleDownload() {
   if (process.client) {
-    window.open(`https://${props.prompt.image_src}`);
+    window.open(`${props.prompt.image_src}`);
   }
 }
 </script>
