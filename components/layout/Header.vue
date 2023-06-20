@@ -170,9 +170,9 @@
           </div>
           <div v-else class="font-weight-bold">
             <div class="d-flex">
-              <span style="width: 100px">Prompts:</span>
+              <span style="width: 100px">Images:</span>
               <span class="text-primary-2">
-                {{ userStatistics["count_prompt"] }}
+                {{ userStatistics["count_image"] }}
               </span>
             </div>
             <div class="d-flex mt-1">
