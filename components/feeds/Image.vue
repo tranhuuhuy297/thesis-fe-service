@@ -240,7 +240,8 @@ function handleUpvote() {
   const { data } = useFetch(`${baseURL}/upvote`, {
     method: isUpvote.value ? "DELETE" : "POST",
     body: {
-      user_id: userStore.id,
+      user_sender_id: userStore.id,
+      user_receiver_id: props.prompt.user_id,
       prompt_id: props.prompt.prompt_id,
     },
     headers: {

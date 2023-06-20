@@ -156,6 +156,39 @@
       </v-card-actions>
     </v-card>
   </v-dialog>
+  <v-dialog v-model.trim="isShowStatistics" width="auto" persistent>
+    <v-card>
+      <v-card-text>
+        <div class="text-h6 font-weight-bold">
+          <span class="text-info">User Statistics</span>
+        </div>
+        <div>Exploring your statistics</div>
+        <div class="mt-4">
+          <div v-if="isLoadingStatistics" class="d-flex justify-center">
+            <v-progress-circular indeterminate color="primary">
+            </v-progress-circular>
+          </div>
+          <div v-else class="font-weight-bold">
+            <div class="d-flex">
+              <span style="width: 100px">Prompts:</span>
+              <span class="text-primary-2">
+                {{ userStatistics["count_prompt"] }}
+              </span>
+            </div>
+            <div class="d-flex mt-1">
+              <span style="width: 100px">Upvotes:</span>
+              <span class="text-primary-2">
+                {{ userStatistics["count_upvote"] }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </v-card-text>
+      <v-card-actions class="d-flex justify-end">
+        <v-btn variant="text" @click="isShowStatistics = false">Cancel</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script setup>
@@ -172,23 +205,13 @@ const route = useRoute();
 
 onMounted(() => {
   nextTick(() => {
+    if (route?.query?.textSearch) {
+      textSearch.value = route?.query?.textSearch;
+      imageStore.setTextSearch(textSearch.value);
+    }
     token.value = getCookie("token");
   });
 });
-
-watch(
-  () => route?.query?.textSearch,
-  (val) => {
-    if (val) textSearch.value = val;
-  }
-);
-
-watch(
-  () => textSearch.value,
-  (val) => {
-    if (val) imageStore.setTextSearch(val);
-  }
-);
 
 const config = useRuntimeConfig();
 const baseURL = `${config.public.baseURL}`;
@@ -196,8 +219,12 @@ const baseURL = `${config.public.baseURL}`;
 const isLoadingSearch = ref(false);
 
 function handleSearch() {
-  navigateTo({ path: "/feeds", query: { textSearch: textSearch.value } });
-  handleGetListSemanticImage();
+  imageStore.setTextSearch(textSearch.value);
+  if (textSearch.value) {
+    navigateTo({ path: "/feeds", query: { textSearch: textSearch.value } });
+  } else {
+    navigateTo({ path: "/feeds" });
+  }
 }
 
 function logout() {
@@ -213,6 +240,8 @@ function handleAction(item) {
     logout();
   } else if (item.navigateTo === "/profile") {
     isShowProfile.value = true;
+  } else if (item.navigateTo === "/user-statistics") {
+    isShowStatistics.value = true;
   } else {
     navigateTo(item.navigateTo);
   }
@@ -255,6 +284,31 @@ async function handleGetListSemanticImage() {
   if (code === CODE_SUCCESS) {
     imageStore.setListImages(result);
   }
+}
+
+const isShowStatistics = ref(false);
+const isLoadingStatistics = ref(false);
+const userStatistics = ref(null);
+watch(
+  () => isShowStatistics.value,
+  (val) => {
+    if (val) {
+      handleGetStatistics();
+    }
+  }
+);
+async function handleGetStatistics() {
+  isLoadingStatistics.value = true;
+  const { data } = await useFetch(
+    `${baseURL}/user/${userStore.id}/statistics`,
+    {
+      method: "GET",
+    }
+  );
+  isLoadingStatistics.value = false;
+  if (!data.value) return;
+  const { result, code, msg } = data.value;
+  userStatistics.value = result;
 }
 </script>
 

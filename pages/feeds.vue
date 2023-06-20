@@ -44,6 +44,9 @@
 
 <script setup>
 import { useImageStore } from "~/stores/Image";
+import { useUserStore } from "~/stores/User";
+
+const userStore = useUserStore();
 
 const config = useRuntimeConfig();
 const baseURL = `${config.public.baseURL}`;
@@ -53,30 +56,28 @@ const size = ref(20);
 
 const route = useRoute();
 
-const textSearch = ref("");
 const imageStore = useImageStore();
 onMounted(() => {
   nextTick(() => {
-    if (imageStore.textSearch) {
-      textSearch.value = imageStore.textSearch;
-    } else {
-      page.value = 0;
-      size.value = 20;
+    page.value = 0;
+    size.value = 20;
+    if (!imageStore.textSearch) {
       handleGetListImage();
+      return;
     }
   });
 });
 
 watch(
-  () => route?.query?.textSearch,
+  () => imageStore.textSearch,
   (val) => {
-    textSearch.value = val;
-  }
-);
-
-watch(
-  () => textSearch.value,
-  () => {
+    if (!val) {
+      page.value = 0;
+      size.value = 20;
+      listImages.value = [];
+      handleGetListImage();
+      return;
+    }
     handleGetListSemanticImage();
   }
 );
@@ -85,15 +86,11 @@ const isLoadingImage = ref(false);
 
 async function handleGetListSemanticImage() {
   isLoadingImage.value = true;
-  console.log(!textSearch.value);
-  if (!textSearch.value) {
-    handleGetListImage();
-    return;
-  }
   const { data } = await useFetch(`${baseURL}/image/search/semantic-search`, {
     method: "GET",
     query: {
-      query: textSearch.value,
+      query: imageStore.textSearch,
+      user_sender_id: userStore.id,
     },
   });
   isLoadingImage.value = false;
@@ -110,6 +107,7 @@ async function handleGetListImage() {
   const { data } = await useFetch(`${baseURL}/image`, {
     method: "GET",
     query: {
+      user_sender_id: userStore.id,
       page: page.value,
       size: size.value,
     },
@@ -123,7 +121,9 @@ async function handleGetListImage() {
 }
 
 const newestImages0 = computed(() => {
-  const images = textSearch.value ? imageStore.listImages : listImages.value;
+  const images = imageStore.textSearch
+    ? imageStore.listImages
+    : listImages.value;
   return images.filter((prompt, index) => {
     if (index % 4 === 0) {
       return prompt;
@@ -131,7 +131,9 @@ const newestImages0 = computed(() => {
   });
 });
 const newestImages1 = computed(() => {
-  const images = textSearch.value ? imageStore.listImages : listImages.value;
+  const images = imageStore.textSearch
+    ? imageStore.listImages
+    : listImages.value;
   return images.filter((prompt, index) => {
     if (index % 4 === 1) {
       return prompt;
@@ -139,7 +141,9 @@ const newestImages1 = computed(() => {
   });
 });
 const newestImages2 = computed(() => {
-  const images = textSearch.value ? imageStore.listImages : listImages.value;
+  const images = imageStore.textSearch
+    ? imageStore.listImages
+    : listImages.value;
   return images.filter((prompt, index) => {
     if (index % 4 === 2) {
       return prompt;
@@ -147,7 +151,9 @@ const newestImages2 = computed(() => {
   });
 });
 const newestImages3 = computed(() => {
-  const images = textSearch.value ? imageStore.listImages : listImages.value;
+  const images = imageStore.textSearch
+    ? imageStore.listImages
+    : listImages.value;
   return images.filter((prompt, index) => {
     if (index % 4 === 3) {
       return prompt;
