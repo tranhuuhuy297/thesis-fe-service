@@ -92,11 +92,11 @@
                 icon: 'mdi-face-man-profile',
                 navigateTo: '/profile',
               },
-              {
-                name: 'Statistic',
-                icon: 'mdi-chart-line',
-                navigateTo: '/user-statistics',
-              },
+              // {
+              //   name: 'Statistic',
+              //   icon: 'mdi-chart-line',
+              //   navigateTo: '/user-statistics',
+              // },
               {
                 name: 'Log Out',
                 icon: 'mdi-logout-variant',

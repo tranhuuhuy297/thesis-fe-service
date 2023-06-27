@@ -159,7 +159,7 @@
         <v-btn
           variant="flat"
           color="info"
-          @click="handleCreateImage"
+          @click="handlePreprocessing"
           :loading="isLoadingCreateImage"
         >
           Upload
@@ -176,6 +176,7 @@
 
 <script setup>
 import { useUserStore } from "~/stores/User";
+import Compressor from "compressorjs";
 
 const userStore = useUserStore();
 function handleSelectFile() {
@@ -219,12 +220,28 @@ async function handleCreatePrompt() {
 const isShowUpload = ref(false);
 const isLoadingCreateImage = ref(false);
 
-async function handleCreateImage() {
+function handlePreprocessing() {
   isLoadingCreateImage.value = true;
+
   const formData = new FormData();
-  formData.append("image", file.value[0]);
-  formData.append("user_id", userStore.id);
-  formData.append("prompt_id", promptCreated?.value.id);
+  let image = null;
+  new Compressor(file.value[0], {
+    quality: 0.8,
+    success(result) {
+      image = new File([result], "image");
+      // formData.append("image", file.value[0]);
+      formData.append("image", image);
+      formData.append("user_id", userStore.id);
+      formData.append("prompt_id", promptCreated?.value.id);
+      handleCreateImage(formData);
+    },
+    error(err) {
+      console.log(err.message);
+    },
+  });
+}
+
+async function handleCreateImage(formData) {
   const { data } = await useFetch(`${baseURL}/image`, {
     method: "POST",
     body: formData,
