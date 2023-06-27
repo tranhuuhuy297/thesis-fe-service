@@ -51,9 +51,9 @@
       </div> -->
       <div
         class="pointer mr-6 pointer--link"
-        @click="navigateTo({ path: '/generator' })"
+        @click="navigateTo({ path: '/random' })"
       >
-        Generator
+        Random
       </div>
       <div
         class="pointer pointer--link"

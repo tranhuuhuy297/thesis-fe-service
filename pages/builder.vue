@@ -9,9 +9,10 @@
         style="height: 100%"
         class="bg-bg-2 rounded-lg pa-4 mr-4 d-flex flex-column"
       >
-        <div class="flex-grow-1">
+        <div class="flex-grow-1 pointer" @click="handleCopy">
           <span class="font-italic text-text-2 mr-2">/imagine </span>
           <span style="word-wrap: break-word">{{ prompt }}</span>
+          <v-tooltip activator="parent" location="top">Copy</v-tooltip>
         </div>
         <div class="d-flex justify-space-between mt-4">
           <v-btn
@@ -22,14 +23,25 @@
             variant="flat"
             prepend-icon="mdi-reload"
           ></v-btn>
-          <v-btn
-            prepend-icon="mdi-content-copy"
-            color="success"
-            text="Copy"
-            class="text-none text-text-1"
-            variant="flat"
-            @click="handleCopy"
-          ></v-btn>
+          <div class="d-flex">
+            <!-- <v-btn
+              prepend-icon="mdi-content-copy"
+              color="success"
+              text="Copy"
+              class="text-none text-text-1"
+              variant="text"
+              @click="handleCopy"
+            ></v-btn> -->
+            <v-btn
+              prepend-icon="mdi-hammer"
+              color="success"
+              text="Generate"
+              class="text-none text-text-1"
+              variant="flat"
+              :loading="isLoadingGenerate"
+              @click="handleGenerate"
+            ></v-btn>
+          </div>
         </div>
       </div>
       <div class="bg-bg-2 rounded-lg pa-4 mr-4 mt-4">
@@ -127,13 +139,17 @@
 </template>
 
 <script setup>
+import { useUserStore } from "~/stores/User";
+
+const userStore = useUserStore();
+
 const imageLinkPrompt = ref("");
 const textPrompt = ref("");
 const stylePrompt = ref("");
 const paramPrompt = ref("");
 
 const prompt = computed(() => {
-  return `${imageLinkPrompt.value} ${textPrompt.value} ${stylePrompt.value} ${paramPrompt.value}`;
+  return `${imageLinkPrompt.value} ${textPrompt.value} ${stylePrompt.value} ${paramPrompt.value}`.trim();
 });
 
 function handleCopy() {
@@ -227,6 +243,33 @@ async function handleSearchSemantic() {
 function handleCopySuggestion(prompt) {
   navigator.clipboard.writeText(prompt);
   useNuxtApp().$toast.success("Copy to clipboard!");
+}
+
+const isLoadingGenerate = ref(false);
+async function handleGenerate() {
+  isLoadingGenerate.value = true;
+  const { data } = await useFetch(`${baseURL}/prompt`, {
+    method: "POST",
+    body: {
+      user_id: userStore.id,
+      prompt: prompt.value,
+      negative_prompt: "",
+    },
+    query: {
+      generate_image: true,
+    },
+    headers: {
+      Authorization: `Bearer ${getCookie("token")}`,
+    },
+  });
+  isLoadingGenerate.value = false;
+  if (!data.value) return;
+  const { result, code, msg } = data.value;
+  if (code === CODE_SUCCESS) {
+    useNuxtApp().$toast.success(
+      "Create prompt successfully, please wait to generate image!"
+    );
+  }
 }
 </script>
 
