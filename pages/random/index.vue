@@ -2,7 +2,9 @@
   <div class="text-h3 font-weight-bold">
     Prompt <span class="text-primary-2">Random</span>
   </div>
-  <div class="mt-2 text-h6">Generate prompt based on some key word</div>
+  <div class="mt-2 text-h6">
+    Generate prompt based on some key word using GPT3.5
+  </div>
   <div class="mt-8 px-16">
     <div class="d-flex justify-center align-center">
       <v-text-field
@@ -16,8 +18,10 @@
       >
         <template #append-inner>
           <v-btn
-            color="info"
-            text="Generate"
+            prepend-icon="mdi-robot-outline"
+            color="success"
+            text="Random"
+            variant="flat"
             class="text-none"
             :loading="isLoadingGenerate"
             @click="handleGenerate"

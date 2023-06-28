@@ -67,7 +67,7 @@ async function handleLogin() {
   const { data } = await useFetch(`${baseURL}/login`, {
     method: "POST",
     body: {
-      gmail: gmail,
+      gmail: gmail.value,
       password: sha256(password.value),
     },
   });
