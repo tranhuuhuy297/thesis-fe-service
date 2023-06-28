@@ -82,6 +82,7 @@ function handleGet() {
 const isLoadingImage = ref(false);
 
 async function handleGetListSemanticImage() {
+  imageStore.setListImages([]);
   isLoadingImage.value = true;
   const { data } = await useFetch(`${baseURL}/image/search/semantic-search`, {
     method: "GET",

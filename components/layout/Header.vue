@@ -203,6 +203,15 @@ const token = ref("");
 
 const route = useRoute();
 
+watch(
+  () => route?.query?.textSearch,
+  (val) => {
+    if (val) textSearch.value = val;
+    else textSearch.value = "";
+    imageStore.textSearch = textSearch.value;
+  }
+);
+
 onMounted(() => {
   nextTick(() => {
     if (route?.query?.textSearch) {
@@ -271,20 +280,6 @@ async function handleUpdateProfile() {
     setTimeout(() => {
       logout();
     }, 500);
-  }
-}
-
-async function handleGetListSemanticImage() {
-  const { data } = await useFetch(`${baseURL}/image/search/semantic-search`, {
-    method: "GET",
-    query: {
-      query: textSearch.value,
-    },
-  });
-  if (!data.value) return;
-  const { result, code, msg } = data.value;
-  if (code === CODE_SUCCESS) {
-    imageStore.setListImages(result);
   }
 }
 
