@@ -17,6 +17,16 @@
         <v-icon v-else icon="mdi-text" style="width: 40px"></v-icon>
         <v-divider vertical class="ml-2"></v-divider>
       </template>
+      <template #append-inner>
+        <v-btn
+          color="error"
+          variant="flat"
+          size="small"
+          text="Delete"
+          class="text-none"
+          @click="handleDelete(index)"
+        ></v-btn>
+      </template>
     </v-text-field>
     <span v-if="!item.negative" class="mx-2 font-weight-bold">::</span>
     <v-text-field
@@ -68,5 +78,8 @@ watch(
 defineExpose({ handleReset });
 function handleReset() {
   listText.value = [];
+}
+function handleDelete(_id) {
+  listText.value = listText.value.filter((item, index) => index !== _id);
 }
 </script>
