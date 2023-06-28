@@ -42,6 +42,10 @@
 </template>
 
 <script setup>
+import { useImageStore } from "~/stores/Image";
+
+const imageStore = useImageStore();
+
 definePageMeta({
   layout: "empty",
 });
@@ -52,6 +56,7 @@ const isLoadingSearch = ref(false);
 
 async function handleSearch() {
   if (textSearch.value) {
+    imageStore.textSearch = textSearch.value;
     navigateTo({ path: "/feeds", query: { textSearch: textSearch.value } });
   }
 }

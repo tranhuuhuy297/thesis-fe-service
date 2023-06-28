@@ -208,6 +208,8 @@ onMounted(() => {
     if (route?.query?.textSearch) {
       textSearch.value = route?.query?.textSearch;
       imageStore.setTextSearch(textSearch.value);
+    } else if (imageStore.textSearch) {
+      textSearch.value = imageStore.textSearch;
     }
     token.value = getCookie("token");
   });

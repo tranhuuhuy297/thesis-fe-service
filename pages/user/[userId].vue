@@ -1,7 +1,7 @@
 <template>
   <div class="text-h3 font-weight-bold">
-    Prompt <span class="text-primary-2">Feeds</span>
-    <div class="mt-2 text-h6">Exploring newest prompt images</div>
+    User <span class="text-primary-2">Images</span>
+    <div class="mt-2 text-h6">@{{ user?.username }} prompt images</div>
   </div>
   <div v-if="isLoadingImage" class="mt-8 d-flex justify-center">
     <v-progress-circular indeterminate color="primary"></v-progress-circular>
@@ -43,69 +43,57 @@
 </template>
 
 <script setup>
-import { useImageStore } from "~/stores/Image";
-import { useUserStore } from "~/stores/User";
-
-const userStore = useUserStore();
-
 const config = useRuntimeConfig();
 const baseURL = `${config.public.baseURL}`;
 
-const page = ref(0);
-const size = ref(20);
+const { userId } = useRoute().params;
 
-const imageStore = useImageStore();
+const user = ref(null);
+const isLoadingImage = ref(true);
+
 onMounted(() => {
   nextTick(() => {
-    handleGet();
+    handleGetUser();
+    handleGetListImage();
   });
 });
 
-watch(
-  () => imageStore.textSearch,
-  () => {
-    handleGet();
+onMounted(() => {
+  function handleScroll() {
+    if (notLoad.value) return;
+    if (
+      document?.documentElement?.clientHeight + window?.scrollY >=
+      document?.documentElement?.scrollHeight
+    ) {
+      page.value += 1;
+      handleGetListImage();
+    }
   }
-);
+  window?.addEventListener("scroll", handleScroll);
+});
 
-function handleGet() {
-  if (!imageStore.textSearch) {
-    page.value = 0;
-    size.value = 20;
-    listImages.value = [];
-    handleGetListImage();
-    return;
-  }
-  handleGetListSemanticImage();
-}
-
-const isLoadingImage = ref(false);
-
-async function handleGetListSemanticImage() {
-  isLoadingImage.value = true;
-  const { data } = await useFetch(`${baseURL}/image/search/semantic-search`, {
+async function handleGetUser() {
+  const { data } = await useFetch(`${baseURL}/user/${userId}`, {
     method: "GET",
-    query: {
-      query: imageStore.textSearch,
-      user_sender_id: userStore.id,
-    },
   });
-  isLoadingImage.value = false;
   if (!data.value) return;
   const { result, code, msg } = data.value;
   if (code === CODE_SUCCESS) {
-    imageStore.setListImages(result);
+    user.value = result;
   }
 }
 
+const page = ref(0);
+const size = ref(20);
 const listImages = ref([]);
 const notLoad = ref(false);
+
 async function handleGetListImage() {
   isLoadingImage.value = true;
   const { data } = await useFetch(`${baseURL}/image`, {
     method: "GET",
-    query: {
-      user_sender_id: userStore.id,
+    params: {
+      user_id: userId,
       page: page.value,
       size: size.value,
     },
@@ -118,63 +106,36 @@ async function handleGetListImage() {
       notLoad.value = true;
       return;
     }
-    listImages.value.unshift(...result);
+    listImages.value = result;
   }
 }
 
 const newestImages0 = computed(() => {
-  const images = imageStore.textSearch
-    ? imageStore.listImages
-    : listImages.value;
-  return images.filter((prompt, index) => {
+  return listImages.value.filter((prompt, index) => {
     if (index % 4 === 0) {
       return prompt;
     }
   });
 });
 const newestImages1 = computed(() => {
-  const images = imageStore.textSearch
-    ? imageStore.listImages
-    : listImages.value;
-  return images.filter((prompt, index) => {
+  return listImages.value.filter((prompt, index) => {
     if (index % 4 === 1) {
       return prompt;
     }
   });
 });
 const newestImages2 = computed(() => {
-  const images = imageStore.textSearch
-    ? imageStore.listImages
-    : listImages.value;
-  return images.filter((prompt, index) => {
+  return listImages.value.filter((prompt, index) => {
     if (index % 4 === 2) {
       return prompt;
     }
   });
 });
 const newestImages3 = computed(() => {
-  const images = imageStore.textSearch
-    ? imageStore.listImages
-    : listImages.value;
-  return images.filter((prompt, index) => {
+  return listImages.value.filter((prompt, index) => {
     if (index % 4 === 3) {
       return prompt;
     }
   });
-});
-
-onMounted(() => {
-  function handleScroll() {
-    if (imageStore.textSearch) return;
-    if (notLoad.value) return;
-    if (
-      document?.documentElement?.clientHeight + window?.scrollY >=
-      document?.documentElement?.scrollHeight
-    ) {
-      page.value += 1;
-      handleGetListImage();
-    }
-  }
-  window?.addEventListener("scroll", handleScroll);
 });
 </script>

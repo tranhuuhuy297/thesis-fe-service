@@ -38,7 +38,11 @@
         <div class="text-h6 font-weight-bold d-flex al">
           <span class="text-info">Prompt Detail</span>
           <span class="mx-2">-</span>
-          <span class="font-italic font-weight-medium" style="font-size: 14px">
+          <span
+            class="font-italic font-weight-medium pointer--link pointer"
+            style="font-size: 14px"
+            @click="navigateTo({ path: `/user/${prompt?.user_id}` })"
+          >
             @{{ prompt.user_gmail }}
           </span>
         </div>
@@ -251,7 +255,9 @@ function handleUpvote() {
   if (isUpvote.value) countUpvote.value -= 1;
   else countUpvote.value += 1;
   isUpvote.value = !isUpvote.value;
-  useNuxtApp().$toast.success("Successfully!");
+  useNuxtApp().$toast.success(
+    `${isUpvote.value ? "Upvote" : "Downvote"} successfully!`
+  );
 }
 
 function handleDownload() {
