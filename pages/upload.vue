@@ -12,9 +12,6 @@
     @click="isShowDialog = true"
   ></v-btn>
   <v-divider class="my-4"></v-divider>
-  <div v-if="isLoadingImage" class="mt-8 d-flex justify-center">
-    <v-progress-circular indeterminate color="primary"></v-progress-circular>
-  </div>
   <div class="mt-8 d-flex">
     <div class="mx-1 w-25">
       <div v-for="(image, index) in imagesCol_0" :key="`${index}_imagesCol_0`">
@@ -52,6 +49,9 @@
         ></FeedsImage>
       </div>
     </div>
+  </div>
+  <div v-if="isLoadingImage" class="d-flex justify-center">
+    <v-progress-circular indeterminate color="primary"></v-progress-circular>
   </div>
   <v-dialog v-model.trim="isShowDialog" width="auto" persistent>
     <v-card>
@@ -290,7 +290,7 @@ async function handleGetImage() {
       notLoad.value = true;
       return;
     }
-    listImages.value.unshift(...result);
+    listImages.value.push(...result);
   }
 }
 

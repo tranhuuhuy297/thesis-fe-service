@@ -3,9 +3,6 @@
     User <span class="text-primary-2">Images</span>
     <div class="mt-2 text-h6">@{{ user?.username }} prompt images</div>
   </div>
-  <div v-if="isLoadingImage" class="mt-8 d-flex justify-center">
-    <v-progress-circular indeterminate color="primary"></v-progress-circular>
-  </div>
   <div class="d-flex mt-8 text-h3">
     <div class="mx-1 w-25">
       <div
@@ -39,6 +36,9 @@
         <FeedsImage :prompt="prompt"></FeedsImage>
       </div>
     </div>
+  </div>
+  <div v-if="isLoadingImage" class="d-flex justify-center">
+    <v-progress-circular indeterminate color="primary"></v-progress-circular>
   </div>
 </template>
 
@@ -106,7 +106,7 @@ async function handleGetListImage() {
       notLoad.value = true;
       return;
     }
-    listImages.value = result;
+    listImages.value.push(...result);
   }
 }
 
