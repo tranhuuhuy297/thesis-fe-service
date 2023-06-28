@@ -59,28 +59,27 @@ const route = useRoute();
 const imageStore = useImageStore();
 onMounted(() => {
   nextTick(() => {
-    page.value = 0;
-    size.value = 20;
-    if (!imageStore.textSearch) {
-      handleGetListImage();
-      return;
-    }
+    handleGet();
   });
 });
 
 watch(
   () => imageStore.textSearch,
-  (val) => {
-    if (!val) {
-      page.value = 0;
-      size.value = 20;
-      listImages.value = [];
-      handleGetListImage();
-      return;
-    }
-    handleGetListSemanticImage();
+  () => {
+    handleGet();
   }
 );
+
+function handleGet() {
+  if (!imageStore.textSearch) {
+    page.value = 0;
+    size.value = 20;
+    listImages.value = [];
+    handleGetListImage();
+    return;
+  }
+  handleGetListSemanticImage();
+}
 
 const isLoadingImage = ref(false);
 

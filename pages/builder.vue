@@ -226,6 +226,7 @@ const semanticSearch = ref("");
 const isLoadingSearch = ref(false);
 const semanticSearchResult = ref([]);
 async function handleSearchSemantic() {
+  if (semanticSearch.value === "") return;
   isLoadingSearch.value = true;
   semanticSearchResult.value = [];
   const { data } = await useFetch(`${baseURL}/prompt/search/semantic-search`, {
@@ -247,6 +248,10 @@ function handleCopySuggestion(prompt) {
 
 const isLoadingGenerate = ref(false);
 async function handleGenerate() {
+  if (prompt.value.trim() === "") {
+    useNuxtApp().$toast.warning("Empty prompt!");
+    return;
+  }
   isLoadingGenerate.value = true;
   const { data } = await useFetch(`${baseURL}/prompt`, {
     method: "POST",

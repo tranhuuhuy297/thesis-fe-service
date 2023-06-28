@@ -3,7 +3,10 @@
     Prompt <span class="text-primary-2">Upload</span>
     <div class="mt-2 text-h6">Upload your prompt image here</div>
   </div>
-  <div class="mt-8">
+  <div v-if="isLoadingImage" class="mt-8 d-flex justify-center">
+    <v-progress-circular indeterminate color="primary"></v-progress-circular>
+  </div>
+  <div v-else class="mt-8">
     <div class="d-flex">
       <v-btn
         text="Select file"
@@ -283,7 +286,9 @@ watch(
 const page = ref(0);
 const size = ref(20);
 
+const isLoadingImage = ref(false);
 async function handleGetImage() {
+  isLoadingImage.value = true;
   const { data } = await useFetch(`${baseURL}/image`, {
     method: "GET",
     params: {
@@ -292,6 +297,7 @@ async function handleGetImage() {
       size: size.value,
     },
   });
+  isLoadingImage.value = false;
   if (!data.value) return;
   const { result, code, msg } = data.value;
   if (code === CODE_SUCCESS) {
