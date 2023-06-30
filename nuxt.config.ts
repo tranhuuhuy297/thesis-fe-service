@@ -12,7 +12,11 @@ export default defineNuxtConfig({
     head: {
       title: "PromptBuilder",
       link: [
-        { rel: "icon", type: "image/png", href: "_nuxt/assets/image/logo.png" },
+        {
+          rel: "icon",
+          type: "image/png",
+          href: "favicon.png",
+        },
       ],
     },
   },
