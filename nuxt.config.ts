@@ -11,7 +11,9 @@ export default defineNuxtConfig({
   app: {
     head: {
       title: "PromptBuilder",
-      link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.ico" }],
+      link: [
+        { rel: "icon", type: "image/png", href: "_nuxt/assets/image/logo.png" },
+      ],
     },
   },
   runtimeConfig: {
