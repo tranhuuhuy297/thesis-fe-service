@@ -268,7 +268,10 @@ async function handleGenerate() {
     },
   });
   isLoadingGenerate.value = false;
-  if (!data.value) return;
+  if (!data.value) {
+    useNuxtApp().$toast.warning("You need to login!");
+    return;
+  }
   const { result, code, msg } = data.value;
   if (code === CODE_SUCCESS) {
     useNuxtApp().$toast.success(
