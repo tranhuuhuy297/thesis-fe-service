@@ -6,7 +6,7 @@
       class="pointer mb-2 img"
       style="border: 1px solid black"
     />
-    <v-btn
+    <!-- <v-btn
       v-if="!isShowDelete"
       :prepend-icon="isUpvote ? 'mdi-heart' : 'mdi-heart-broken'"
       :color="isUpvote ? 'primary-2' : 'white'"
@@ -15,7 +15,7 @@
       :text="countUpvote"
       class="font-weight-bold"
       @click.stop="handleUpvote"
-    ></v-btn>
+    ></v-btn> -->
     <v-btn
       v-if="isShowDelete"
       icon="mdi-delete"
@@ -41,9 +41,9 @@
           <span
             class="font-italic font-weight-medium pointer--link pointer"
             style="font-size: 14px"
-            @click="navigateTo({ path: `/user/${prompt?.user_id}` })"
+            @click="navigateTo({ path: `/user/${detailPrompt?.user_id}` })"
           >
-            @{{ prompt.user_gmail }}
+            {{ `@${detailPrompt?.user_gmail}` }}
           </span>
         </div>
         <div class="mt-4 d-flex align-center">
@@ -51,10 +51,11 @@
             <v-textarea
               bg-color="bg-1"
               label="Prompt"
-              :model-value="prompt.prompt"
+              :model-value="detailPrompt?.prompt"
               variant="outlined"
               class="mx-2 mb-4"
-              hide-details=""
+              hide-details
+              :loading="isLoadingGetDetail"
               auto-grow
               readonly
             >
@@ -72,11 +73,12 @@
             <v-textarea
               bg-color="bg-1"
               label="Negative Prompt"
-              :model-value="prompt.negative_prompt"
+              :model-value="detailPrompt?.negative_prompt"
               variant="outlined"
               class="mx-2"
               auto-grow
-              hide-details=""
+              hide-details
+              :loading="isLoadingGetDetail"
               readonly
             >
               <template #append-inner>
@@ -93,7 +95,7 @@
           </div>
           <v-divider vertical></v-divider>
           <v-img
-            :src="`${prompt.image_src}`"
+            :src="`${prompt?.image_src}`"
             style="max-width: 30vw; max-height: 50vh"
           ></v-img>
         </div>
@@ -115,12 +117,13 @@
             <v-textarea
               bg-color="bg-1"
               label="Prompt"
-              :model-value="prompt.prompt"
+              :model-value="detailPrompt?.prompt"
               variant="outlined"
               class="mx-2 mb-4"
-              hide-details=""
+              hide-details
               auto-grow
               readonly
+              :loading="isLoadingGetDetail"
             >
               <template #append-inner>
                 <v-btn
@@ -136,12 +139,13 @@
             <v-textarea
               bg-color="bg-1"
               label="Negative Prompt"
-              :model-value="prompt.negative_prompt"
+              :model-value="detailPrompt?.negative_prompt"
               variant="outlined"
               class="mx-2"
               auto-grow
-              hide-details=""
+              hide-details
               readonly
+              :loading="isLoadingGetDetail"
             >
               <template #append-inner>
                 <v-btn
@@ -157,7 +161,7 @@
           </div>
           <v-divider vertical></v-divider>
           <v-img
-            :src="`${prompt.image_src}`"
+            :src="`${prompt?.image_src}`"
             style="max-width: 30vw; max-height: 50vh"
           ></v-img>
         </div>
@@ -194,6 +198,31 @@ const isShowDialog = ref(false);
 const isShowDeleteDialog = ref(false);
 const isLoadingDelete = ref(false);
 
+watch(
+  () => isShowDialog.value,
+  (val) => {
+    if (val) {
+      handleGetPrompt();
+    }
+  }
+);
+
+const detailPrompt = ref(null);
+
+const isLoadingGetDetail = ref(false);
+async function handleGetPrompt() {
+  isLoadingGetDetail.value = true;
+  const { data } = await useFetch(`${baseURL}/image/${props.prompt.id}`, {
+    method: "GET",
+  });
+  isLoadingGetDetail.value = false;
+  if (!data.value) return;
+  const { result, code, msg } = data.value;
+  if (code === CODE_SUCCESS) {
+    detailPrompt.value = result;
+  }
+}
+
 async function handleDeletePrompt() {
   isLoadingDelete.value = true;
   const { data } = await useFetch(`${baseURL}/image/${props.prompt.id}`, {
@@ -212,11 +241,6 @@ async function handleDeletePrompt() {
   }
 }
 const userStore = useUserStore();
-
-watch(
-  () => isShowDialog.value,
-  () => {}
-);
 
 function handleCopyPrompt() {
   navigator.clipboard.writeText(props.prompt.prompt);
