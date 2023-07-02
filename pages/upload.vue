@@ -18,7 +18,7 @@
         <FeedsImage
           :is-show-delete="true"
           :prompt="image"
-          @deleted-prompt="handleGetImage"
+          @deleted-prompt="handleDeletedPrompt"
         ></FeedsImage>
       </div>
     </div>
@@ -27,7 +27,7 @@
         <FeedsImage
           :is-show-delete="true"
           :prompt="image"
-          @deleted-prompt="handleGetImage"
+          @deleted-prompt="handleDeletedPrompt"
         ></FeedsImage>
       </div>
     </div>
@@ -248,7 +248,7 @@ async function handleCreateImage(formData) {
     prompt.value = "";
     negativePrompt.value = "";
     page.value = 0;
-    size.value = 20;
+    listImages.value = [];
     handleGetImage();
   }
 }
@@ -342,6 +342,12 @@ onMounted(() => {
   }
   window?.addEventListener("scroll", handleScroll);
 });
+
+function handleDeletedPrompt() {
+  page.value = 0;
+  listImages.value = [];
+  handleGetImage();
+}
 </script>
 
 <style scoped></style>
