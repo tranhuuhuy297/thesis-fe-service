@@ -75,6 +75,10 @@ async function handleLogin() {
   if (!data.value) return;
   const { result, code, msg } = data.value;
   if (code === CODE_SUCCESS) {
+    if (result["is_ban"]) {
+      useNuxtApp().$toast.error("User is banned. Please contact to admin!");
+      return;
+    }
     userStore.setUser(result);
     document.cookie = `token=${result["access_token"]}`;
     document.cookie = `expire=${result["expire_time"]}`;
