@@ -112,59 +112,11 @@
           <span class="text-error">Delete</span>
         </div>
         <div>Are you sure to delete this prompt?</div>
-        <div class="mt-4 d-flex align-center">
-          <div>
-            <v-textarea
-              bg-color="bg-1"
-              label="Prompt"
-              :model-value="detailPrompt?.prompt"
-              variant="outlined"
-              class="mx-2 mb-4"
-              hide-details
-              auto-grow
-              readonly
-              :loading="isLoadingGetDetail"
-            >
-              <template #append-inner>
-                <v-btn
-                  prepend-icon="mdi-content-copy"
-                  color="success"
-                  text="Copy"
-                  class="text-none text-text-1"
-                  variant="flat"
-                  @click="handleCopyPrompt"
-                ></v-btn>
-              </template>
-            </v-textarea>
-            <v-textarea
-              bg-color="bg-1"
-              label="Negative Prompt"
-              :model-value="detailPrompt?.negative_prompt"
-              variant="outlined"
-              class="mx-2"
-              auto-grow
-              hide-details
-              readonly
-              :loading="isLoadingGetDetail"
-            >
-              <template #append-inner>
-                <v-btn
-                  prepend-icon="mdi-content-copy"
-                  color="success"
-                  text="Copy"
-                  class="text-none text-text-1"
-                  variant="flat"
-                  @click="handleCopyNegPrompt"
-                ></v-btn>
-              </template>
-            </v-textarea>
-          </div>
-          <v-divider vertical></v-divider>
-          <v-img
-            :src="`${prompt?.image_src}`"
-            style="max-width: 30vw; max-height: 50vh"
-          ></v-img>
-        </div>
+        <v-img
+          class="mt-4"
+          :src="`${prompt?.image_src}`"
+          style="max-width: 30vw; max-height: 50vh"
+        ></v-img>
       </v-card-text>
       <v-card-actions class="d-flex justify-end">
         <v-btn variant="text" @click="isShowDeleteDialog = false">Cancel</v-btn>
