@@ -44,18 +44,18 @@
             @keydown.prevent.enter="handleAddWeight"
           ></v-text-field>
         </div>
-        <div class="d-flex align-center px-4 mt-4">
+        <div class="d-flex align-center mt-4">
           <v-img
             :src="`${styleSelected?.image_src}`"
-            width="400"
-            height="400"
+            width="350"
+            height="350"
           ></v-img>
         </div>
       </v-card-text>
       <v-card-actions class="d-flex justify-end">
         <v-btn variant="text" @click="isShowWeight = false">Cancel</v-btn>
         <v-btn variant="flat" color="info" @click="handleAddWeight">
-          Add {{ styleName }}
+          Add
         </v-btn>
       </v-card-actions>
     </v-card>
