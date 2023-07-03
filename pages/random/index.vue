@@ -37,11 +37,7 @@
         color="success"
       ></v-icon>
     </div>
-    <div
-      v-for="(prompt, idx) in prompt_gen"
-      :key="`prompt_${idx}`"
-      class="mx-16"
-    >
+    <div v-for="(prompt, idx) in prompt_gen" :key="`prompt_${idx}`">
       <div
         style="border: 1px solid black"
         class="mb-1 pa-2 px-4 pointer prompt"
