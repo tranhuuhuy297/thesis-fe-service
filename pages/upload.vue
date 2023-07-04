@@ -59,7 +59,7 @@
         <div class="text-h6 font-weight-bold">
           <span class="text-info">Upload prompt & image</span>
         </div>
-        <div class="mt-4 d-flex">
+        <div class="mt-4 d-flex" style="min-width: 50vw">
           <div class="w-50">
             <v-textarea
               v-model.trim="prompt"
@@ -69,7 +69,6 @@
               autofocus
               bg-color="bg-1"
               class="mr-4"
-              :rules="[rules.required]"
               placeholder="Prompt"
             ></v-textarea>
             <v-textarea
@@ -77,10 +76,9 @@
               variant="outlined"
               density="compact"
               placeholder="Negative prompt"
-              class="mr-4 mt-1"
+              class="mr-4"
               bg-color="bg-1"
               auto-grow
-              autofocus
             ></v-textarea>
           </div>
           <v-divider vertical></v-divider>
@@ -153,7 +151,7 @@ watch(
   }
 );
 const prompt = ref("");
-const negativePrompt = ref();
+const negativePrompt = ref("");
 
 const isLoadingCreate = ref(false);
 
@@ -169,6 +167,8 @@ function handlePreprocessing() {
       // formData.append("image", file.value[0]);
       formData.append("image", image);
       formData.append("user_id", userStore.id);
+      formData.append("prompt", prompt.value);
+      formData.append("negative_prompt", negativePrompt.value);
       handleCreateImage(formData);
     },
     error(err) {

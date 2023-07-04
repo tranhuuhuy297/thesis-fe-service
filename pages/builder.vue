@@ -264,6 +264,9 @@ async function handleGenerate() {
       prompt: prompt.value,
       negative_prompt: "",
     },
+    params: {
+      user_id: userStore.id,
+    },
     query: {
       generate_image: true,
     },

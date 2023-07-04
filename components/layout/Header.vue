@@ -235,6 +235,9 @@ async function handleUpdateProfile() {
     body: {
       username: username.value,
     },
+    params: {
+      user_id: userStore.id,
+    },
     headers: {
       Authorization: `Bearer ${getCookie("token")}`,
     },

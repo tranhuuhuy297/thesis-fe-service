@@ -6,16 +6,6 @@
       class="pointer mb-2 img"
       style="border: 1px solid black"
     />
-    <!-- <v-btn
-      v-if="!isShowDelete"
-      :prepend-icon="isUpvote ? 'mdi-heart' : 'mdi-heart-broken'"
-      :color="isUpvote ? 'primary-2' : 'white'"
-      style="position: absolute; top: 2px; right: 2px"
-      :variant="isUpvote ? 'text' : 'flat'"
-      :text="countUpvote"
-      class="font-weight-bold"
-      @click.stop="handleUpvote"
-    ></v-btn> -->
     <v-btn
       v-if="isShowDelete"
       icon="mdi-delete"
@@ -41,9 +31,9 @@
           <span
             class="font-italic font-weight-medium pointer--link pointer"
             style="font-size: 14px"
-            @click="navigateTo({ path: `/user/${detailPrompt?.user_id}` })"
+            @click="navigateTo({ path: `/user/${prompt?.user_id}` })"
           >
-            {{ `@${detailPrompt?.user_gmail}` }}
+            {{ `@${prompt?.user_gmail}` }}
           </span>
         </div>
         <div class="mt-4 d-flex align-center">
@@ -51,11 +41,10 @@
             <v-textarea
               bg-color="bg-1"
               label="Prompt"
-              :model-value="detailPrompt?.prompt"
+              :model-value="prompt?.prompt"
               variant="outlined"
               class="mx-2 mb-4"
               hide-details
-              :loading="isLoadingGetDetail"
               auto-grow
               readonly
             >
@@ -73,7 +62,7 @@
             <v-textarea
               bg-color="bg-1"
               label="Negative Prompt"
-              :model-value="detailPrompt?.negative_prompt"
+              :model-value="prompt?.negative_prompt"
               variant="outlined"
               class="mx-2"
               auto-grow
@@ -150,35 +139,13 @@ const isShowDialog = ref(false);
 const isShowDeleteDialog = ref(false);
 const isLoadingDelete = ref(false);
 
-watch(
-  () => isShowDialog.value,
-  (val) => {
-    if (val) {
-      handleGetPrompt();
-    }
-  }
-);
-
-const detailPrompt = ref(null);
-
-const isLoadingGetDetail = ref(false);
-async function handleGetPrompt() {
-  isLoadingGetDetail.value = true;
-  const { data } = await useFetch(`${baseURL}/image/${props.prompt.id}`, {
-    method: "GET",
-  });
-  isLoadingGetDetail.value = false;
-  if (!data.value) return;
-  const { result, code, msg } = data.value;
-  if (code === CODE_SUCCESS) {
-    detailPrompt.value = result;
-  }
-}
-
 async function handleDeletePrompt() {
   isLoadingDelete.value = true;
   const { data } = await useFetch(`${baseURL}/image/${props.prompt.id}`, {
     method: "DELETE",
+    params: {
+      user_id: userStore.id,
+    },
     headers: {
       Authorization: `Bearer ${getCookie("token")}`,
     },
@@ -215,26 +182,6 @@ onMounted(() => {
     )
   );
 });
-
-function handleUpvote() {
-  const { data } = useFetch(`${baseURL}/upvote`, {
-    method: isUpvote.value ? "DELETE" : "POST",
-    body: {
-      user_sender_id: userStore.id,
-      user_receiver_id: props.prompt.user_id,
-      prompt_id: props.prompt.prompt_id,
-    },
-    headers: {
-      Authorization: `Bearer ${getCookie("token")}`,
-    },
-  });
-  if (isUpvote.value) countUpvote.value -= 1;
-  else countUpvote.value += 1;
-  isUpvote.value = !isUpvote.value;
-  useNuxtApp().$toast.success(
-    `${isUpvote.value ? "Upvote" : "Downvote"} successfully!`
-  );
-}
 
 function handleDownload() {
   if (process.client) {
