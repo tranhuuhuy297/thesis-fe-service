@@ -104,8 +104,12 @@ async function handleLogin() {
     useNuxtApp().$toast.error("User is banned. Please contact with admin!");
     return;
   }
-  if (code == -1) {
+  if (code == CODE_WRONG_PASS) {
     useNuxtApp().$toast.error("Wrong password!");
+    return;
+  }
+  if (code == CODE_EXCEPTION) {
+    useNuxtApp().$toast.error("Email does not exist!");
     return;
   }
   if (code === CODE_SUCCESS) {
