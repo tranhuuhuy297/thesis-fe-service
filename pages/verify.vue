@@ -19,9 +19,27 @@ definePageMeta({
   layout: "authen",
 });
 
+const config = useRuntimeConfig();
+const baseURL = `${config.public.baseURL}/user`;
+
+const route = useRoute();
 const verifyCode = ref("");
 
 async function handleVerify() {
-  console.log(verifyCode.value);
+  const { data } = await useFetch(`${baseURL}/verify`, {
+    method: "POST",
+    query: {
+      gmail: route?.query?.email,
+      verify_code: verifyCode.value,
+    },
+  });
+  if (!data.value) return;
+  const { result, code, msg } = data.value;
+  if (code === CODE_SUCCESS) {
+    useNuxtApp().$toast.success("Verify successfully!");
+    setTimeout(() => {
+      navigateTo({ path: "/login" });
+    }, 1000);
+  }
 }
 </script>

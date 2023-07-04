@@ -95,6 +95,9 @@ async function handleLogin() {
     useNuxtApp().$toast.warning(
       "User is not activated. Please verify your email!"
     );
+    setTimeout(() => {
+      navigateTo({ path: "verify", query: { email: gmail.value } });
+    }, 1000);
     return;
   }
   if (code === CODE_BAN) {
