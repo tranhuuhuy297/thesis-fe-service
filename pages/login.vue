@@ -92,7 +92,7 @@ async function handleLogin() {
   if (!data.value) return;
   const { result, code, msg } = data.value;
   if (code === CODE_NOT_ACTIVATE) {
-    useNuxtApp().$toast.warning(
+    useNuxtApp().$toast.error(
       "User is not activated. Please verify your email or contact with admin!"
     );
     setTimeout(() => {
@@ -102,6 +102,10 @@ async function handleLogin() {
   }
   if (code === CODE_BAN) {
     useNuxtApp().$toast.error("User is banned. Please contact with admin!");
+    return;
+  }
+  if (code == -1) {
+    useNuxtApp().$toast.error("Wrong password!");
     return;
   }
   if (code === CODE_SUCCESS) {
