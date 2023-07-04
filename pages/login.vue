@@ -2,10 +2,14 @@
   <div class="width-100">
     <div class="text-h4 font-weight-bold">Log In</div>
     <div class="mt-1">Let me help you create and share AI Art Prompts</div>
-    <v-form validate-on="input" v-model="valid" @submit.prevent="handleLogin">
+    <v-form
+      validate-on="input"
+      class="mt-6"
+      v-model="valid"
+      @submit.prevent="handleLogin"
+    >
       <v-text-field
         v-model.trim="gmail"
-        class="mt-6"
         variant="outlined"
         :rules="[rules.required, rules.email]"
         prepend-inner-icon="mdi-email-outline"
@@ -87,11 +91,17 @@ async function handleLogin() {
   isLoadingLogin.value = false;
   if (!data.value) return;
   const { result, code, msg } = data.value;
+  if (code === CODE_NOT_ACTIVATE) {
+    useNuxtApp().$toast.warning(
+      "User is not activated. Please verify your email!"
+    );
+    return;
+  }
+  if (code === CODE_BAN) {
+    useNuxtApp().$toast.error("User is banned. Please contact to admin!");
+    return;
+  }
   if (code === CODE_SUCCESS) {
-    if (result["is_ban"]) {
-      useNuxtApp().$toast.error("User is banned. Please contact to admin!");
-      return;
-    }
     userStore.setUser(result);
     document.cookie = `token=${result["access_token"]}`;
     document.cookie = `expire=${result["expire_time"]}`;

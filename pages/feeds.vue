@@ -107,7 +107,6 @@ async function handleGetListSemanticImage() {
     method: "GET",
     query: {
       query: textSearch.value,
-      user_sender_id: userStore.id,
     },
   });
   isLoadingImage.value = false;
@@ -123,7 +122,6 @@ async function handleGetListImage() {
   const { data } = await useFetch(`${baseURL}/image`, {
     method: "GET",
     query: {
-      user_sender_id: userStore.id,
       page: page.value,
       size: size.value,
     },

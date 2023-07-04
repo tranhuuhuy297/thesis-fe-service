@@ -36,6 +36,12 @@
         Random
       </div>
       <div
+        class="pointer mr-6 pointer--link"
+        @click="navigateTo({ path: '/upload' })"
+      >
+        Upload
+      </div>
+      <div
         class="pointer pointer--link"
         @click="navigateTo({ path: '/feeds' })"
       >
