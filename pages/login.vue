@@ -93,7 +93,7 @@ async function handleLogin() {
   const { result, code, msg } = data.value;
   if (code === CODE_NOT_ACTIVATE) {
     useNuxtApp().$toast.warning(
-      "User is not activated. Please verify your email!"
+      "User is not activated. Please verify your email or contact with admin!"
     );
     setTimeout(() => {
       navigateTo({ path: "verify", query: { email: gmail.value } });
@@ -101,7 +101,7 @@ async function handleLogin() {
     return;
   }
   if (code === CODE_BAN) {
-    useNuxtApp().$toast.error("User is banned. Please contact to admin!");
+    useNuxtApp().$toast.error("User is banned. Please contact with admin!");
     return;
   }
   if (code === CODE_SUCCESS) {

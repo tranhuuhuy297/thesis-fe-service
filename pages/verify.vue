@@ -9,7 +9,18 @@
         prepend-inner-icon="mdi-key-outline"
         placeholder="Verify code"
         @keydown.prevent.enter="handleVerify"
-      ></v-text-field>
+      >
+        <template #append-inner>
+          <v-btn
+            size="small"
+            text="Verify"
+            class="text-none"
+            variant="flat"
+            color="info"
+            :loading="isLoadingVerify"
+          ></v-btn>
+        </template>
+      </v-text-field>
     </div>
   </div>
 </template>
@@ -25,7 +36,10 @@ const baseURL = `${config.public.baseURL}/user`;
 const route = useRoute();
 const verifyCode = ref("");
 
+const isLoadingVerify = ref(false);
+
 async function handleVerify() {
+  isLoadingVerify.value = true;
   const { data } = await useFetch(`${baseURL}/verify`, {
     method: "POST",
     query: {
@@ -33,6 +47,7 @@ async function handleVerify() {
       verify_code: verifyCode.value,
     },
   });
+  isLoadingVerify.value = false;
   if (!data.value) return;
   const { result, code, msg } = data.value;
   if (code === CODE_SUCCESS) {
@@ -40,6 +55,8 @@ async function handleVerify() {
     setTimeout(() => {
       navigateTo({ path: "/login" });
     }, 1000);
+  } else {
+    useNuxtApp().$toast.error("Wrong code!");
   }
 }
 </script>

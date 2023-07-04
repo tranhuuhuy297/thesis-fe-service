@@ -3,7 +3,7 @@ import "vue3-toastify/dist/index.css";
 
 export default defineNuxtPlugin((nuxtApp) => {
   nuxtApp.vueApp.use(Vue3Toastify, {
-    autoClose: 1000,
+    autoClose: 2000,
     position: toast.POSITION.BOTTOM_RIGHT,
     transition: toast.TRANSITIONS.BOUNCE,
     theme: "colored",
