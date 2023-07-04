@@ -8,18 +8,16 @@
         class="mt-6"
         variant="outlined"
         :rules="[rules.required, rules.email]"
-        label="Email"
         prepend-inner-icon="mdi-email-outline"
-        placeholder="xxx@gmail.com"
+        placeholder="Email"
       ></v-text-field>
       <v-text-field
-        class="mt-2"
+        class="mt-1"
         v-model.trim="password"
         variant="outlined"
         :type="showPassword ? 'text' : 'password'"
-        label="Password"
         prepend-inner-icon="mdi-panda"
-        placeholder="Abc@123"
+        placeholder="Password"
         :rules="[rules.required]"
       >
         <template #append-inner>

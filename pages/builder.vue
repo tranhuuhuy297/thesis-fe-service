@@ -50,7 +50,7 @@
           prepend-inner-icon="mdi-text-search-variant"
           variant="outlined"
           density="compact"
-          label="Semantic Search"
+          label="Suggestions"
           bg-color="bg-1"
           :loading="isLoadingSearch"
           clearable

@@ -3,6 +3,26 @@
     Prompt <span class="text-primary-2">Feeds</span>
     <div class="mt-2 text-h6">Exploring newest prompt images</div>
   </div>
+  <v-text-field
+    v-model.trim="textSearch"
+    variant="outlined"
+    class="mt-8 w-50"
+    label="Search AI Images"
+    density="compact"
+    hide-details
+    @keydown.prevent.enter="handleGetListSemanticImage"
+  >
+    <template #append-inner>
+      <v-btn
+        icon="mdi-reload"
+        text
+        color="info"
+        size="x-small"
+        @click="handleReset"
+      ></v-btn>
+    </template>
+  </v-text-field>
+  <v-divider class="my-4"></v-divider>
   <div class="d-flex mt-8 text-h3">
     <div class="mx-1 w-25">
       <div
@@ -43,7 +63,6 @@
 </template>
 
 <script setup>
-import { useImageStore } from "~/stores/Image";
 import { useUserStore } from "~/stores/User";
 
 const userStore = useUserStore();
@@ -54,40 +73,40 @@ const baseURL = `${config.public.baseURL}`;
 const page = ref(0);
 const size = ref(20);
 
-const imageStore = useImageStore();
+const textSearch = ref("");
+
+const route = useRoute();
+
 onMounted(() => {
   nextTick(() => {
-    handleGet();
+    textSearch.value = route?.query?.textSearch;
+    if (textSearch.value) handleGetListSemanticImage();
+    else handleGetListImage();
   });
 });
 
-watch(
-  () => imageStore.textSearch,
-  () => {
-    handleGet();
-  }
-);
+const isLoadingImage = ref(false);
+const listImages = ref([]);
+const notLoad = ref(false);
 
-function handleGet() {
-  if (!imageStore.textSearch) {
-    page.value = 0;
-    size.value = 20;
-    listImages.value = [];
-    handleGetListImage();
-    return;
-  }
-  handleGetListSemanticImage();
+function handleReset() {
+  textSearch.value = "";
+  listImages.value = [];
+  page.value = 0;
+  handleGetListImage();
 }
 
-const isLoadingImage = ref(false);
-
 async function handleGetListSemanticImage() {
-  imageStore.setListImages([]);
+  if (textSearch.value === "") {
+    handleReset();
+    return;
+  }
+  listImages.value = [];
   isLoadingImage.value = true;
   const { data } = await useFetch(`${baseURL}/image/search/semantic-search`, {
     method: "GET",
     query: {
-      query: imageStore.textSearch,
+      query: textSearch.value,
       user_sender_id: userStore.id,
     },
   });
@@ -95,12 +114,10 @@ async function handleGetListSemanticImage() {
   if (!data.value) return;
   const { result, code, msg } = data.value;
   if (code === CODE_SUCCESS) {
-    imageStore.setListImages(result);
+    listImages.value = result;
   }
 }
 
-const listImages = ref([]);
-const notLoad = ref(false);
 async function handleGetListImage() {
   isLoadingImage.value = true;
   const { data } = await useFetch(`${baseURL}/image`, {
@@ -124,40 +141,28 @@ async function handleGetListImage() {
 }
 
 const newestImages0 = computed(() => {
-  const images = imageStore.textSearch
-    ? imageStore.listImages
-    : listImages.value;
-  return images.filter((prompt, index) => {
+  return listImages.value.filter((prompt, index) => {
     if (index % 4 === 0) {
       return prompt;
     }
   });
 });
 const newestImages1 = computed(() => {
-  const images = imageStore.textSearch
-    ? imageStore.listImages
-    : listImages.value;
-  return images.filter((prompt, index) => {
+  return listImages.value.filter((prompt, index) => {
     if (index % 4 === 1) {
       return prompt;
     }
   });
 });
 const newestImages2 = computed(() => {
-  const images = imageStore.textSearch
-    ? imageStore.listImages
-    : listImages.value;
-  return images.filter((prompt, index) => {
+  return listImages.value.filter((prompt, index) => {
     if (index % 4 === 2) {
       return prompt;
     }
   });
 });
 const newestImages3 = computed(() => {
-  const images = imageStore.textSearch
-    ? imageStore.listImages
-    : listImages.value;
-  return images.filter((prompt, index) => {
+  return listImages.value.filter((prompt, index) => {
     if (index % 4 === 3) {
       return prompt;
     }
@@ -166,7 +171,7 @@ const newestImages3 = computed(() => {
 
 onMounted(() => {
   function handleScroll() {
-    if (imageStore.textSearch) return;
+    if (textSearch.value) return;
     if (notLoad.value) return;
     if (
       document?.documentElement?.clientHeight + window?.scrollY >=

@@ -6,28 +6,27 @@
       <v-text-field
         v-model.trim="username"
         class="mt-6"
-        label="Username"
+        placeholder="Username"
         variant="outlined"
         :rules="[rules.required, rules.counter]"
         prepend-inner-icon="mdi-account-outline"
+        counter
       ></v-text-field>
       <v-text-field
-        class="mt-2"
+        class="mt-1"
         v-model.trim="gmail"
-        label="Email"
+        placeholder="Email"
         variant="outlined"
         prepend-inner-icon="mdi-email-outline"
-        placeholder="xxx@gmail.com"
         :rules="[rules.required, rules.email]"
       ></v-text-field>
       <v-text-field
         v-model.trim="password"
-        label="Password"
+        placeholder="Password"
         variant="outlined"
         :type="showPassword ? 'text' : 'password'"
-        class="mt-2"
+        class="mt-1"
         prepend-inner-icon="mdi-panda"
-        placeholder="Abc@123"
         :rules="[rules.required]"
       >
         <template #append-inner>
@@ -41,12 +40,11 @@
       </v-text-field>
       <v-text-field
         v-model.trim="confirmPassword"
-        class="mt-2"
-        label="Confirm password"
+        class="mt-1"
+        placeholder="Confirm password"
         variant="outlined"
         :type="showConfirmPassword ? 'text' : 'password'"
         prepend-inner-icon="mdi-panda"
-        placeholder="Abc@123"
         :rules="[rules.required, confirmPasswordRule]"
       >
         <template #append-inner>

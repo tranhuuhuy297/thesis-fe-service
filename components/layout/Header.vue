@@ -3,7 +3,7 @@
     <div class="d-flex align-center flex-grow-1">
       <div
         class="d-flex align-center rounded-lg bg-primary mr-4 pointer"
-        @click="navigateTo({ path: '/' })"
+        @click="navigateTo({ path: '/feeds' })"
       >
         <img
           src="~/assets/image/logo.png"
@@ -15,26 +15,6 @@
           PromptBuilder
         </div>
       </div>
-      <v-text-field
-        v-model.trim="textSearch"
-        variant="outlined"
-        placeholder="Search AI Images"
-        density="comfortable"
-        hide-details
-        prepend-inner-icon="mdi-magnify"
-        :loading="isLoadingSearch"
-        @keydown.enter="handleSearch"
-      >
-        <template #append-inner>
-          <v-divider vertical class="mr-3"></v-divider>
-          <v-btn
-            icon="mdi-camera"
-            variant="text"
-            @click="navigateTo('/upload')"
-          >
-          </v-btn>
-        </template>
-      </v-text-field>
     </div>
     <div class="d-flex align-center ml-10">
       <div
@@ -69,6 +49,7 @@
         text="Log In"
         color="primary"
         variant="flat"
+        prepend-icon="mdi-login"
         @click="navigateTo({ path: '/login' })"
       >
       </v-btn>
@@ -91,6 +72,11 @@
                 name: 'Profile',
                 icon: 'mdi-face-man-profile',
                 navigateTo: '/profile',
+              },
+              {
+                name: 'Upload',
+                icon: 'mdi-camera',
+                navigateTo: '/upload',
               },
               // {
               //   name: 'Statistic',
@@ -192,13 +178,10 @@
 </template>
 
 <script setup>
-import { useImageStore } from "~/stores/Image";
 import { useUserStore } from "~/stores/User";
 
-const imageStore = useImageStore();
 const userStore = useUserStore();
 
-const textSearch = ref("");
 const token = ref("");
 
 const route = useRoute();
@@ -214,29 +197,12 @@ watch(
 
 onMounted(() => {
   nextTick(() => {
-    if (route?.query?.textSearch) {
-      textSearch.value = route?.query?.textSearch;
-      imageStore.setTextSearch(textSearch.value);
-    } else if (imageStore.textSearch) {
-      textSearch.value = imageStore.textSearch;
-    }
     token.value = getCookie("token");
   });
 });
 
 const config = useRuntimeConfig();
 const baseURL = `${config.public.baseURL}`;
-
-const isLoadingSearch = ref(false);
-
-function handleSearch() {
-  imageStore.setTextSearch(textSearch.value);
-  if (textSearch.value) {
-    navigateTo({ path: "/feeds", query: { textSearch: textSearch.value } });
-  } else {
-    navigateTo({ path: "/feeds" });
-  }
-}
 
 function logout() {
   document.cookie = "token=;";
@@ -281,31 +247,6 @@ async function handleUpdateProfile() {
       logout();
     }, 500);
   }
-}
-
-const isShowStatistics = ref(false);
-const isLoadingStatistics = ref(false);
-const userStatistics = ref(null);
-watch(
-  () => isShowStatistics.value,
-  (val) => {
-    if (val) {
-      handleGetStatistics();
-    }
-  }
-);
-async function handleGetStatistics() {
-  isLoadingStatistics.value = true;
-  const { data } = await useFetch(
-    `${baseURL}/user/${userStore.id}/statistics`,
-    {
-      method: "GET",
-    }
-  );
-  isLoadingStatistics.value = false;
-  if (!data.value) return;
-  const { result, code, msg } = data.value;
-  userStatistics.value = result;
 }
 </script>
 

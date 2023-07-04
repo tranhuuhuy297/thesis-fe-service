@@ -14,7 +14,6 @@
         hide-details
         prepend-inner-icon="mdi-magnify"
         placeholder="Search AI images"
-        :loading="isLoadingSearch"
         @keydown.enter="handleSearch"
       >
       </v-text-field>
@@ -42,21 +41,13 @@
 </template>
 
 <script setup>
-import { useImageStore } from "~/stores/Image";
-
-const imageStore = useImageStore();
-
 definePageMeta({
   layout: "empty",
 });
 
 const textSearch = ref("");
-
-const isLoadingSearch = ref(false);
-
 async function handleSearch() {
   if (textSearch.value) {
-    imageStore.textSearch = textSearch.value;
     navigateTo({ path: "/feeds", query: { textSearch: textSearch.value } });
   }
 }
