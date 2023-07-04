@@ -57,97 +57,60 @@
     <v-card>
       <v-card-text>
         <div class="text-h6 font-weight-bold">
-          <span class="text-info">Create prompt</span>
+          <span class="text-info">Upload prompt & image</span>
         </div>
-        <div>1st step - You have to create prompt</div>
-        <div class="d-flex mt-4">
-          <v-textarea
-            v-model.trim="prompt"
-            variant="outlined"
-            density="compact"
-            auto-grow
-            autofocus
-            bg-color="bg-1"
-            class="mx-2"
-            label="Prompt"
-          ></v-textarea>
-          <v-textarea
-            v-model.trim="negativePrompt"
-            variant="outlined"
-            density="compact"
-            label="Negative Prompt"
-            class="mx-2"
-            bg-color="bg-1"
-            auto-grow
-            autofocus
-          ></v-textarea>
-        </div>
-      </v-card-text>
-      <v-card-actions class="d-flex justify-end">
-        <v-btn
-          variant="text"
-          @click="
-            isShowDialog = false;
-            prompt = '';
-            negativePrompt = '';
-          "
-        >
-          Cancel
-        </v-btn>
-        <v-btn
-          variant="flat"
-          color="info"
-          @click="handleCreatePrompt"
-          :loading="isLoadingCreatePrompt"
-        >
-          Next
-        </v-btn>
-      </v-card-actions>
-    </v-card>
-  </v-dialog>
-  <v-dialog v-model.trim="isShowUpload" width="auto" persistent>
-    <v-card>
-      <v-card-text style="min-width: 50vw">
-        <div class="text-h6 font-weight-bold">
-          <span class="text-info">Upload image</span>
-        </div>
-        <div>Final step - Upload your image</div>
-        <div
-          class="w-100 mt-4 rounded-lg d-flex justify-center align-center pointer"
-          @click="handleSelectFile"
-        >
-          <div>
-            <v-btn
-              v-if="!fileImage"
-              prepend-icon="mdi-camera"
-              class="text-none"
-              text="Your image"
+        <div class="mt-4 d-flex">
+          <div class="w-50">
+            <v-textarea
+              v-model.trim="prompt"
               variant="outlined"
-            ></v-btn>
-            <v-img
-              :src="fileImage"
-              style="max-width: 50vw; max-height: 50vh"
-            ></v-img>
+              density="compact"
+              auto-grow
+              autofocus
+              bg-color="bg-1"
+              class="mr-4"
+              :rules="[rules.required]"
+              placeholder="Prompt"
+            ></v-textarea>
+            <v-textarea
+              v-model.trim="negativePrompt"
+              variant="outlined"
+              density="compact"
+              placeholder="Negative prompt"
+              class="mr-4 mt-1"
+              bg-color="bg-1"
+              auto-grow
+              autofocus
+            ></v-textarea>
+          </div>
+          <v-divider vertical></v-divider>
+          <div
+            class="rounded-lg d-flex justify-center align-center pointer flex-grow-1 mx-2"
+            @click="handleSelectFile"
+          >
+            <div>
+              <v-btn
+                v-if="!fileImage"
+                prepend-icon="mdi-camera"
+                class="text-none"
+                text="Your image"
+                variant="outlined"
+              ></v-btn>
+              <v-img
+                :src="fileImage"
+                style="max-width: 50vw; max-height: 50vh"
+              ></v-img>
+            </div>
           </div>
         </div>
       </v-card-text>
       <v-card-actions class="d-flex justify-end">
-        <v-btn
-          variant="text"
-          @click="
-            isShowUpload = false;
-            file = null;
-            fileImage = null;
-          "
-        >
-          Cancel
-        </v-btn>
-
+        <v-btn variant="text" @click="isShowDialog = false"> Cancel </v-btn>
         <v-btn
           variant="flat"
           color="info"
           @click="handlePreprocessing"
-          :loading="isLoadingCreateImage"
+          :loading="isLoadingCreate"
         >
           Upload
         </v-btn>
@@ -177,38 +140,25 @@ const file = ref("");
 
 // dialog
 const isShowDialog = ref(false);
-const isLoadingCreatePrompt = ref(false);
+
+watch(
+  () => isShowDialog.value,
+  (val) => {
+    if (!val) {
+      prompt.value = "";
+      negativePrompt.value = "";
+      file.value = null;
+      fileImage.value = null;
+    }
+  }
+);
 const prompt = ref("");
 const negativePrompt = ref();
-const promptCreated = ref(null);
-async function handleCreatePrompt() {
-  isLoadingCreatePrompt.value = true;
-  const { data } = await useFetch(`${baseURL}/prompt`, {
-    method: "POST",
-    body: {
-      user_id: userStore.id,
-      prompt: prompt.value,
-      negative_prompt: negativePrompt.value,
-    },
-    headers: {
-      Authorization: `Bearer ${getCookie("token")}`,
-    },
-  });
-  isLoadingCreatePrompt.value = false;
-  if (!data.value) return;
-  const { result, code, msg } = data.value;
-  if (code === CODE_SUCCESS) {
-    isShowUpload.value = true;
-    useNuxtApp().$toast.success("Create prompt successfully!");
-    promptCreated.value = result;
-  }
-}
 
-const isShowUpload = ref(false);
-const isLoadingCreateImage = ref(false);
+const isLoadingCreate = ref(false);
 
 function handlePreprocessing() {
-  isLoadingCreateImage.value = true;
+  isLoadingCreate.value = true;
 
   const formData = new FormData();
   let image = null;
@@ -219,7 +169,6 @@ function handlePreprocessing() {
       // formData.append("image", file.value[0]);
       formData.append("image", image);
       formData.append("user_id", userStore.id);
-      formData.append("prompt_id", promptCreated?.value.id);
       handleCreateImage(formData);
     },
     error(err) {
@@ -236,17 +185,12 @@ async function handleCreateImage(formData) {
       Authorization: `Bearer ${getCookie("token")}`,
     },
   });
-  isLoadingCreateImage.value = false;
+  isLoadingCreate.value = false;
   if (!data.value) return;
   const { result, code, msg } = data.value;
   if (code === CODE_SUCCESS) {
     useNuxtApp().$toast.success("Upload image successfully!");
-    isShowUpload.value = false;
-    file.value = null;
-    fileImage.value = null;
     isShowDialog.value = false;
-    prompt.value = "";
-    negativePrompt.value = "";
     page.value = 0;
     listImages.value = [];
     handleGetImage();
@@ -323,6 +267,7 @@ const imagesCol_3 = computed(() => {
     }
   });
 });
+
 onMounted(() => {
   nextTick(() => {
     handleGetImage();

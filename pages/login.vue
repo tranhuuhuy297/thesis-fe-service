@@ -22,7 +22,7 @@
       >
         <template #append-inner>
           <v-btn
-            :icon="showPassword ? 'mdi-eye-off-outline' : 'mdi-eye-outline'"
+            :icon="!showPassword ? 'mdi-eye-off-outline' : 'mdi-eye-outline'"
             variant="text"
             size="small"
             @click="showPassword = !showPassword"

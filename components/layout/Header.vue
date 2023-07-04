@@ -205,6 +205,7 @@ const config = useRuntimeConfig();
 const baseURL = `${config.public.baseURL}`;
 
 function logout() {
+  userStore.reset();
   document.cookie = "token=;";
   document.cookie = "expire=;";
   setTimeout(() => {

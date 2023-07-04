@@ -248,6 +248,10 @@ function handleCopySuggestion(prompt) {
 
 const isLoadingGenerate = ref(false);
 async function handleGenerate() {
+  if (!userStore.id) {
+    useNuxtApp().$toast.warning("You need to login!");
+    return;
+  }
   if (prompt.value.trim() === "") {
     useNuxtApp().$toast.warning("Empty prompt!");
     return;
@@ -268,10 +272,7 @@ async function handleGenerate() {
     },
   });
   isLoadingGenerate.value = false;
-  if (!data.value) {
-    useNuxtApp().$toast.warning("You need to login!");
-    return;
-  }
+  if (!data.value) return;
   const { result, code, msg } = data.value;
   if (code === CODE_SUCCESS) {
     useNuxtApp().$toast.success(
