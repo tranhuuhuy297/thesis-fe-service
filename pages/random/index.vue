@@ -14,7 +14,6 @@
         class="mb-4"
         bg-color="bg-1"
         label="Subjects you want to generate"
-        @keydown.prevent.enter="handleGenerate"
       >
         <template #append-inner>
           <v-btn
@@ -53,14 +52,27 @@
 import { useUserStore } from "~/stores/User";
 const userStore = useUserStore();
 
-const hintText = ref("");
+const hintText = ref("cat, dog, rain");
 
 const config = useRuntimeConfig();
 const baseURL = `${config.public.baseURL}`;
 
 const isLoadingGenerate = ref(false);
-const prompt_gen = ref([]);
+const prompt_gen = ref([
+  "A clowder of cats and a pack of dogs frolic together under a gentle rain, their fur glistening with droplets.",
+  "A pride of cats and a pack of dogs seek shelter from the pouring rain, forming a harmonious tableau of unity and companionship.",
+  "A colony of cats and a pack of dogs explore the wet streets, their paws leaving imprints on the rain-soaked pavement.",
+  "A mischief of cats and a pack of dogs playfully chase each other amidst the falling rain, creating a whimsical scene of joyful chaos.",
+  "A group of cats and a pack of dogs huddle together under an umbrella, seeking refuge from the relentless rain.",
+  "A litter of kittens and a pack of dogs curiously observe raindrops falling, their innocent gazes capturing the beauty of the moment.",
+  "A swarm of cats and a pack of dogs navigate through puddles, their synchronized movements reflecting a dance in the rain.",
+  "A band of cats and a pack of dogs find solace in a cozy corner, enjoying the rhythmic sound of raindrops against the windowpane.",
+  "A cluster of cats and a pack of dogs gather around a waterlogged tree, their inquisitive nature piqued by the rain's transformative touch.",
+  "A herd of cats and a pack of dogs traverse a meadow drenched in rain, creating a picturesque tableau of nature's resilience and harmony.",
+]);
+
 async function handleGenerate() {
+  useNuxtApp().$toast.info("This task might take about 30 seconds");
   prompt_gen.value = [];
   isLoadingGenerate.value = true;
   const { data } = await useFetch(`${baseURL}/generate`, {
