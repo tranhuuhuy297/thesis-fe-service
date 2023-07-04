@@ -2,38 +2,46 @@
   <div class="width-100">
     <div class="text-h4 font-weight-bold">Log In</div>
     <div class="mt-1">Let me help you create and share AI Art Prompts</div>
-    <v-text-field
-      v-model.trim="gmail"
-      class="mt-6"
-      variant="outlined"
-      label="Email"
-      prepend-inner-icon="mdi-email-outline"
-      placeholder="xxx@gmail.com"
-    ></v-text-field>
-    <v-text-field
-      v-model.trim="password"
-      variant="outlined"
-      type="password"
-      label="Password"
-      prepend-inner-icon="mdi-panda"
-      placeholder="Abc@123"
-    ></v-text-field>
-    <v-btn
-      block
-      class="font-weight-bold text-text-1 text-none"
-      size="x-large"
-      variant="flat"
-      color="primary"
-      text="Log In"
-      :loading="isLoadingLogin"
-      @click="handleLogin"
-    />
-    <!-- <div
-      class="mt-10 text-primary-3 font-weight-bold pointer"
-      @click="navigateTo({ path: '/forgot-password' })"
-    >
-      Forgot Password?
-    </div> -->
+    <v-form validate-on="input" v-model="valid" @submit.prevent="handleLogin">
+      <v-text-field
+        v-model.trim="gmail"
+        class="mt-6"
+        variant="outlined"
+        :rules="[rules.required, rules.email]"
+        label="Email"
+        prepend-inner-icon="mdi-email-outline"
+        placeholder="xxx@gmail.com"
+      ></v-text-field>
+      <v-text-field
+        class="mt-2"
+        v-model.trim="password"
+        variant="outlined"
+        :type="showPassword ? 'text' : 'password'"
+        label="Password"
+        prepend-inner-icon="mdi-panda"
+        placeholder="Abc@123"
+        :rules="[rules.required]"
+      >
+        <template #append-inner>
+          <v-btn
+            :icon="showPassword ? 'mdi-eye-off-outline' : 'mdi-eye-outline'"
+            variant="text"
+            size="small"
+            @click="showPassword = !showPassword"
+          ></v-btn>
+        </template>
+      </v-text-field>
+      <v-btn
+        block
+        class="mt-2 font-weight-bold text-text-1 text-none"
+        size="x-large"
+        variant="flat"
+        color="primary"
+        text="Log In"
+        type="submit"
+        :loading="isLoadingLogin"
+      />
+    </v-form>
     <div class="mt-4">
       Don't have an account?
       <span
@@ -53,16 +61,23 @@ import { useUserStore } from "~/stores/User";
 definePageMeta({
   layout: "authen",
 });
+
 const gmail = ref("");
 const password = ref("");
+
+const showPassword = ref(false);
+
 const config = useRuntimeConfig();
 const baseURL = `${config.public.baseURL}/user`;
 
 const userStore = useUserStore();
 
+const valid = ref(false);
+
 const isLoadingLogin = ref(false);
 
 async function handleLogin() {
+  if (!valid.value) return;
   isLoadingLogin.value = true;
   const { data } = await useFetch(`${baseURL}/login`, {
     method: "POST",
