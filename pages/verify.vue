@@ -6,18 +6,17 @@
       <v-text-field
         v-model.trim="verifyCode"
         variant="outlined"
-        prepend-inner-icon="mdi-key-outline"
+        prepend-inner-icon="mdi-numeric"
         placeholder="Verify code"
-        @keydown.prevent.enter="handleVerify"
       >
         <template #append-inner>
           <v-btn
-            size="small"
             text="Verify"
             class="text-none"
             variant="flat"
             color="info"
             :loading="isLoadingVerify"
+            @click="handleVerify"
           ></v-btn>
         </template>
       </v-text-field>

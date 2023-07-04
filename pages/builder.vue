@@ -279,7 +279,7 @@ async function handleGenerate() {
   const { result, code, msg } = data.value;
   if (code === CODE_SUCCESS) {
     useNuxtApp().$toast.success(
-      "Create prompt successfully, please wait to generate image!"
+      "Your image will appear in Upload. Please wait!"
     );
   }
 }

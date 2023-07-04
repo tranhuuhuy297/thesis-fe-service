@@ -190,17 +190,6 @@ const userStore = useUserStore();
 
 const token = ref("");
 
-const route = useRoute();
-
-watch(
-  () => route?.query?.textSearch,
-  (val) => {
-    if (val) textSearch.value = val;
-    else textSearch.value = "";
-    imageStore.textSearch = textSearch.value;
-  }
-);
-
 onMounted(() => {
   nextTick(() => {
     token.value = getCookie("token");

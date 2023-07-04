@@ -13,6 +13,18 @@
   </div>
   <div class="d-flex flex-wrap mt-2">
     <div
+      v-if="styleStore.listBuilderValue[styleName]?.length === 0"
+      class="d-flex justify-center w-100"
+    >
+      Upcoming feature
+    </div>
+    <div
+      class="d-flex justify-center"
+      v-if="styleStore.listBuilderValue[styleName]?.length === 0"
+    >
+      <img src="~/assets/image/logo.png" alt="prompt builder" class="w-50" />
+    </div>
+    <div
       v-for="(image, index) in styleStore.listBuilderValue[styleName]"
       :key="index"
       class="pa-2 pointer w-25 img"
