@@ -77,37 +77,53 @@
       </div>
     </div>
     <div class="bg-bg-2 rounded-lg pa-4" style="width: 70%; height: 100%">
-      <v-btn
-        :variant="parentType === 'Image_Link' ? 'elevated' : 'outlined'"
-        :color="parentType === 'Image_Link' ? 'primary-2' : ''"
-        text="Image Link"
-        class="mr-1"
-        prepend-icon="mdi-link-variant"
-        @click="parentType = 'Image_Link'"
-      ></v-btn>
-      <v-btn
-        :variant="parentType === 'Text' ? 'elevated' : 'outlined'"
-        :color="parentType === 'Text' ? 'primary-2' : ''"
-        text="Text"
-        class="mr-1"
-        prepend-icon="mdi-text"
-        @click="parentType = 'Text'"
-      ></v-btn>
-      <v-btn
-        :variant="parentType === 'Style' ? 'elevated' : 'outlined'"
-        :color="parentType === 'Style' ? 'primary-2' : ''"
-        text="Style"
-        class="mr-1"
-        prepend-icon="mdi-palette-outline"
-        @click="parentType = 'Style'"
-      ></v-btn>
-      <v-btn
-        :variant="parentType === 'Param' ? 'elevated' : 'outlined'"
-        :color="parentType === 'Param' ? 'primary-2' : ''"
-        text="Param"
-        prepend-icon="mdi-wrench-cog-outline"
-        @click="parentType = 'Param'"
-      ></v-btn>
+      <div class="d-flex justify-space-between align-center">
+        <div>
+          <v-btn
+            :variant="parentType === 'Image_Link' ? 'elevated' : 'outlined'"
+            :color="parentType === 'Image_Link' ? 'primary-2' : ''"
+            text="Image Link"
+            class="mr-1"
+            prepend-icon="mdi-link-variant"
+            @click="parentType = 'Image_Link'"
+          ></v-btn>
+          <v-btn
+            :variant="parentType === 'Text' ? 'elevated' : 'outlined'"
+            :color="parentType === 'Text' ? 'primary-2' : ''"
+            text="Text"
+            class="mr-1"
+            prepend-icon="mdi-text"
+            @click="parentType = 'Text'"
+          ></v-btn>
+          <v-btn
+            :variant="parentType === 'Style' ? 'elevated' : 'outlined'"
+            :color="parentType === 'Style' ? 'primary-2' : ''"
+            text="Style"
+            class="mr-1"
+            prepend-icon="mdi-palette-outline"
+            @click="parentType = 'Style'"
+          ></v-btn>
+          <v-btn
+            :variant="parentType === 'Param' ? 'elevated' : 'outlined'"
+            :color="parentType === 'Param' ? 'primary-2' : ''"
+            text="Param"
+            prepend-icon="mdi-wrench-cog-outline"
+            @click="parentType = 'Param'"
+          ></v-btn>
+        </div>
+        <div>
+          <v-btn
+            prepend-icon="mdi-reload"
+            size="small"
+            variant="flat"
+            color="primary"
+            text="Reset"
+            class="text-none"
+            @click="handleResetEachType"
+          >
+          </v-btn>
+        </div>
+      </div>
       <div class="mt-4">
         <div :class="{ none: parentType !== 'Image_Link' }">
           <BuilderImageLink
@@ -157,50 +173,84 @@ function handleCopy() {
   useNuxtApp().$toast.success("Copy to clipboard!");
 }
 
+const parentType = ref("Text");
 const builderImageLink = ref();
 const builderText = ref();
 const builderParam = ref();
-function handleReset() {
-  imageLinkPrompt.value = "";
-  textPrompt.value = "";
-  stylePrompt.value = "";
-  paramPrompt.value = "";
-  builderImageLink.value?.handleReset();
-  builderText.value?.handleReset();
-  builderParam.value?.handleReset();
-  useNuxtApp().$toast.warning("Reset created prompt!");
+
+function handleResetEachType() {
+  if (parentType.value === "Image_Link") {
+    handleResetImageLink();
+  } else if (parentType.value === "Text") {
+    handleResetText();
+  } else if (parentType.value === "Style") {
+    handleResetStyle();
+  } else if (parentType.value === "Param") {
+    handleResetParam();
+  }
 }
 
-const parentType = ref("Style");
+function handleResetImageLink() {
+  imageLinkPrompt.value = "";
+  builderImageLink.value?.handleReset();
+}
+
+function handleResetText() {
+  textPrompt.value = "";
+  builderText.value?.handleReset();
+}
+
+function handleResetStyle() {
+  stylePrompt.value = "";
+}
+
+function handleResetParam() {
+  paramPrompt.value = "";
+  builderParam.value?.handleReset();
+}
+
+function handleReset() {
+  handleResetImageLink();
+  handleResetText();
+  handleResetStyle();
+  handleResetParam();
+  useNuxtApp().$toast.warning("Reset created prompt!");
+}
 
 //image link
 function updateImageLink(listImageLink) {
   imageLinkPrompt.value = "";
+  const tempImageLink = [];
   for (const imageLink of listImageLink) {
-    imageLinkPrompt.value += `${imageLink}, `;
+    tempImageLink.push(`${imageLink}`);
   }
+  imageLinkPrompt.value = tempImageLink.join(", ");
 }
 
 //text
 function updateText(listText) {
   textPrompt.value = "";
+  const tempListText = [];
   for (const text of listText) {
-    if (text.negative) textPrompt.value += `--no ${text.value}, `;
+    if (text.negative) tempListText.push(`--no ${text.value}`);
     else {
       if (text.weight.toString() === "1" || !text.weight)
-        textPrompt.value += `${text.value}, `;
-      else textPrompt.value += `${text.value}::${text.weight}, `;
+        tempListText.push(`${text.value}`);
+      else tempListText.push(`${text.value}::${text.weight}`);
     }
   }
+  textPrompt.value = tempListText.join(", ");
 }
 
 //style
 function updateStyle(listStyle) {
   stylePrompt.value = "";
+  const tempListStyle = [];
   for (const style of listStyle) {
-    if (style.weight.toString() === "1") stylePrompt.value += `${style.name}, `;
-    else stylePrompt.value += `${style.name}::${style.weight}, `;
+    if (style.weight.toString() === "1") tempListStyle.push(`${style.name}`);
+    else tempListStyle.push(`${style.name}::${style.weight}`);
   }
+  stylePrompt.value = tempListStyle.join(", ");
 }
 
 //param
