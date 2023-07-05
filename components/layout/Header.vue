@@ -29,12 +29,12 @@
       >
         Resources
       </div> -->
-      <div
+      <!-- <div
         class="pointer mr-6 pointer--link"
         @click="navigateTo({ path: '/random' })"
       >
         Random
-      </div>
+      </div> -->
       <div
         class="pointer mr-6 pointer--link"
         @click="navigateTo({ path: '/upload' })"
