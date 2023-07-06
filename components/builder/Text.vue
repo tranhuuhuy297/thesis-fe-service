@@ -44,8 +44,7 @@
     >
     </v-btn>
     <v-btn
-      variant="flat"
-      color="success"
+      variant="text"
       text="GPT Support"
       class="text-none"
       :append-icon="isShowRandom ? 'mdi-menu-down' : 'mdi-menu-up'"
