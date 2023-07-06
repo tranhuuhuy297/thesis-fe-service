@@ -312,7 +312,6 @@ async function handleGenerate() {
     body: {
       user_id: userStore.id,
       prompt: prompt.value,
-      negative_prompt: "",
     },
     params: {
       user_id: userStore.id,

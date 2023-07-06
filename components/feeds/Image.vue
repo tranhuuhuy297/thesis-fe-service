@@ -33,59 +33,35 @@
             style="font-size: 14px"
             @click="navigateTo({ path: `/user/${prompt?.user_id}` })"
           >
-            {{ `@${prompt?.user_gmail}` }}
+            Click here to show more images of this user
           </span>
         </div>
-        <div class="mt-4 d-flex align-center">
+        <div class="mt-4 d-flex">
           <div>
             <v-textarea
               bg-color="bg-1"
               label="Prompt"
               :model-value="prompt?.prompt"
               variant="outlined"
-              class="mx-2 mb-4"
               hide-details
               auto-grow
               readonly
+              style="min-width: 20vw"
             >
-              <template #append-inner>
-                <v-btn
-                  prepend-icon="mdi-content-copy"
-                  color="success"
-                  text="Copy"
-                  class="text-none text-text-1"
-                  variant="flat"
-                  @click="handleCopyPrompt"
-                ></v-btn>
-              </template>
             </v-textarea>
-            <v-textarea
-              bg-color="bg-1"
-              label="Negative Prompt"
-              :model-value="prompt?.negative_prompt"
-              variant="outlined"
-              class="mx-2"
-              auto-grow
-              hide-details
-              :loading="isLoadingGetDetail"
-              readonly
-            >
-              <template #append-inner>
-                <v-btn
-                  prepend-icon="mdi-content-copy"
-                  color="success"
-                  text="Copy"
-                  class="text-none text-text-1"
-                  variant="flat"
-                  @click="handleCopyNegPrompt"
-                ></v-btn>
-              </template>
-            </v-textarea>
+            <v-btn
+              prepend-icon="mdi-content-copy"
+              color="success"
+              text="Copy"
+              class="text-none text-text-1 mt-4"
+              variant="flat"
+              @click="handleCopyPrompt"
+            ></v-btn>
           </div>
-          <v-divider vertical></v-divider>
           <v-img
+            class="ml-4"
             :src="`${prompt?.image_src}`"
-            style="max-width: 30vw; max-height: 50vh"
+            style="max-width: 20vw"
           ></v-img>
         </div>
       </v-card-text>
@@ -104,7 +80,7 @@
         <v-img
           class="mt-4"
           :src="`${prompt?.image_src}`"
-          style="max-width: 30vw; max-height: 50vh"
+          style="max-width: 20vw"
         ></v-img>
       </v-card-text>
       <v-card-actions class="d-flex justify-end">
@@ -163,11 +139,6 @@ const userStore = useUserStore();
 
 function handleCopyPrompt() {
   navigator.clipboard.writeText(props.prompt.prompt);
-  useNuxtApp().$toast.success("Copy to clipboard!");
-}
-
-function handleCopyNegPrompt() {
-  navigator.clipboard.writeText(props.prompt.negative_prompt);
   useNuxtApp().$toast.success("Copy to clipboard!");
 }
 

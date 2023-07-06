@@ -25,6 +25,10 @@
 </template>
 
 <script setup>
+import { useUserStore } from "~/stores/User";
+
+const userStore = useUserStore();
+
 definePageMeta({
   layout: "authen",
 });
@@ -52,7 +56,10 @@ async function handleVerify() {
   if (code === CODE_SUCCESS) {
     useNuxtApp().$toast.success("Verify successfully!");
     setTimeout(() => {
-      navigateTo({ path: "/login" });
+      userStore.setUser(result);
+      document.cookie = `token=${result["access_token"]}`;
+      document.cookie = `expire=${result["expire_time"]}`;
+      navigateTo({ path: "/upload" });
     }, 1000);
   } else {
     useNuxtApp().$toast.error("Wrong code!");
