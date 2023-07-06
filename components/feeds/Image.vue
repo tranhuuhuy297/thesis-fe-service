@@ -80,7 +80,7 @@
         <v-img
           class="mt-4"
           :src="`${prompt?.image_src}`"
-          style="max-width: 30vw; max-height: 50vh"
+          style="max-width: 20vw"
         ></v-img>
       </v-card-text>
       <v-card-actions class="d-flex justify-end">
