@@ -38,7 +38,7 @@
     </div>
   </div>
   <div v-if="isLoadingImage" class="d-flex justify-center">
-    <v-progress-circular indeterminate color="primary"></v-progress-circular>
+    <v-progress-circular indeterminate color="success"></v-progress-circular>
   </div>
 </template>
 

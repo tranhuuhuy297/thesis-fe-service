@@ -3,7 +3,7 @@
     <div class="d-flex align-center flex-grow-1">
       <div
         class="d-flex align-center rounded-lg bg-primary mr-4 pointer"
-        @click="navigateTo({ path: '/feeds' })"
+        @click="navigateTo({ path: '/' })"
       >
         <img
           src="~/assets/image/logo.png"
@@ -35,18 +35,19 @@
       >
         Random
       </div> -->
-      <div
+      <!-- <div
         class="pointer mr-6 pointer--link"
         @click="navigateTo({ path: '/upload' })"
       >
         Upload
-      </div>
+      </div> -->
       <div
-        class="pointer pointer--link"
+        class="pointer mr-6 pointer--link"
         @click="navigateTo({ path: '/feeds' })"
       >
         Feeds
       </div>
+      <div class="pointer pointer--link">Docs</div>
       <v-divider vertical class="mx-5 my-1"></v-divider>
       <v-btn
         v-if="!token"
@@ -157,7 +158,7 @@
         <div>Exploring your statistics</div>
         <div class="mt-4">
           <div v-if="isLoadingStatistics" class="d-flex justify-center">
-            <v-progress-circular indeterminate color="primary">
+            <v-progress-circular indeterminate color="success">
             </v-progress-circular>
           </div>
           <div v-else class="font-weight-bold">

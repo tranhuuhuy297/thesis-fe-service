@@ -12,7 +12,9 @@
         <div class="flex-grow-1 pointer" @click="handleCopy">
           <span class="font-italic text-text-2 mr-2">/imagine </span>
           <span style="word-wrap: break-word">{{ prompt }}</span>
-          <v-tooltip activator="parent" location="top">Copy</v-tooltip>
+          <v-tooltip v-if="prompt" activator="parent" location="top">
+            Copy
+          </v-tooltip>
         </div>
         <div class="d-flex justify-space-between mt-4">
           <v-btn
@@ -114,7 +116,6 @@
         <div>
           <v-btn
             prepend-icon="mdi-reload"
-            size="small"
             variant="flat"
             color="primary"
             text="Reset"
@@ -169,6 +170,7 @@ const prompt = computed(() => {
 });
 
 function handleCopy() {
+  if (!prompt.value) return;
   navigator.clipboard.writeText(prompt.value);
   useNuxtApp().$toast.success("Copy to clipboard!");
 }
@@ -232,12 +234,9 @@ function updateText(listText) {
   textPrompt.value = "";
   const tempListText = [];
   for (const text of listText) {
-    if (text.negative) tempListText.push(`--no ${text.value}`);
-    else {
-      if (text.weight.toString() === "1" || !text.weight)
-        tempListText.push(`${text.value}`);
-      else tempListText.push(`${text.value}::${text.weight}`);
-    }
+    if (text.weight.toString() === "1" || !text.weight)
+      tempListText.push(`${text.value}`);
+    else tempListText.push(`${text.value}::${text.weight}`);
   }
   textPrompt.value = tempListText.join(", ");
 }
@@ -275,6 +274,7 @@ const baseURL = `${config.public.baseURL}`;
 const semanticSearch = ref("");
 const isLoadingSearch = ref(false);
 const semanticSearchResult = ref([]);
+
 async function handleSearchSemantic() {
   if (semanticSearch.value === "") return;
   isLoadingSearch.value = true;
@@ -292,8 +292,8 @@ async function handleSearchSemantic() {
 }
 
 function handleCopySuggestion(prompt) {
-  navigator.clipboard.writeText(prompt);
-  useNuxtApp().$toast.success("Copy to clipboard!");
+  parentType.value = "Text";
+  builderText.value?.handleCopySuggestion(prompt);
 }
 
 const isLoadingGenerate = ref(false);
