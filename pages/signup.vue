@@ -116,7 +116,7 @@ async function handleSignUp() {
   if (!data.value) return;
   const { result, code, msg } = data.value;
   if (code === CODE_SUCCESS) {
-    useNuxtApp().$toast.success("Sign Up successfully!");
+    useNuxtApp().$toast.success("Sign up successfully!");
     setTimeout(() => {
       navigateTo({ path: "/login" });
     }, 1000);
