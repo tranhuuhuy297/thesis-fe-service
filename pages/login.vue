@@ -93,7 +93,7 @@ async function handleLogin() {
   const { result, code, msg } = data.value;
   if (code === CODE_NOT_ACTIVATE) {
     useNuxtApp().$toast.error(
-      "User is not activated. Please verify your email or contact with admin!"
+      "User is not activated \nPlease check your email!"
     );
     setTimeout(() => {
       navigateTo({ path: "verify", query: { email: gmail.value } });
