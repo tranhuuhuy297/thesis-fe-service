@@ -10,17 +10,11 @@
     label="Search AI Images"
     density="compact"
     hide-details
+    bg-color="bg-1"
     @keydown.prevent.enter="handleGetListSemanticImage"
+    clearable
+    @click:clear="handleReset"
   >
-    <template #append-inner>
-      <v-btn
-        icon="mdi-reload"
-        text
-        color="info"
-        size="x-small"
-        @click="handleReset"
-      ></v-btn>
-    </template>
   </v-text-field>
   <v-divider class="my-4"></v-divider>
   <div class="d-flex mt-8 text-h3">

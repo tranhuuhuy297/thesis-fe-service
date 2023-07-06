@@ -59,48 +59,34 @@
         <div class="text-h6 font-weight-bold">
           <span class="text-info">Upload prompt & image</span>
         </div>
-        <div class="mt-4 d-flex" style="min-width: 50vw">
-          <div class="w-50">
-            <v-textarea
-              v-model.trim="prompt"
-              variant="outlined"
-              density="compact"
-              auto-grow
-              autofocus
-              bg-color="bg-1"
-              class="mr-4"
-              placeholder="Prompt"
-            ></v-textarea>
-            <v-textarea
-              v-model.trim="negativePrompt"
-              variant="outlined"
-              density="compact"
-              placeholder="Negative prompt"
-              class="mr-4"
-              bg-color="bg-1"
-              auto-grow
-            ></v-textarea>
-          </div>
-          <v-divider vertical></v-divider>
-          <div
-            class="rounded-lg d-flex justify-center align-center pointer flex-grow-1 mx-2"
-            @click="handleSelectFile"
+        <div class="d-flex mt-4">
+          <v-textarea
+            v-model.trim="prompt"
+            variant="outlined"
+            density="compact"
+            hide-details
+            auto-grow
+            autofocus
+            bg-color="bg-1"
+            label="Prompt"
+            style="min-width: 20vw"
           >
-            <div>
-              <v-btn
-                v-if="!fileImage"
-                prepend-icon="mdi-camera"
-                class="text-none"
-                text="Your image"
-                variant="outlined"
-              ></v-btn>
-              <v-img
-                :src="fileImage"
-                style="max-width: 50vw; max-height: 50vh"
-              ></v-img>
-            </div>
-          </div>
+          </v-textarea>
+          <v-img
+            class="ml-4 pointer"
+            :src="fileImage"
+            @click="handleSelectFile"
+            style="max-width: 20vw"
+          ></v-img>
         </div>
+        <v-btn
+          v-if="!fileImage"
+          prepend-icon="mdi-camera"
+          class="text-none mt-4"
+          text="Your image"
+          variant="outlined"
+          @click="handleSelectFile"
+        ></v-btn>
       </v-card-text>
       <v-card-actions class="d-flex justify-end">
         <v-btn variant="text" @click="isShowDialog = false"> Cancel </v-btn>
@@ -144,15 +130,12 @@ watch(
   (val) => {
     if (!val) {
       prompt.value = "";
-      negativePrompt.value = "";
       file.value = null;
       fileImage.value = null;
     }
   }
 );
 const prompt = ref("");
-const negativePrompt = ref("");
-
 const isLoadingCreate = ref(false);
 
 function handlePreprocessing() {
@@ -168,7 +151,6 @@ function handlePreprocessing() {
       formData.append("image", image);
       formData.append("user_id", userStore.id);
       formData.append("prompt", prompt.value);
-      formData.append("negative_prompt", negativePrompt.value);
       handleCreateImage(formData);
     },
     error(err) {
