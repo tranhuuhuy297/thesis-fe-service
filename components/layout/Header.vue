@@ -47,7 +47,12 @@
       >
         Feeds
       </div>
-      <div class="pointer pointer--link">Docs</div>
+      <div
+        class="pointer pointer--link"
+        @click="navigateTo({ path: '/upload' })"
+      >
+        Upload
+      </div>
       <v-divider vertical class="mx-5 my-1"></v-divider>
       <v-btn
         v-if="!token"
@@ -80,11 +85,11 @@
                 icon: 'mdi-face-man-profile',
                 navigateTo: '/profile',
               },
-              {
-                name: 'Upload',
-                icon: 'mdi-camera',
-                navigateTo: '/upload',
-              },
+              // {
+              //   name: 'Upload',
+              //   icon: 'mdi-camera',
+              //   navigateTo: '/upload',
+              // },
               // {
               //   name: 'Statistic',
               //   icon: 'mdi-chart-line',

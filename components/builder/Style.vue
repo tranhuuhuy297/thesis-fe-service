@@ -18,16 +18,20 @@
   </div>
   <v-divider class="my-4"></v-divider>
   <div v-if="styleName">
-    <div class="d-flex justify-end">
+    <div class="d-flex align-center">
       <div class="w-50"></div>
       <v-select
         v-if="styleStore.listBuilderValue[styleName]"
         v-model="selectedBuilderType"
         variant="outlined"
         density="compact"
-        bg-color="bg-1"
+        hide-details
         :items="Object.keys(styleStore.listBuilderValue[styleName]).sort()"
       ></v-select>
+      <div v-else class="d-flex justify-center">
+        <v-progress-circular indeterminate color="success">
+        </v-progress-circular>
+      </div>
     </div>
     <div v-if="selectedBuilderType" class="d-flex flex-wrap">
       <div
@@ -90,19 +94,16 @@ const styleStore = useStyleStore();
 const config = useRuntimeConfig();
 const baseURL = `${config.public.baseURL}`;
 
-const styleName = ref("Themes");
+const styleName = ref("Artists");
 
 const listStyleName = ref([
-  { name: "Themes", icon: "mdi-theme-light-dark" },
+  { name: "Artists", icon: "mdi-brush-outline" },
+  { name: "Camera, Film And Lenses", icon: "mdi-camera-outline" },
+  { name: "Colors", icon: "mdi-palette-outline" },
   { name: "Design Styles", icon: "mdi-pencil-ruler" },
   { name: "Digital", icon: "mdi-television" },
-  { name: "Artists", icon: "mdi-brush-outline" },
-  { name: "Colors", icon: "mdi-palette-outline" },
   { name: "Lighting", icon: "mdi-lightbulb-outline" },
-  { name: "Materials", icon: "mdi-wall" },
-  { name: "Perspective", icon: "mdi-perspective-less" },
-  { name: "Geography and Culture", icon: "mdi-airplane" },
-  { name: "Camera, Film and Lenses", icon: "mdi-camera-outline" },
+  { name: "Themes", icon: "mdi-theme-light-dark" },
 ]);
 
 onMounted(() => {

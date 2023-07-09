@@ -93,8 +93,8 @@
         <v-btn
           variant="flat"
           color="info"
-          @click="handlePreprocessing"
           :loading="isLoadingCreate"
+          @click="handlePreprocessing"
         >
           Upload
         </v-btn>
@@ -139,6 +139,21 @@ const prompt = ref("");
 const isLoadingCreate = ref(false);
 
 function handlePreprocessing() {
+  if (!file.value) {
+    useNuxtApp().$toast.warning("Image is required!");
+    return;
+  }
+
+  if (!prompt.value) {
+    useNuxtApp().$toast.warning("Prompt is required!");
+    return;
+  }
+
+  if (!file.value[0].type.includes("image")) {
+    useNuxtApp().$toast.warning("Invalid image!");
+    return;
+  }
+
   isLoadingCreate.value = true;
 
   const formData = new FormData();
