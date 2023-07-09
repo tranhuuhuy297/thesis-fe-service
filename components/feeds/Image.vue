@@ -46,7 +46,7 @@
               hide-details
               auto-grow
               readonly
-              style="min-width: 20vw"
+              style="min-width: 30vw"
             >
             </v-textarea>
             <v-btn
@@ -61,7 +61,7 @@
           <v-img
             class="ml-4"
             :src="`${prompt?.image_src}`"
-            style="max-width: 20vw"
+            style="max-width: 30vw"
           ></v-img>
         </div>
       </v-card-text>
@@ -77,11 +77,13 @@
           <span class="text-error">Delete</span>
         </div>
         <div>Are you sure to delete this prompt?</div>
-        <v-img
-          class="mt-4"
-          :src="`${prompt?.image_src}`"
-          style="max-width: 20vw"
-        ></v-img>
+        <div class="d-flex align-center justify-center">
+          <v-img
+            class="mt-4"
+            :src="`${prompt?.image_src}`"
+            style="max-width: 30vw"
+          ></v-img>
+        </div>
       </v-card-text>
       <v-card-actions class="d-flex justify-end">
         <v-btn variant="text" @click="isShowDeleteDialog = false">Cancel</v-btn>
