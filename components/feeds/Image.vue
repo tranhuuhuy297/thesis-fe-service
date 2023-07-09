@@ -46,7 +46,7 @@
               hide-details
               auto-grow
               readonly
-              style="min-width: 20vw"
+              style="min-width: 30vw"
             >
             </v-textarea>
             <v-btn
@@ -61,7 +61,7 @@
           <v-img
             class="ml-4"
             :src="`${prompt?.image_src}`"
-            style="max-width: 20vw"
+            style="max-width: 30vw"
           ></v-img>
         </div>
       </v-card-text>

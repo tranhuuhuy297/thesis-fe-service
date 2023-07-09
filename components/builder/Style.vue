@@ -1,41 +1,50 @@
 <template>
-  <div class="d-flex justify-end">
-    <div style="width: 70%"></div>
-    <v-autocomplete
-      v-model.trim="styleName"
-      :items="styleStore.listNameStyle"
-      variant="outlined"
-      density="compact"
-      hide-details
-      bg-color="bg-1"
-      @update:modelValue="handleGetListBuilderValue(styleName)"
-    ></v-autocomplete>
+  <div class="d-flex flex-wrap">
+    <div
+      v-for="(style, index) in listStyleName"
+      :key="`style_${index}`"
+      class="pa-1"
+    >
+      <v-btn
+        :variant="styleName === style.name ? 'elevated' : 'outlined'"
+        :color="styleName === style.name ? 'info' : ''"
+        :text="style.name"
+        :prepend-icon="style.icon"
+        size="small"
+        class="text-none"
+        @click="styleName = style.name"
+      ></v-btn>
+    </div>
   </div>
-  <div class="d-flex flex-wrap mt-2">
-    <div
-      v-if="styleStore.listBuilderValue[styleName]?.length === 0"
-      class="d-flex justify-center w-100"
-    >
-      Upcoming feature
+  <v-divider class="my-4"></v-divider>
+  <div v-if="styleName">
+    <div class="d-flex justify-end">
+      <div class="w-50"></div>
+      <v-select
+        v-if="styleStore.listBuilderValue[styleName]"
+        v-model="selectedBuilderType"
+        variant="outlined"
+        density="compact"
+        bg-color="bg-1"
+        :items="Object.keys(styleStore.listBuilderValue[styleName]).sort()"
+      ></v-select>
     </div>
-    <div
-      class="d-flex justify-center"
-      v-if="styleStore.listBuilderValue[styleName]?.length === 0"
-    >
-      <img src="~/assets/image/logo.png" alt="prompt builder" class="w-50" />
-    </div>
-    <div
-      v-for="(image, index) in styleStore.listBuilderValue[styleName]"
-      :key="index"
-      class="pa-2 pointer w-25 img"
-      @click="
-        isShowWeight = true;
-        styleSelected = image;
-      "
-    >
-      <v-img :src="`${image.image_src}`" cover></v-img>
-      <div class="bg-bg-1 pa-1" style="border-radius: 0 0 5px 5px">
-        {{ image?.name }}
+    <div v-if="selectedBuilderType" class="d-flex flex-wrap">
+      <div
+        v-for="(image, index) in styleStore.listBuilderValue[styleName][
+          selectedBuilderType
+        ]"
+        :key="`builder_value_${index}`"
+        class="pa-2 pointer w-25 img"
+        @click="
+          isShowWeight = true;
+          styleSelected = image;
+        "
+      >
+        <v-img :src="`${image?.image_src}`" cover></v-img>
+        <div class="bg-bg-1 pa-1" style="border-radius: 0 0 5px 5px">
+          {{ image?.name }}
+        </div>
       </div>
     </div>
   </div>
@@ -81,30 +90,36 @@ const styleStore = useStyleStore();
 const config = useRuntimeConfig();
 const baseURL = `${config.public.baseURL}`;
 
-const styleName = ref("Artists");
+const styleName = ref("Themes");
+
+const listStyleName = ref([
+  { name: "Themes", icon: "mdi-theme-light-dark" },
+  { name: "Design Styles", icon: "mdi-pencil-ruler" },
+  { name: "Digital", icon: "mdi-television" },
+  { name: "Artists", icon: "mdi-brush-outline" },
+  { name: "Colors", icon: "mdi-palette-outline" },
+  { name: "Lighting", icon: "mdi-lightbulb-outline" },
+  { name: "Materials", icon: "mdi-wall" },
+  { name: "Perspective", icon: "mdi-perspective-less" },
+  { name: "Geography and Culture", icon: "mdi-airplane" },
+  { name: "Camera, Film and Lenses", icon: "mdi-camera-outline" },
+]);
 
 onMounted(() => {
   nextTick(() => {
-    handleGetListStyle();
     handleGetListBuilderValue(styleName.value);
   });
 });
 
-async function handleGetListStyle() {
-  const { data } = await useLazyFetch(`${baseURL}/builder_type`, {
-    method: "GET",
-    params: {
-      page: 0,
-      size: 100,
-      parent_type: "Style",
-    },
-  });
-  if (!data.value) return;
-  const { result, code, msg } = data.value;
-  if (code === CODE_SUCCESS) {
-    styleStore.setListStyle(result);
+watch(
+  () => styleName.value,
+  () => {
+    selectedBuilderType.value = "";
+    handleGetListBuilderValue(styleName.value);
   }
-}
+);
+
+const selectedBuilderType = ref("");
 
 async function handleGetListBuilderValue(builderType) {
   if (builderType in styleStore.listBuilderValue) return;

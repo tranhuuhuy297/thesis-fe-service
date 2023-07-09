@@ -20,10 +20,10 @@
           <v-btn
             color="primary"
             text="Reset"
-            @click="handleReset"
             class="text-none text-text-1"
             variant="flat"
             prepend-icon="mdi-reload"
+            @click="handleReset"
           ></v-btn>
           <div class="d-flex">
             <!-- <v-btn
@@ -57,6 +57,7 @@
           :loading="isLoadingSearch"
           clearable
           @keydown.prevent.enter="handleSearchSemantic"
+          @click:clear="semanticSearchResult = []"
         ></v-text-field>
         <div style="max-height: 45vh; overflow-y: scroll">
           <div class="d-flex justify-center">
@@ -67,13 +68,29 @@
             ></v-progress-circular>
           </div>
           <div
-            v-for="(prompt, index) in semanticSearchResult"
+            v-for="(image, index) in semanticSearchResult"
             :key="`semantic_${index}`"
-            style="border: 1px solid black; margin-bottom: 1px"
-            class="pa-1 prompt pointer"
-            @click="handleCopySuggestion(prompt)"
+            class="d-flex align-center"
           >
-            {{ prompt }}
+            <!-- <v-btn
+              size="x-small"
+              icon="mdi-eye"
+              variant="text"
+              @click="
+                isShowImageSuggestion = true;
+                selectedSuggestion = image;
+              "
+            ></v-btn> -->
+            <div
+              class="pa-1 prompt pointer ml-1 flex-grow-1"
+              style="border: 1px solid black; margin-bottom: 1px"
+              @click="
+                isShowImageSuggestion = true;
+                selectedSuggestion = image;
+              "
+            >
+              {{ image["prompt"] }}
+            </div>
           </div>
         </div>
       </div>
@@ -125,7 +142,8 @@
           </v-btn>
         </div>
       </div>
-      <div class="mt-4">
+      <v-divider class="my-4"></v-divider>
+      <div>
         <div :class="{ none: parentType !== 'Image_Link' }">
           <BuilderImageLink
             ref="builderImageLink"
@@ -153,6 +171,60 @@
       </div>
     </div>
   </div>
+  <v-dialog v-model.trim="isShowImageSuggestion" width="auto" persistent>
+    <v-card>
+      <v-card-text>
+        <div class="text-h6 font-weight-bold d-flex al">
+          <span class="text-info">Prompt Detail</span>
+          <span class="mx-2">-</span>
+          <span
+            class="font-italic font-weight-medium pointer--link pointer"
+            style="font-size: 14px"
+            @click="
+              navigateTo({ path: `/user/${selectedSuggestion?.user_id}` })
+            "
+          >
+            Click here to show more images of this user
+          </span>
+        </div>
+        <div class="mt-4 d-flex">
+          <div>
+            <v-textarea
+              bg-color="bg-1"
+              label="Prompt"
+              :model-value="selectedSuggestion?.prompt"
+              variant="outlined"
+              hide-details
+              auto-grow
+              readonly
+              style="min-width: 30vw"
+            >
+            </v-textarea>
+            <v-btn
+              @click="
+                handleCopySuggestion(selectedSuggestion?.prompt);
+                isShowImageSuggestion = false;
+              "
+              class="mt-2 text-none"
+              variant="flat"
+              color="info"
+              text="Add"
+            ></v-btn>
+          </div>
+          <v-img
+            class="ml-4"
+            :src="`${selectedSuggestion?.image_src}`"
+            style="max-width: 30vw"
+          ></v-img>
+        </div>
+      </v-card-text>
+      <v-card-actions class="d-flex justify-end">
+        <v-btn variant="text" @click="isShowImageSuggestion = false"
+          >Close</v-btn
+        >
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script setup>
@@ -279,16 +351,16 @@ async function handleSearchSemantic() {
   if (semanticSearch.value === "") return;
   isLoadingSearch.value = true;
   semanticSearchResult.value = [];
-  const { data } = await useFetch(`${baseURL}/prompt/search/semantic-search`, {
+  const { data } = await useFetch(`${baseURL}/image/search/semantic-search`, {
     method: "GET",
-    params: {
+    query: {
       query: semanticSearch.value,
     },
   });
   isLoadingSearch.value = false;
   if (!data.value) return;
   const { result, code, msg } = data.value;
-  semanticSearchResult.value = result.map((item) => item["metadata"]["prompt"]);
+  semanticSearchResult.value = result;
 }
 
 function handleCopySuggestion(prompt) {
@@ -332,6 +404,9 @@ async function handleGenerate() {
     );
   }
 }
+
+const isShowImageSuggestion = ref(false);
+const selectedSuggestion = ref(null);
 </script>
 
 <style scoped>

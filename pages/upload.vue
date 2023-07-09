@@ -69,14 +69,14 @@
             autofocus
             bg-color="bg-1"
             label="Prompt"
-            style="min-width: 20vw"
+            style="min-width: 30vw"
           >
           </v-textarea>
           <v-img
             class="ml-4 pointer"
             :src="fileImage"
             @click="handleSelectFile"
-            style="max-width: 20vw"
+            style="max-width: 30vw"
           ></v-img>
         </div>
         <v-btn

@@ -47,11 +47,12 @@
       variant="text"
       text="GPT Support"
       class="text-none"
-      :append-icon="isShowRandom ? 'mdi-menu-down' : 'mdi-menu-up'"
+      :append-icon="isShowRandom ? 'mdi-menu-up' : 'mdi-menu-down'"
       @click="isShowRandom = !isShowRandom"
     ></v-btn>
   </div>
-  <div v-if="isShowRandom" class="mt-8 mx-2">
+  <div v-if="isShowRandom">
+    <v-divider class="my-4"></v-divider>
     <v-text-field
       v-model="hintText"
       variant="outlined"
