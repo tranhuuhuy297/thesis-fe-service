@@ -53,7 +53,7 @@
           variant="outlined"
           density="compact"
           label="Suggestions"
-          bg-color="bg-1"
+          bg-color="white"
           :loading="isLoadingSearch"
           clearable
           @keydown.prevent.enter="handleSearchSemantic"
