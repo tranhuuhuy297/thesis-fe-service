@@ -1,54 +1,32 @@
 <template>
-  <div class="d-flex flex-wrap">
-    <div
-      v-for="(style, index) in listStyleName"
-      :key="`style_${index}`"
-      class="pa-1"
+  <div
+    class="d-flex"
+    v-for="(builderType, index) in styleStore.listBuilderType"
+    :key="index"
+  >
+    <v-btn
+      :text="builderType.name"
+      :variant="
+        selectedBuilderType?.name === builderType.name ? 'elevated' : 'outlined'
+      "
+      :color="selectedBuilderType?.name === builderType.name ? 'info' : ''"
+      @click="selectedBuilderType = builderType"
     >
-      <v-btn
-        :variant="styleName === style.name ? 'elevated' : 'outlined'"
-        :color="styleName === style.name ? 'info' : ''"
-        :text="style.name"
-        :prepend-icon="style.icon"
-        size="small"
-        class="text-none"
-        @click="styleName = style.name"
-      ></v-btn>
-    </div>
+    </v-btn>
   </div>
-  <v-divider class="my-4"></v-divider>
-  <div v-if="styleName">
-    <div class="d-flex align-center">
-      <div class="w-50"></div>
-      <v-select
-        v-if="styleStore.listBuilderValue[styleName]"
-        v-model="selectedBuilderType"
-        variant="outlined"
-        density="compact"
-        hide-details
-        :items="Object.keys(styleStore.listBuilderValue[styleName]).sort()"
-      ></v-select>
-      <div v-else class="d-flex justify-center">
-        <v-progress-circular indeterminate color="success">
-        </v-progress-circular>
-      </div>
-    </div>
-    <div v-if="selectedBuilderType" class="d-flex flex-wrap">
-      <div
-        v-for="(image, index) in styleStore.listBuilderValue[styleName][
-          selectedBuilderType
-        ]"
-        :key="`builder_value_${index}`"
-        class="pa-2 pointer w-25 img"
-        @click="
-          isShowWeight = true;
-          styleSelected = image;
-        "
-      >
-        <v-img :src="`${image?.image_src}`" cover></v-img>
-        <div class="bg-bg-1 pa-1" style="border-radius: 0 0 5px 5px">
-          {{ image?.name }}
-        </div>
+  <div v-if="selectedBuilderType" class="d-flex flex-wrap mt-4">
+    <div
+      v-for="(image, index) in styleStore.listBuilderValue[selectedBuilderType]"
+      :key="`builder_value_${index}`"
+      class="pointer w-25 img"
+      @click="
+        isShowWeight = true;
+        selectedValue = image;
+      "
+    >
+      <v-img :src="`${image?.image_src}`" cover></v-img>
+      <div class="bg-bg-1 pa-1" style="border-radius: 0 0 5px 5px">
+        {{ image?.name }}
       </div>
     </div>
   </div>
@@ -59,7 +37,7 @@
           <span class="text-info">Weight</span>
         </div>
         <div class="d-flex align-center">
-          <div>{{ styleSelected?.name }}</div>
+          <div>{{ selectedValue?.name }}</div>
           <span class="font-weight-bold mx-2">::</span>
           <v-text-field
             v-model.trim="styleWeight"
@@ -71,7 +49,7 @@
         </div>
         <div class="d-flex align-center mt-4">
           <v-img
-            :src="`${styleSelected?.image_src}`"
+            :src="`${selectedValue?.image_src}`"
             width="350"
             height="350"
           ></v-img>
@@ -89,64 +67,73 @@
 
 <script setup>
 import { useStyleStore } from "~/stores/Style";
-const styleStore = useStyleStore();
 
 const config = useRuntimeConfig();
 const baseURL = `${config.public.baseURL}`;
 
-const styleName = ref("Artists");
+const styleStore = useStyleStore();
 
-const listStyleName = ref([
-  { name: "Artists", icon: "mdi-brush-outline" },
-  { name: "Camera, Film And Lenses", icon: "mdi-camera-outline" },
-  { name: "Colors", icon: "mdi-palette-outline" },
-  { name: "Design Styles", icon: "mdi-pencil-ruler" },
-  { name: "Digital", icon: "mdi-television" },
-  { name: "Lighting", icon: "mdi-lightbulb-outline" },
-  { name: "Themes", icon: "mdi-theme-light-dark" },
-]);
+const selectedBuilderType = ref(null);
 
-onMounted(() => {
-  nextTick(() => {
-    handleGetListBuilderValue(styleName.value);
-  });
-});
-
-watch(
-  () => styleName.value,
-  () => {
-    selectedBuilderType.value = "";
-    handleGetListBuilderValue(styleName.value);
+const isLoadingGetListBuilderType = ref(false);
+async function handleGetListBuilderType() {
+  if (styleStore.listBuilderType.length > 0) {
+    return;
   }
-);
-
-const selectedBuilderType = ref("");
-
-async function handleGetListBuilderValue(builderType) {
-  if (builderType in styleStore.listBuilderValue) return;
-  const { data } = await useLazyFetch(`${baseURL}/builder_value`, {
+  isLoadingGetListBuilderType.value = true;
+  const { data } = await useFetch(`${baseURL}/builder_type`, {
     method: "GET",
     params: {
       page: 0,
-      size: 1000,
-      builder_type: builderType,
+      size: 100,
     },
   });
+  isLoadingGetListBuilderType.value = false;
   if (!data.value) return;
-  const { result, code, msg } = data.value;
+  const { result, count, code, msg } = data.value;
   if (code === CODE_SUCCESS) {
-    styleStore.setListBuilderValue(builderType, result);
+    styleStore.setListBuilderType(result);
   }
 }
 
-const listStyle = ref([]);
-const styleSelected = ref("");
-const styleWeight = ref(1);
+watch(
+  () => selectedBuilderType.value,
+  () => {
+    handleGetListBuilderValue();
+  }
+);
+
+async function handleGetListBuilderValue() {
+  const { data } = await useFetch(`${baseURL}/builder_value`, {
+    method: "GET",
+    params: {
+      page: 0,
+      size: 100,
+      builder_type_id: selectedBuilderType.value?.id,
+    },
+  });
+  if (!data.value) return;
+  const { result, count, code, msg } = data.value;
+  if (code === CODE_SUCCESS) {
+    styleStore.setListBuilderValue(selectedBuilderType.value, result);
+  }
+}
+
+onMounted(() => {
+  nextTick(() => {
+    handleGetListBuilderType();
+  });
+});
+
 const isShowWeight = ref(false);
+const selectedValue = ref(null);
+
+const listStyle = ref([]);
+const styleWeight = ref(1);
 
 function handleAddWeight() {
   listStyle.value.push({
-    name: styleSelected.value?.name,
+    name: selectedValue.value?.name,
     weight: styleWeight.value,
   });
   isShowWeight.value = false;

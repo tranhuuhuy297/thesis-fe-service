@@ -29,7 +29,7 @@
       hide-details
       variant="outlined"
       density="compact"
-      bg-color="bg-1"
+      bg-color="white"
       placeholder="weight"
     ></v-text-field>
   </div>
@@ -58,7 +58,7 @@
       variant="outlined"
       density="compact"
       hide-details
-      bg-color="bg-1"
+      bg-color="white"
       label="Subjects you want to generate"
       placeholder="cat, dog"
       class="mb-2"
