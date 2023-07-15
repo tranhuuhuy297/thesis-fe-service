@@ -23,7 +23,7 @@
       @click.stop="handleDownload"
     ></v-btn>
   </div>
-  <v-dialog v-model.trim="isShowDialog" width="100vw" persistent>
+  <v-dialog v-model.trim="isShowDialog" width="auto" persistent>
     <v-card>
       <v-card-text class="mb-2">
         <div class="text-h6 font-weight-bold d-flex">
@@ -47,7 +47,7 @@
           ></v-btn>
         </div>
         <div class="mt-4 d-flex w-100">
-          <div style="width: 50%" class="mr-8 d-flex flex-column">
+          <div class="mr-8 d-flex flex-column">
             <div class="mb-4 bg-bg-2 rounded pa-2">
               {{ prompt?.prompt }}
             </div>
@@ -102,7 +102,7 @@
           </div>
           <div
             class="bg-bg-1 rounded d-flex justify-center align-center"
-            style="height: 80vh; width: auto; min-width: 30%"
+            style="height: 80vh; width: auto; min-width: 40%"
           >
             <v-img
               :src="`${prompt?.image_src}`"

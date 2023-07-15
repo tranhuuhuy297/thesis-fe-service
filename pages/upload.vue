@@ -55,51 +55,60 @@
   </div>
   <v-dialog v-model.trim="isShowDialog" width="auto" persistent>
     <v-card>
-      <v-card-text>
-        <div class="text-h6 font-weight-bold">
-          <span class="text-info">Upload prompt & image</span>
+      <v-card-text class="mb-2">
+        <div class="d-flex align-center text-h6 font-weight-bold">
+          <span class="text-info flex-grow-1">Upload prompt & image</span>
+          <v-btn
+            icon="mdi-close"
+            variant="text"
+            size="small"
+            color="info"
+            @click="isShowDialog = false"
+          ></v-btn>
         </div>
-        <div class="d-flex mt-4">
-          <v-textarea
-            v-model.trim="prompt"
-            variant="outlined"
-            density="compact"
-            hide-details
-            auto-grow
-            autofocus
-            rows="3"
-            bg-color="bg-1"
-            label="Prompt"
-            style="min-width: 30vw"
-          >
-          </v-textarea>
-          <v-img
-            class="ml-4 pointer"
-            :src="fileImage"
-            @click="handleSelectFile"
-            style="max-width: 30vw"
-          ></v-img>
+        <div class="d-flex mt-4 w-100">
+          <div class="mr-8" style="min-width: 20vw">
+            <v-textarea
+              v-model.trim="prompt"
+              variant="outlined"
+              density="compact"
+              hide-details
+              auto-grow
+              autofocus
+              bg-color="bg-1"
+              label="Prompt"
+            >
+            </v-textarea>
+            <div class="mt-2">
+              <v-btn
+                variant="flat"
+                color="info"
+                :loading="isLoadingCreate"
+                @click="handlePreprocessing"
+              >
+                Upload
+              </v-btn>
+            </div>
+          </div>
+          <div class="d-flex justify-center align-center bg-bg-1 rounded pa-2">
+            <v-btn
+              v-if="!file"
+              prepend-icon="mdi-camera"
+              class="text-none"
+              text="Your image"
+              variant="outlined"
+              @click="handleSelectFile"
+            ></v-btn>
+            <v-img
+              v-else
+              class="pointer"
+              :src="fileImage"
+              style="height: 80vh; width: auto; min-width: 30vw"
+              @click="handleSelectFile"
+            ></v-img>
+          </div>
         </div>
-        <v-btn
-          v-if="!fileImage"
-          prepend-icon="mdi-camera"
-          class="text-none mt-4"
-          text="Your image"
-          variant="outlined"
-          @click="handleSelectFile"
-        ></v-btn>
       </v-card-text>
-      <v-card-actions class="d-flex justify-end">
-        <v-btn variant="text" @click="isShowDialog = false"> Cancel </v-btn>
-        <v-btn
-          variant="flat"
-          color="info"
-          :loading="isLoadingCreate"
-          @click="handlePreprocessing"
-        >
-          Upload
-        </v-btn>
-      </v-card-actions>
     </v-card>
   </v-dialog>
   <v-file-input
