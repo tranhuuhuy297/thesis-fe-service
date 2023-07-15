@@ -21,7 +21,7 @@
     >
       <v-img
         :src="imageLink"
-        lazy-src="nothing"
+        :lazy-src="imageLink"
         min-height="100px"
         alt="image"
         class="img"

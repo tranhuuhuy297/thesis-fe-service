@@ -214,6 +214,7 @@
           <v-img
             class="ml-4"
             :src="`${selectedSuggestion?.image_src}`"
+            :lazy-src="`${selectedSuggestion?.image_src}`"
             style="max-width: 30vw"
           ></v-img>
         </div>

@@ -67,6 +67,7 @@
             hide-details
             auto-grow
             autofocus
+            rows="3"
             bg-color="bg-1"
             label="Prompt"
             style="min-width: 30vw"
