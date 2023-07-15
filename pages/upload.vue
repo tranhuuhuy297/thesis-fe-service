@@ -67,7 +67,7 @@
           ></v-btn>
         </div>
         <div class="d-flex mt-4 w-100">
-          <div class="mr-8" style="min-width: 20vw">
+          <div class="mr-8" style="min-width: 30vw">
             <v-textarea
               v-model.trim="prompt"
               variant="outlined"

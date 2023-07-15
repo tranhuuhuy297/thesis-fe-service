@@ -47,7 +47,7 @@
           ></v-btn>
         </div>
         <div class="mt-4 d-flex w-100">
-          <div class="mr-8 d-flex flex-column">
+          <div class="mr-8 d-flex flex-column" style="min-width: 30vw">
             <div class="mb-4 bg-bg-2 rounded pa-2">
               {{ prompt?.prompt }}
             </div>
