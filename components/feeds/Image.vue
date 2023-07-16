@@ -93,18 +93,16 @@
           <v-img
             class="mt-4"
             :src="`${prompt?.image_src}`"
-            style="max-width: 30vw"
+            width="350"
+            height="350"
           ></v-img>
         </div>
       </v-card-text>
       <v-card-actions class="d-flex justify-end">
-        <v-btn variant="text" @click="isShowDeleteDialog = false" size="large"
-          >Cancel</v-btn
-        >
+        <v-btn variant="text" @click="isShowDeleteDialog = false">Cancel</v-btn>
         <v-btn
           variant="flat"
           color="error"
-          size="large"
           :loading="isLoadingDelete"
           @click="handleDeletePrompt"
         >
