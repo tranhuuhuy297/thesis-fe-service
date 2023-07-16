@@ -15,7 +15,7 @@ export const light: ThemeDefinition = {
     "text-1": "#333333",
     "text-2": "#5c5c5c",
     // secondary: "",
-    error: "#E62929",
+    error: "#FF6666",
     info: "#3081E2",
     success: "#34c77b",
     // warning: "",

@@ -6,7 +6,7 @@
   <v-btn
     text="Select file"
     color="info"
-    size="large"
+    size="x-large"
     variant="flat"
     class="rounded-lg text-none mt-8"
     @click="isShowDialog = true"
@@ -53,21 +53,32 @@
   <div v-if="isLoadingImage" class="d-flex justify-center">
     <v-progress-circular indeterminate color="success"></v-progress-circular>
   </div>
-  <v-dialog v-model.trim="isShowDialog" width="auto" persistent>
+  <v-dialog v-model.trim="isShowDialog" width="auto">
     <v-card>
       <v-card-text class="mb-2">
-        <div class="d-flex align-center text-h6 font-weight-bold">
-          <span class="text-info flex-grow-1">Upload prompt & image</span>
-          <v-btn
-            icon="mdi-close"
-            variant="text"
-            size="small"
-            color="info"
-            @click="isShowDialog = false"
-          ></v-btn>
-        </div>
         <div class="d-flex mt-4 w-100">
-          <div class="mr-8" style="min-width: 30vw">
+          <div
+            class="d-flex rounded justify-center align-center bg-bg-1 rounded pa-2"
+          >
+            <v-btn
+              v-if="!file"
+              prepend-icon="mdi-camera"
+              class="text-none"
+              text="Your image"
+              size="large"
+              variant="outlined"
+              @click="handleSelectFile"
+            ></v-btn>
+            <v-img
+              v-else
+              class="pointer"
+              :src="fileImage"
+              style="height: 75vh; width: auto"
+              @click="handleSelectFile"
+            ></v-img>
+          </div>
+          <v-divider vertical class="mx-4"></v-divider>
+          <div style="min-width: 30vw">
             <v-textarea
               v-model.trim="prompt"
               variant="outlined"
@@ -79,33 +90,16 @@
               label="Prompt"
             >
             </v-textarea>
-            <div class="mt-2">
-              <v-btn
-                variant="flat"
-                color="info"
-                :loading="isLoadingCreate"
-                @click="handlePreprocessing"
-              >
-                Upload
-              </v-btn>
-            </div>
-          </div>
-          <div class="d-flex justify-center align-center bg-bg-1 rounded pa-2">
             <v-btn
-              v-if="!file"
-              prepend-icon="mdi-camera"
-              class="text-none"
-              text="Your image"
-              variant="outlined"
-              @click="handleSelectFile"
-            ></v-btn>
-            <v-img
-              v-else
-              class="pointer"
-              :src="fileImage"
-              style="height: 80vh; width: auto; min-width: 30vw"
-              @click="handleSelectFile"
-            ></v-img>
+              variant="flat"
+              color="info"
+              class="mt-2"
+              size="large"
+              :loading="isLoadingCreate"
+              @click="handlePreprocessing"
+            >
+              Upload
+            </v-btn>
           </div>
         </div>
       </v-card-text>
