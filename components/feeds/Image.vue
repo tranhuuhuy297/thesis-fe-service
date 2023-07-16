@@ -36,7 +36,7 @@
           </div>
           <v-divider vertical class="mx-4"></v-divider>
 
-          <div class="d-flex flex-column" style="min-width: 40vw">
+          <div class="d-flex flex-column" style="max-width: 40vw">
             <span
               class="pointer--link pointer mb-2 text-success font-weight-bold"
               @click="navigateTo({ path: `/user/${prompt?.user_id}` })"
