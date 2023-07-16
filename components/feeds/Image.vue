@@ -23,39 +23,36 @@
       @click.stop="handleDownload"
     ></v-btn>
   </div>
-  <v-dialog v-model.trim="isShowDialog" width="auto" persistent>
+  <v-dialog v-model.trim="isShowDialog" width="auto">
     <v-card>
       <v-card-text class="mb-2">
-        <div class="text-h6 font-weight-bold d-flex">
-          <div class="flex-grow-1 d-flex align-center">
-            <span class="text-info">Prompt Detail</span>
-            <span class="mx-2">-</span>
+        <div class="mt-4 d-flex w-100">
+          <div class="bg-bg-1 rounded d-flex justify-center align-center pa-2">
+            <v-img
+              :src="`${prompt?.image_src}`"
+              style="height: 75vh; width: auto"
+              :lazy-src="`${prompt?.image_src}`"
+            ></v-img>
+          </div>
+          <v-divider vertical class="mx-4"></v-divider>
+
+          <div
+            class="d-flex flex-column"
+            style="max-width: 40vw; min-width: 30vw"
+          >
             <span
-              class="font-italic font-weight-medium pointer--link pointer"
-              style="font-size: 14px"
+              class="pointer--link pointer mb-2 text-success font-weight-bold"
               @click="navigateTo({ path: `/user/${prompt?.user_id}` })"
             >
               @{{ username }}
             </span>
-          </div>
-          <v-btn
-            icon="mdi-close"
-            variant="text"
-            size="small"
-            color="info"
-            @click="isShowDialog = false"
-          ></v-btn>
-        </div>
-        <div class="mt-4 d-flex w-100">
-          <div class="mr-8 d-flex flex-column" style="min-width: 30vw">
-            <div class="mb-4 bg-bg-2 rounded pa-2">
+            <div class="mb-4 bg-bg-1 rounded pa-2">
               {{ prompt?.prompt }}
             </div>
             <div class="d-flex align-center justify-space-between">
-              <div class="d-flex align-center mr-2">
+              <div class="d-flex align-end mr-2">
                 <v-icon
                   icon="mdi-heart"
-                  size="small"
                   color="primary-2"
                   class="mr-1"
                 ></v-icon>
@@ -67,47 +64,22 @@
               <v-btn
                 :prepend-icon="isUpvote ? 'mdi-heart' : 'mdi-heart-outline'"
                 text="Upvote"
-                size="small"
                 class="text-none text-text-1"
                 :color="isUpvote ? 'primary-2' : ''"
                 :variant="isUpvote ? 'flat' : 'text'"
+                size="large"
                 @click="handleUpvote"
               ></v-btn>
               <v-btn
                 prepend-icon="mdi-content-copy"
-                size="small"
                 color="success"
                 text="Copy"
                 class="text-none text-text-1"
                 variant="flat"
+                size="large"
                 @click="handleCopyPrompt"
               ></v-btn>
             </div>
-            <v-divider class="my-2"></v-divider>
-            <div>
-              <div
-                v-for="(comment, index) in listComment"
-                :key="`${index}_comment`"
-                class="bg-bg-1 pa-2 rounded-lg mb-2"
-              >
-                <div
-                  class="font-italic text-info pointer"
-                  style="font-size: 10px"
-                >
-                  @{{ comment.username }}
-                </div>
-                <div>{{ comment.text }}</div>
-              </div>
-            </div>
-          </div>
-          <div
-            class="bg-bg-1 rounded d-flex justify-center align-center"
-            style="height: 80vh; width: auto; min-width: 40%"
-          >
-            <v-img
-              :src="`${prompt?.image_src}`"
-              :lazy-src="`${prompt?.image_src}`"
-            ></v-img>
           </div>
         </div>
       </v-card-text>
@@ -124,7 +96,8 @@
           <v-img
             class="mt-4"
             :src="`${prompt?.image_src}`"
-            style="max-width: 30vw"
+            width="350"
+            height="350"
           ></v-img>
         </div>
       </v-card-text>
@@ -163,7 +136,10 @@ const isLoadingDelete = ref(false);
 watch(
   () => isShowDialog.value,
   (val) => {
-    if (val) handleGetUser();
+    if (val) {
+      handleGetUser();
+      handleGetListUpvote();
+    }
   }
 );
 
@@ -214,10 +190,65 @@ function handleDownload() {
 
 const numberUpvote = ref(0);
 const isUpvote = ref(false);
+const upvoteId = ref("");
+
+async function handleGetListUpvote() {
+  const { data } = await useFetch(`${baseURL}/upvote`, {
+    method: "GET",
+    query: {
+      image_id: props.prompt.id,
+    },
+  });
+  if (!data.value) return;
+  const { result, count, code, msg } = data.value;
+  if (code === CODE_SUCCESS) {
+    numberUpvote.value = count;
+    const listUpvoteUserId = result.map((item) => item.user_sender_id);
+
+    if (listUpvoteUserId.includes(userStore.id)) {
+      isUpvote.value = true;
+      upvoteId.value = result.filter(
+        (item) => item.user_sender_id === userStore.id
+      )[0].id;
+    }
+  }
+}
+
 async function handleUpvote() {
   isUpvote.value = !isUpvote.value;
-  if (isUpvote.value) numberUpvote.value += 1;
-  else numberUpvote.value -= 1;
+
+  if (isUpvote.value) {
+    const { data } = await useFetch(`${baseURL}/upvote`, {
+      method: "POST",
+      body: {
+        user_sender_id: userStore.id,
+        user_receiver_id: props.prompt.user_id,
+        image_id: props.prompt.id,
+      },
+      headers: {
+        Authorization: `Bearer ${getCookie("token")}`,
+      },
+    });
+    if (!data.value) return;
+    const { result, code, msg } = data.value;
+    if (code === CODE_SUCCESS) {
+      handleGetListUpvote();
+      useNuxtApp().$toast.success("Upvote successfully!");
+    }
+  } else {
+    const { data } = await useFetch(`${baseURL}/upvote/${upvoteId.value}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${getCookie("token")}`,
+      },
+    });
+    if (!data.value) return;
+    const { result, code, msg } = data.value;
+    if (code === CODE_SUCCESS) {
+      handleGetListUpvote();
+      useNuxtApp().$toast.info("Downvote successfully!");
+    }
+  }
 }
 </script>
 

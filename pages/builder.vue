@@ -16,11 +16,11 @@
             Copy
           </v-tooltip>
         </div>
-        <div class="d-flex justify-space-between mt-4">
+        <div class="d-flex mt-4">
           <v-btn
             color="primary"
             text="Reset"
-            class="text-none text-text-1"
+            class="text-none text-text-1 mr-2"
             variant="flat"
             prepend-icon="mdi-reload"
             @click="handleReset"
@@ -38,7 +38,7 @@
               prepend-icon="mdi-hammer"
               color="success"
               text="Generate"
-              class="text-none text-text-1"
+              class="text-none"
               variant="flat"
               :loading="isLoadingGenerate"
               @click="handleGenerate"
@@ -171,59 +171,59 @@
       </div>
     </div>
   </div>
-  <v-dialog v-model.trim="isShowImageSuggestion" width="auto" persistent>
+  <v-dialog v-model.trim="isShowImageSuggestion" width="auto">
     <v-card>
-      <v-card-text>
-        <div class="text-h6 font-weight-bold d-flex al">
-          <span class="text-info">Prompt Detail</span>
-          <span class="mx-2">-</span>
-          <span
-            class="font-italic font-weight-medium pointer--link pointer"
-            style="font-size: 14px"
-            @click="
-              navigateTo({ path: `/user/${selectedSuggestion?.user_id}` })
-            "
-          >
-            Click here to show more images of this user
-          </span>
-        </div>
-        <div class="mt-4 d-flex">
-          <div>
-            <v-textarea
-              bg-color="bg-1"
-              label="Prompt"
-              :model-value="selectedSuggestion?.prompt"
-              variant="outlined"
-              hide-details
-              auto-grow
-              readonly
-              style="min-width: 30vw"
-            >
-            </v-textarea>
-            <v-btn
-              @click="
-                handleCopySuggestion(selectedSuggestion?.prompt);
-                isShowImageSuggestion = false;
-              "
-              class="mt-2 text-none"
-              variant="flat"
-              color="info"
-              text="Add"
-            ></v-btn>
+      <v-card-text class="mb-2">
+        <div class="mt-4 d-flex w-100">
+          <div class="bg-bg-1 rounded d-flex justify-center align-center pa-2">
+            <v-img
+              :src="`${selectedSuggestion.image_src}`"
+              style="height: 75vh; width: auto"
+              :lazy-src="`${selectedSuggestion.image_src}`"
+            ></v-img>
           </div>
-          <v-img
-            class="ml-4"
-            :src="`${selectedSuggestion?.image_src}`"
-            :lazy-src="`${selectedSuggestion?.image_src}`"
-            style="max-width: 30vw"
-          ></v-img>
+          <v-divider vertical class="mx-4"></v-divider>
+          <div
+            class="d-flex flex-column"
+            style="max-width: 40vw; min-width: 30vw"
+          >
+            <span
+              class="pointer--link pointer mb-2 text-success font-weight-bold"
+              @click="
+                navigateTo({ path: `/user/${selectedSuggestion.user_id}` })
+              "
+            >
+              @{{ username }}
+            </span>
+            <div class="mb-4 bg-bg-1 rounded pa-2">
+              {{ selectedSuggestion.prompt }}
+            </div>
+            <div class="d-flex align-center justify-space-between">
+              <div class="d-flex align-center mr-2">
+                <v-icon
+                  icon="mdi-heart"
+                  size="small"
+                  color="primary-2"
+                  class="mr-1"
+                ></v-icon>
+                <span style="font-size: 12px">{{ numberUpvote }}</span>
+              </div>
+            </div>
+            <v-divider class="my-2"></v-divider>
+            <div class="d-flex align-center">
+              <v-btn
+                prepend-icon="mdi-plus"
+                color="success"
+                text="Add"
+                class="text-none text-text-1"
+                variant="flat"
+                size="large"
+                @click="handleCopySuggestion(selectedSuggestion.prompt)"
+              ></v-btn>
+            </div>
+          </div>
         </div>
       </v-card-text>
-      <v-card-actions class="d-flex justify-end">
-        <v-btn variant="text" @click="isShowImageSuggestion = false"
-          >Close</v-btn
-        >
-      </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
@@ -289,7 +289,7 @@ function handleReset() {
   handleResetText();
   handleResetStyle();
   handleResetParam();
-  useNuxtApp().$toast.warning("Reset created prompt!");
+  useNuxtApp().$toast.success("Reset created prompt!");
 }
 
 //image link
@@ -329,14 +329,15 @@ function updateStyle(listStyle) {
 function updateParam(listParam) {
   paramPrompt.value = "";
   for (const param of listParam.value) {
-    if (param.listValue) {
+    if (!param.value) continue;
+    if (param.type === "true-false") {
       if (param.value === "no" || param.value === "") continue;
       else {
         paramPrompt.value += `${param.shortName} `;
         continue;
       }
     }
-    if (param.value !== "") {
+    if (param.type === "slide" || param.type === "select") {
       paramPrompt.value += `${param.shortName} ${param.value} `;
     }
   }
@@ -367,6 +368,7 @@ async function handleSearchSemantic() {
 function handleCopySuggestion(prompt) {
   parentType.value = "Text";
   builderText.value?.handleCopySuggestion(prompt);
+  isShowImageSuggestion.value = false;
 }
 
 const isLoadingGenerate = ref(false);
@@ -408,6 +410,47 @@ async function handleGenerate() {
 
 const isShowImageSuggestion = ref(false);
 const selectedSuggestion = ref(null);
+
+watch(
+  () => isShowImageSuggestion.value,
+  (val) => {
+    if (val) {
+      handleGetUser();
+      handleGetListUpvote();
+    }
+  }
+);
+
+const username = ref("");
+async function handleGetUser() {
+  const { data } = await useFetch(
+    `${baseURL}/user/${selectedSuggestion.value.user_id}`,
+    {
+      method: "GET",
+    }
+  );
+  if (!data.value) return;
+  const { result, code, msg } = data.value;
+  if (code === CODE_SUCCESS) {
+    username.value = result?.username;
+  }
+}
+
+const numberUpvote = ref(0);
+
+async function handleGetListUpvote() {
+  const { data } = await useFetch(`${baseURL}/upvote`, {
+    method: "GET",
+    query: {
+      image_id: selectedSuggestion.value.id,
+    },
+  });
+  if (!data.value) return;
+  const { result, count, code, msg } = data.value;
+  if (code === CODE_SUCCESS) {
+    numberUpvote.value = count;
+  }
+}
 </script>
 
 <style scoped>

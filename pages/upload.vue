@@ -3,14 +3,25 @@
     Prompt <span class="text-primary-2">Upload</span>
     <div class="mt-2 text-h6">Upload your prompt images here</div>
   </div>
-  <v-btn
-    text="Select file"
-    color="info"
-    size="large"
-    variant="flat"
-    class="rounded-lg text-none mt-8"
-    @click="isShowDialog = true"
-  ></v-btn>
+  <div class="d-flex justify-space-between align-end mt-8">
+    <v-btn
+      text="Select file"
+      color="info"
+      size="x-large"
+      variant="flat"
+      class="rounded-lg text-none"
+      @click="isShowDialog = true"
+    ></v-btn>
+    <div class="d-flex align-end">
+      <v-icon icon="mdi-image" class="mr-1" color="success"></v-icon>
+      <span style="font-size: 14px">{{ imageCount }}</span>
+
+      <v-divider vertical class="mx-2"></v-divider>
+
+      <v-icon icon="mdi-heart" class="mr-1 pointer" color="primary-2"></v-icon>
+      <span style="font-size: 14px" class="pointer">{{ upvoteCount }}</span>
+    </div>
+  </div>
   <v-divider class="my-4"></v-divider>
   <div class="mt-8 d-flex">
     <div class="mx-1 w-25">
@@ -53,21 +64,32 @@
   <div v-if="isLoadingImage" class="d-flex justify-center">
     <v-progress-circular indeterminate color="success"></v-progress-circular>
   </div>
-  <v-dialog v-model.trim="isShowDialog" width="auto" persistent>
+  <v-dialog v-model.trim="isShowDialog" width="auto">
     <v-card>
       <v-card-text class="mb-2">
-        <div class="d-flex align-center text-h6 font-weight-bold">
-          <span class="text-info flex-grow-1">Upload prompt & image</span>
-          <v-btn
-            icon="mdi-close"
-            variant="text"
-            size="small"
-            color="info"
-            @click="isShowDialog = false"
-          ></v-btn>
-        </div>
         <div class="d-flex mt-4 w-100">
-          <div class="mr-8" style="min-width: 30vw">
+          <div
+            class="d-flex rounded justify-center align-center bg-bg-1 rounded pa-2"
+          >
+            <v-btn
+              v-if="!file"
+              prepend-icon="mdi-camera"
+              class="text-none"
+              text="Your image"
+              size="large"
+              variant="outlined"
+              @click="handleSelectFile"
+            ></v-btn>
+            <v-img
+              v-else
+              class="pointer"
+              :src="fileImage"
+              style="height: 75vh; width: auto"
+              @click="handleSelectFile"
+            ></v-img>
+          </div>
+          <v-divider vertical class="mx-4"></v-divider>
+          <div style="min-width: 30vw">
             <v-textarea
               v-model.trim="prompt"
               variant="outlined"
@@ -79,33 +101,17 @@
               label="Prompt"
             >
             </v-textarea>
-            <div class="mt-2">
-              <v-btn
-                variant="flat"
-                color="info"
-                :loading="isLoadingCreate"
-                @click="handlePreprocessing"
-              >
-                Upload
-              </v-btn>
-            </div>
-          </div>
-          <div class="d-flex justify-center align-center bg-bg-1 rounded pa-2">
             <v-btn
-              v-if="!file"
-              prepend-icon="mdi-camera"
-              class="text-none"
-              text="Your image"
-              variant="outlined"
-              @click="handleSelectFile"
-            ></v-btn>
-            <v-img
-              v-else
-              class="pointer"
-              :src="fileImage"
-              style="height: 80vh; width: auto; min-width: 30vw"
-              @click="handleSelectFile"
-            ></v-img>
+              prepend-icon="mdi-upload"
+              variant="flat"
+              color="info"
+              class="mt-2"
+              size="large"
+              :loading="isLoadingCreate"
+              @click="handlePreprocessing"
+            >
+              Upload
+            </v-btn>
           </div>
         </div>
       </v-card-text>
@@ -220,9 +226,11 @@ watch(
 
 const page = ref(0);
 const size = ref(20);
+const imageCount = ref(0);
 
 const isLoadingImage = ref(false);
 const notLoad = ref(false);
+
 async function handleGetImage() {
   isLoadingImage.value = true;
   const { data } = await useFetch(`${baseURL}/image`, {
@@ -235,8 +243,9 @@ async function handleGetImage() {
   });
   isLoadingImage.value = false;
   if (!data.value) return;
-  const { result, code, msg } = data.value;
+  const { result, count, code, msg } = data.value;
   if (code === CODE_SUCCESS) {
+    imageCount.value = count;
     if (result.length === 0) {
       notLoad.value = true;
       return;
@@ -278,6 +287,7 @@ const imagesCol_3 = computed(() => {
 onMounted(() => {
   nextTick(() => {
     handleGetImage();
+    handleGetListUpvote();
   });
 });
 
@@ -299,6 +309,24 @@ function handleDeletedPrompt() {
   page.value = 0;
   listImages.value = [];
   handleGetImage();
+}
+
+const upvoteCount = ref(0);
+const listImageUpvote = ref([]);
+async function handleGetListUpvote(deep = false) {
+  const { data } = await useFetch(`${baseURL}/upvote`, {
+    method: "GET",
+    query: {
+      user_receiver_id: userStore.id,
+      deep: deep,
+    },
+  });
+  if (!data.value) return;
+  const { result, count, code, msg } = data.value;
+  if (code === CODE_SUCCESS) {
+    upvoteCount.value = count;
+    listImageUpvote.value = result;
+  }
 }
 </script>
 

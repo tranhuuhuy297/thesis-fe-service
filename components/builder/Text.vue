@@ -10,7 +10,7 @@
       hide-details
       density="compact"
       bg-color="bg-1"
-      style="width: 80%"
+      class="mr-2 w-75"
     >
       <template #append-inner>
         <v-btn
@@ -23,15 +23,16 @@
         ></v-btn>
       </template>
     </v-text-field>
-    <span class="mx-2 font-weight-bold">::</span>
-    <v-text-field
-      v-model.trim="item.weight"
+    <v-slider
+      v-model="item.weight"
       hide-details
-      variant="outlined"
+      color="info"
       density="compact"
-      bg-color="white"
-      placeholder="weight"
-    ></v-text-field>
+      min="0"
+      max="1"
+      thumb-size="12px"
+      step="0.1"
+    ></v-slider>
   </div>
   <div class="mt-4 d-flex align-center">
     <v-btn
@@ -131,7 +132,7 @@ function handlePushToText(prompt) {
   listText.value.push({ ...textTemplate, value: prompt });
 }
 
-const textTemplate = { value: "", weight: "" };
+const textTemplate = { value: "", weight: 1 };
 const listText = ref([{ ...textTemplate }]);
 
 const emit = defineEmits(["updateText"]);

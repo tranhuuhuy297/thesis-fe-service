@@ -41,17 +41,19 @@
           <span class="text-info">Weight</span>
         </div>
         <div class="d-flex align-center">
-          <div>{{ selectedValue?.name }}</div>
-          <span class="font-weight-bold mx-2">::</span>
-          <v-text-field
-            v-model.trim="styleWeight"
-            variant="outlined"
+          <div>{{ styleWeight }}</div>
+          <v-slider
+            v-model="styleWeight"
             hide-details
+            color="info"
             density="compact"
-            @keydown.prevent.enter="handleAddWeight"
-          ></v-text-field>
+            min="0"
+            max="1"
+            thumb-size="12px"
+            step="0.1"
+          ></v-slider>
         </div>
-        <div class="d-flex align-center mt-4">
+        <div class="d-flex align-center mt-2">
           <v-img
             :src="`${selectedValue?.image_src}`"
             :lazy-src="`${selectedValue?.image_src}`"
@@ -155,5 +157,12 @@ watch(
     );
   },
   { deep: true }
+);
+
+watch(
+  () => isShowWeight.value,
+  (val) => {
+    if (val) styleWeight.value = 1;
+  }
 );
 </script>

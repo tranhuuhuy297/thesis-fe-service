@@ -3,6 +3,7 @@ export const CODE_SUCCESS = 0;
 export const CODE_NOT_ACTIVATE = -2;
 export const CODE_BAN = -3;
 export const CODE_WRONG_PASS = -4;
+export const CODE_NOT_FOUND = 106;
 
 export const rules = {
   required: (value) => !!value || "Field is required",

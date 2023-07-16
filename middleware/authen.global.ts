@@ -3,6 +3,7 @@ import { useUserStore } from "~/stores/User";
 export default defineNuxtRouteMiddleware((to, from) => {
   // console.log("init middleware", process.client);
   if (process.client) {
+    console.log("middleware");
     const isLogin = getCookie("token");
     const expiredTime = getCookie("expire");
 
@@ -16,7 +17,7 @@ export default defineNuxtRouteMiddleware((to, from) => {
       const userStore = useUserStore();
       const decoded_info = decodeJwt(isLogin);
       userStore.setUser(decoded_info);
-      if (to.fullPath === "/login") {
+      if (["/login", "/signup", "/verify"].includes(to.fullPath)) {
         return navigateTo("/upload");
       }
     }

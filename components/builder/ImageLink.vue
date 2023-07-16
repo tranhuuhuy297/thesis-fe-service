@@ -12,7 +12,21 @@
       <v-icon icon="mdi-link-variant"></v-icon>
     </template>
   </v-text-field>
-  <div class="d-flex mt-4" style="flex-wrap: wrap">
+  <div class="mt-4 d-flex align-center">
+    <v-btn
+      text="Upload"
+      variant="elevated"
+      color="info"
+      prepend-icon="mdi-upload"
+      class="mr-2 text-none"
+    >
+    </v-btn>
+  </div>
+  <div
+    v-if="listImageLink.length > 0"
+    class="d-flex mt-4"
+    style="flex-wrap: wrap"
+  >
     <div
       v-for="(imageLink, index) in listImageLink"
       :key="index"
