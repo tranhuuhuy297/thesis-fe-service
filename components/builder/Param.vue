@@ -32,11 +32,7 @@
             bg-color="bg-1"
           ></v-select>
         </div>
-        <div v-if="param.type === 'slide'">
-          <!-- <span>{{ param.min }}</span> -->
-          <div class="d-flex justify-center" style="font-size: 14px">
-            {{ param.value }}
-          </div>
+        <div v-if="param.type === 'slide'" class="d-flex align-center">
           <v-slider
             v-model="param.value"
             hide-details
@@ -46,9 +42,8 @@
             :max="param.max"
             :step="param.step"
             thumb-size="12px"
-            style="height: 24px"
+            :thumb-label="param.value ? 'always' : ''"
           ></v-slider>
-          <!-- <span>{{ param.max }}</span> -->
         </div>
       </div>
     </div>

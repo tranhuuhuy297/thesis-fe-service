@@ -23,10 +23,7 @@
         ></v-btn>
       </template>
     </v-text-field>
-    <div style="width: 20%">
-      <div class="d-flex justify-center" style="font-size: 14px">
-        {{ item.weight }}
-      </div>
+    <div style="width: 20%" class="d-flex align-center">
       <v-slider
         v-model="item.weight"
         hide-details
@@ -36,7 +33,7 @@
         max="1"
         thumb-size="12px"
         step="0.1"
-        style="height: 24px"
+        :thumb-label="item.weight > 0 ? 'always' : ''"
       ></v-slider>
     </div>
   </div>
