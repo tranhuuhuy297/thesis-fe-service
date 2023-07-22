@@ -36,7 +36,10 @@
           </div>
           <v-divider vertical class="mx-4"></v-divider>
 
-          <div class="d-flex flex-column" style="max-width: 40vw">
+          <div
+            class="d-flex flex-column"
+            style="max-width: 40vw; min-width: 30vw"
+          >
             <span
               class="pointer--link pointer mb-2 text-success font-weight-bold"
               @click="navigateTo({ path: `/user/${prompt?.user_id}` })"
@@ -47,7 +50,7 @@
               {{ prompt?.prompt }}
             </div>
             <div class="d-flex align-center justify-space-between">
-              <div class="d-flex align-center mr-2">
+              <div class="d-flex align-end mr-2">
                 <v-icon
                   icon="mdi-heart"
                   color="primary-2"

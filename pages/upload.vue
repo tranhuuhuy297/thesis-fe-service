@@ -3,14 +3,25 @@
     Prompt <span class="text-primary-2">Upload</span>
     <div class="mt-2 text-h6">Upload your prompt images here</div>
   </div>
-  <v-btn
-    text="Select file"
-    color="info"
-    size="x-large"
-    variant="flat"
-    class="rounded-lg text-none mt-8"
-    @click="isShowDialog = true"
-  ></v-btn>
+  <div class="d-flex justify-space-between align-end mt-8">
+    <v-btn
+      text="Select file"
+      color="info"
+      size="x-large"
+      variant="flat"
+      class="rounded-lg text-none"
+      @click="isShowDialog = true"
+    ></v-btn>
+    <div class="d-flex align-end">
+      <v-icon icon="mdi-image" class="mr-1" color="success"></v-icon>
+      <span style="font-size: 14px">{{ imageCount }}</span>
+
+      <v-divider vertical class="mx-2"></v-divider>
+
+      <v-icon icon="mdi-heart" class="mr-1 pointer" color="primary-2"></v-icon>
+      <span style="font-size: 14px" class="pointer">{{ upvoteCount }}</span>
+    </div>
+  </div>
   <v-divider class="my-4"></v-divider>
   <div class="mt-8 d-flex">
     <div class="mx-1 w-25">
@@ -91,6 +102,7 @@
             >
             </v-textarea>
             <v-btn
+              prepend-icon="mdi-upload"
               variant="flat"
               color="info"
               class="mt-2"
@@ -214,9 +226,11 @@ watch(
 
 const page = ref(0);
 const size = ref(20);
+const imageCount = ref(0);
 
 const isLoadingImage = ref(false);
 const notLoad = ref(false);
+
 async function handleGetImage() {
   isLoadingImage.value = true;
   const { data } = await useFetch(`${baseURL}/image`, {
@@ -229,8 +243,9 @@ async function handleGetImage() {
   });
   isLoadingImage.value = false;
   if (!data.value) return;
-  const { result, code, msg } = data.value;
+  const { result, count, code, msg } = data.value;
   if (code === CODE_SUCCESS) {
+    imageCount.value = count;
     if (result.length === 0) {
       notLoad.value = true;
       return;
@@ -272,6 +287,7 @@ const imagesCol_3 = computed(() => {
 onMounted(() => {
   nextTick(() => {
     handleGetImage();
+    handleGetListUpvote();
   });
 });
 
@@ -293,6 +309,24 @@ function handleDeletedPrompt() {
   page.value = 0;
   listImages.value = [];
   handleGetImage();
+}
+
+const upvoteCount = ref(0);
+const listImageUpvote = ref([]);
+async function handleGetListUpvote(deep = false) {
+  const { data } = await useFetch(`${baseURL}/upvote`, {
+    method: "GET",
+    query: {
+      user_receiver_id: userStore.id,
+      deep: deep,
+    },
+  });
+  if (!data.value) return;
+  const { result, count, code, msg } = data.value;
+  if (code === CODE_SUCCESS) {
+    upvoteCount.value = count;
+    listImageUpvote.value = result;
+  }
 }
 </script>
 

@@ -16,11 +16,11 @@
             Copy
           </v-tooltip>
         </div>
-        <div class="d-flex justify-space-between mt-4">
+        <div class="d-flex mt-4">
           <v-btn
             color="primary"
             text="Reset"
-            class="text-none text-text-1"
+            class="text-none text-text-1 mr-2"
             variant="flat"
             prepend-icon="mdi-reload"
             @click="handleReset"
@@ -36,7 +36,7 @@
             ></v-btn> -->
             <v-btn
               prepend-icon="mdi-hammer"
-              color="info"
+              color="success"
               text="Generate"
               class="text-none"
               variant="flat"
@@ -183,7 +183,10 @@
             ></v-img>
           </div>
           <v-divider vertical class="mx-4"></v-divider>
-          <div class="d-flex flex-column" style="max-width: 40vw">
+          <div
+            class="d-flex flex-column"
+            style="max-width: 40vw; min-width: 30vw"
+          >
             <span
               class="pointer--link pointer mb-2 text-success font-weight-bold"
               @click="
@@ -326,14 +329,15 @@ function updateStyle(listStyle) {
 function updateParam(listParam) {
   paramPrompt.value = "";
   for (const param of listParam.value) {
-    if (param.listValue) {
+    if (!param.value) continue;
+    if (param.type === "true-false") {
       if (param.value === "no" || param.value === "") continue;
       else {
         paramPrompt.value += `${param.shortName} `;
         continue;
       }
     }
-    if (param.value !== "") {
+    if (param.type === "slide" || param.type === "select") {
       paramPrompt.value += `${param.shortName} ${param.value} `;
     }
   }
