@@ -18,8 +18,10 @@
 
       <v-divider vertical class="mx-2"></v-divider>
 
-      <v-icon icon="mdi-heart" class="mr-1 pointer" color="primary-2"></v-icon>
-      <span style="font-size: 14px" class="pointer">{{ upvoteCount }}</span>
+      <v-icon icon="mdi-heart" class="mr-1" color="primary-2"></v-icon>
+      <span style="font-size: 14px">
+        {{ upvoteCount }}
+      </span>
     </div>
   </div>
   <v-divider class="my-4"></v-divider>
@@ -312,7 +314,7 @@ function handleDeletedPrompt() {
 }
 
 const upvoteCount = ref(0);
-const listImageUpvote = ref([]);
+
 async function handleGetListUpvote(deep = false) {
   const { data } = await useFetch(`${baseURL}/upvote`, {
     method: "GET",
@@ -325,9 +327,8 @@ async function handleGetListUpvote(deep = false) {
   const { result, count, code, msg } = data.value;
   if (code === CODE_SUCCESS) {
     upvoteCount.value = count;
-    listImageUpvote.value = result;
   }
 }
-</script>
 
-<style scoped></style>
+async function handleShowListUpvote() {}
+</script>

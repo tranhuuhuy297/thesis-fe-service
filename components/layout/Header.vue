@@ -96,6 +96,11 @@
               //   navigateTo: '/user-statistics',
               // },
               {
+                name: 'Change password',
+                icon: 'mdi-lock-reset',
+                navigateTo: '/change-password',
+              },
+              {
                 name: 'Log Out',
                 icon: 'mdi-logout-variant',
                 navigateTo: '/logout',
@@ -122,9 +127,8 @@
     <v-card>
       <v-card-text>
         <div class="text-h6 font-weight-bold">
-          <span class="text-info">User Profile</span>
+          <span class="text-info">Update profile</span>
         </div>
-        <div>Update your information</div>
         <div class="mt-4">
           <v-text-field
             v-model="username"
@@ -154,42 +158,78 @@
       </v-card-actions>
     </v-card>
   </v-dialog>
-  <v-dialog v-model.trim="isShowStatistics" width="auto" persistent>
+  <v-dialog
+    v-model.trim="isShowChangePassword"
+    width="auto"
+    min-width="400px"
+    persistent
+  >
     <v-card>
       <v-card-text>
         <div class="text-h6 font-weight-bold">
-          <span class="text-info">User Statistics</span>
+          <span class="text-info">Change password</span>
         </div>
-        <div>Exploring your statistics</div>
         <div class="mt-4">
-          <div v-if="isLoadingStatistics" class="d-flex justify-center">
-            <v-progress-circular indeterminate color="success">
-            </v-progress-circular>
-          </div>
-          <div v-else class="font-weight-bold">
-            <div class="d-flex">
-              <span style="width: 100px">Images:</span>
-              <span class="text-primary-2">
-                {{ userStatistics["count_image"] }}
-              </span>
-            </div>
-            <div class="d-flex mt-1">
-              <span style="width: 100px">Upvotes:</span>
-              <span class="text-primary-2">
-                {{ userStatistics["count_upvote"] }}
-              </span>
-            </div>
-          </div>
+          <v-text-field
+            v-model.trim="newPassword"
+            variant="outlined"
+            label="New password"
+            :type="showNewPassword ? 'text' : 'password'"
+            bg-color="bg-1"
+          >
+            <template #append-inner>
+              <v-btn
+                :icon="
+                  !showNewPassword ? 'mdi-eye-off-outline' : 'mdi-eye-outline'
+                "
+                variant="text"
+                size="small"
+                @click="showNewPassword = !showNewPassword"
+              ></v-btn>
+            </template>
+          </v-text-field>
+          <v-text-field
+            v-model.trim="confirmNewPassword"
+            variant="outlined"
+            label="Confirm new password"
+            :type="showConfirmNewPassword ? 'text' : 'password'"
+            bg-color="bg-1"
+          >
+            <template #append-inner>
+              <v-btn
+                :icon="
+                  !showConfirmNewPassword
+                    ? 'mdi-eye-off-outline'
+                    : 'mdi-eye-outline'
+                "
+                variant="text"
+                size="small"
+                @click="showConfirmNewPassword = !showConfirmNewPassword"
+              ></v-btn>
+            </template>
+          </v-text-field>
         </div>
       </v-card-text>
       <v-card-actions class="d-flex justify-end">
-        <v-btn variant="text" @click="isShowStatistics = false">Cancel</v-btn>
+        <v-btn variant="text" @click="isShowChangePassword = false"
+          >Cancel</v-btn
+        >
+        <v-btn
+          variant="flat"
+          color="info"
+          :loading="isLoadingChangePassword"
+          @click="handleChangePassword"
+        >
+          Confirm
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
 
 <script setup>
+import { sha256 } from "ohash";
+
 import { useUserStore } from "~/stores/User";
 
 const userStore = useUserStore();
@@ -219,16 +259,53 @@ function handleAction(item) {
     logout();
   } else if (item.navigateTo === "/profile") {
     isShowProfile.value = true;
-  } else if (item.navigateTo === "/user-statistics") {
-    isShowStatistics.value = true;
+  } else if (item.navigateTo === "/change-password") {
+    isShowChangePassword.value = true;
   } else {
     navigateTo(item.navigateTo);
+  }
+}
+
+const isShowChangePassword = ref(false);
+const newPassword = ref("");
+const confirmNewPassword = ref("");
+const showNewPassword = ref(false);
+const showConfirmNewPassword = ref(false);
+const isLoadingChangePassword = ref(false);
+
+async function handleChangePassword() {
+  if (confirmNewPassword.value !== newPassword.value) {
+    useNuxtApp().$toast.warning("Confirm password is not valid!");
+    return;
+  }
+  isLoadingChangePassword.value = true;
+  const { data } = await useFetch(
+    `${baseURL}/change-password/user/${userStore.id}`,
+    {
+      method: "PUT",
+      body: {
+        password: sha256(newPassword.value),
+      },
+      headers: {
+        Authorization: `Bearer ${getCookie("token")}`,
+      },
+    }
+  );
+  isLoadingChangePassword.value = false;
+  if (!data.value) return;
+  const { result, code, msg } = data.value;
+  if (code === CODE_SUCCESS) {
+    useNuxtApp().$toast.success("Change password successfully!");
+    setTimeout(() => {
+      logout();
+    }, 500);
   }
 }
 
 const isShowProfile = ref(false);
 const isLoadingUpdate = ref(false);
 const username = ref(`${userStore.username}`);
+
 async function handleUpdateProfile() {
   isLoadingUpdate.value = true;
   const { data } = await useFetch(`${baseURL}/user/${userStore.id}`, {

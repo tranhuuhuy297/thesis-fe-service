@@ -12,7 +12,17 @@
         }}</span>
       </div>
       <div class="w-25">
-        <div v-if="param.type === 'select' || param.type === 'true-false'">
+        <div v-if="param.type === 'true-false'" class="d-flex align-center">
+          <v-radio-group v-model="param.value" inline hide-details>
+            <v-radio
+              v-for="(value, idx) in param.listValue"
+              :key="idx"
+              :label="value"
+              :value="value"
+            ></v-radio>
+          </v-radio-group>
+        </div>
+        <div v-if="param.type === 'select'">
           <v-select
             v-model="param.value"
             hide-details
@@ -87,16 +97,16 @@ const listParam = ref([
     max: 1,
     step: 0.25,
   },
-  {
-    name: "Repeat",
-    value: "",
-    guide: "create multiple Jobs from a single prompt",
-    type: "slide",
-    shortName: "--r",
-    min: 1,
-    max: 40,
-    step: 1,
-  },
+  // {
+  //   name: "Repeat",
+  //   value: "",
+  //   guide: "create multiple Jobs from a single prompt",
+  //   type: "slide",
+  //   shortName: "--r",
+  //   min: 1,
+  //   max: 40,
+  //   step: 1,
+  // },
   {
     name: "Seed",
     value: "",
@@ -105,7 +115,7 @@ const listParam = ref([
     type: "slide",
     shortName: "--seed",
     min: 0,
-    max: 4294967295,
+    max: 1000,
     step: 1,
   },
   {
