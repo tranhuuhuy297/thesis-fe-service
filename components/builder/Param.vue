@@ -2,8 +2,8 @@
   <div v-for="(param, index) in listParam" :key="`param_${index}`" class="mr-2">
     <div class="d-flex align-center mb-2">
       <div
-        class="pa-2 mr-4 w-75 bg-bg-1 d-flex align-center justify-space-between"
-        style="border: 1px solid black"
+        class="pa-2 mr-4 bg-bg-1 d-flex align-center justify-space-between"
+        style="border: 1px solid black; width: 80%"
         :class="{ 'bg-bg-3': param.value }"
       >
         <span>{{ param.name }}</span>
@@ -11,7 +11,7 @@
           param.guide
         }}</span>
       </div>
-      <div class="w-25">
+      <div style="width: 20%">
         <div v-if="param.type === 'true-false'" class="d-flex align-center">
           <v-radio-group v-model="param.value" inline hide-details>
             <v-radio
@@ -32,8 +32,11 @@
             bg-color="bg-1"
           ></v-select>
         </div>
-        <div v-if="param.type === 'slide'" class="d-flex align-center">
+        <div v-if="param.type === 'slide'">
           <!-- <span>{{ param.min }}</span> -->
+          <div class="d-flex justify-center" style="font-size: 14px">
+            {{ param.value }}
+          </div>
           <v-slider
             v-model="param.value"
             hide-details
@@ -43,6 +46,7 @@
             :max="param.max"
             :step="param.step"
             thumb-size="12px"
+            style="height: 24px"
           ></v-slider>
           <!-- <span>{{ param.max }}</span> -->
         </div>
