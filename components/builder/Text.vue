@@ -10,7 +10,7 @@
       hide-details
       density="compact"
       bg-color="bg-1"
-      class="mr-2 w-75"
+      class="mr-2"
     >
       <template #append-inner>
         <v-btn
@@ -23,16 +23,22 @@
         ></v-btn>
       </template>
     </v-text-field>
-    <v-slider
-      v-model="item.weight"
-      hide-details
-      color="info"
-      density="compact"
-      min="0"
-      max="1"
-      thumb-size="12px"
-      step="0.1"
-    ></v-slider>
+    <div style="width: 20%">
+      <div class="d-flex justify-center" style="font-size: 14px">
+        {{ item.weight }}
+      </div>
+      <v-slider
+        v-model="item.weight"
+        hide-details
+        color="info"
+        density="compact"
+        min="0"
+        max="1"
+        thumb-size="12px"
+        step="0.1"
+        style="height: 24px"
+      ></v-slider>
+    </div>
   </div>
   <div class="mt-4 d-flex align-center">
     <v-btn
