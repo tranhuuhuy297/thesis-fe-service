@@ -95,6 +95,7 @@ async function handleGetListSemanticImage() {
     handleReset();
     return;
   }
+  navigateTo({ path: "/feeds", query: { textSearch: textSearch.value } });
   listImages.value = [];
   isLoadingImage.value = true;
   const { data } = await useFetch(`${baseURL}/image/search/semantic-search`, {

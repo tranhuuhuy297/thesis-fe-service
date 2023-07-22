@@ -81,7 +81,7 @@
           <v-list-item
             v-for="(item, index) in [
               {
-                name: 'Profile',
+                name: 'Update profile',
                 icon: 'mdi-face-man-profile',
                 navigateTo: '/profile',
               },

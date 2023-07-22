@@ -59,7 +59,7 @@
           @keydown.prevent.enter="handleSearchSemantic"
           @click:clear="semanticSearchResult = []"
         ></v-text-field>
-        <div style="max-height: 45vh; overflow-y: scroll">
+        <div style="max-height: 37vh; overflow-y: scroll">
           <div class="d-flex justify-center">
             <v-progress-circular
               v-if="isLoadingSearch"
