@@ -64,7 +64,7 @@
             <v-progress-circular
               v-if="isLoadingSearch"
               indeterminate
-              color="primary-2"
+              color="success"
             ></v-progress-circular>
           </div>
           <div
@@ -221,6 +221,39 @@
                 @click="handleCopySuggestion(selectedSuggestion.prompt)"
               ></v-btn>
             </div>
+            <v-divider class="my-2"></v-divider>
+            <v-progress-circular
+              v-if="isLoadingSameImage"
+              indeterminate
+              color="success"
+            ></v-progress-circular>
+            <div class="d-flex flex-wrap" v-if="listSameImage.length > 0">
+              <div
+                v-for="(img, idx) in listSameImage"
+                :key="`${idx}_img`"
+                class="pa-1"
+                style="width: 25%"
+                @click="selectedSuggestion = img"
+              >
+                <v-img
+                  :src="`${img.image_src}`"
+                  :lazy-src="`${img.image_src}`"
+                  class="img pointer"
+                ></v-img>
+              </div>
+            </div>
+            <v-pagination
+              v-if="listSameImage.length > 0"
+              v-model="page"
+              :length="length"
+              density="comfortable"
+              class="mt-1"
+              active-color="primary"
+              prev-icon="mdi-menu-left"
+              next-icon="mdi-menu-right"
+              variant="flat"
+              :total-visible="5"
+            ></v-pagination>
           </div>
         </div>
       </v-card-text>
@@ -239,6 +272,9 @@ const stylePrompt = ref("");
 const paramPrompt = ref("");
 
 const prompt = computed(() => {
+  if (textPrompt.value && stylePrompt.value) {
+    return `${imageLinkPrompt.value} ${textPrompt.value}, ${stylePrompt.value} ${paramPrompt.value}`.trim();
+  }
   return `${imageLinkPrompt.value} ${textPrompt.value} ${stylePrompt.value} ${paramPrompt.value}`.trim();
 });
 
@@ -374,7 +410,7 @@ function handleCopySuggestion(prompt) {
 const isLoadingGenerate = ref(false);
 async function handleGenerate() {
   if (!userStore.id) {
-    useNuxtApp().$toast.warning("You need to login!");
+    useNuxtApp().$toast.warning("You have to login!");
     return;
   }
   if (prompt.value.trim() === "") {
@@ -412,11 +448,14 @@ const isShowImageSuggestion = ref(false);
 const selectedSuggestion = ref(null);
 
 watch(
-  () => isShowImageSuggestion.value,
+  () => selectedSuggestion.value,
   (val) => {
     if (val) {
       handleGetUser();
       handleGetListUpvote();
+      page.value = 1;
+      listSameImage.value = [];
+      if (val) handleGetListImage(selectedSuggestion.value.prompt);
     }
   }
 );
@@ -451,6 +490,40 @@ async function handleGetListUpvote() {
     numberUpvote.value = count;
   }
 }
+
+const page = ref(1);
+const size = ref(8);
+const length = ref(10);
+const isLoadingSameImage = ref(false);
+const listSameImage = ref([]);
+
+async function handleGetListImage(query) {
+  isLoadingSameImage.value = true;
+  const { data } = await useFetch(`${baseURL}/image`, {
+    method: "GET",
+    query: {
+      query: query,
+      page: page.value - 1,
+      size: size.value,
+    },
+  });
+  isLoadingSameImage.value = false;
+  if (!data.value) return;
+  const { result, count, code, msg } = data.value;
+  if (code === CODE_SUCCESS) {
+    length.value = parseInt(count / size.value) + 1;
+    listSameImage.value = result.filter(
+      (item) => item.id != selectedSuggestion.value.id
+    );
+  }
+}
+
+watch(
+  () => page.value,
+  () => {
+    handleGetListImage(selectedSuggestion.value.prompt);
+  }
+);
 </script>
 
 <style scoped>

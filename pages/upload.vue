@@ -311,6 +311,7 @@ function handleDeletedPrompt() {
   page.value = 0;
   listImages.value = [];
   handleGetImage();
+  handleGetListUpvote();
 }
 
 const upvoteCount = ref(0);
@@ -329,6 +330,4 @@ async function handleGetListUpvote(deep = false) {
     upvoteCount.value = count;
   }
 }
-
-async function handleShowListUpvote() {}
 </script>

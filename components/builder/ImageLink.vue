@@ -12,7 +12,7 @@
       <v-icon icon="mdi-link-variant"></v-icon>
     </template>
   </v-text-field>
-  <div class="mt-4 d-flex align-center">
+  <!-- <div class="mt-4 d-flex align-center">
     <v-btn
       text="Upload"
       variant="elevated"
@@ -21,7 +21,7 @@
       class="mr-2 text-none"
     >
     </v-btn>
-  </div>
+  </div> -->
   <div
     v-if="listImageLink.length > 0"
     class="d-flex mt-4"

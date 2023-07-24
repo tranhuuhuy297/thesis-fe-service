@@ -3,7 +3,6 @@ import { useUserStore } from "~/stores/User";
 export default defineNuxtRouteMiddleware((to, from) => {
   // console.log("init middleware", process.client);
   if (process.client) {
-    console.log("middleware");
     const isLogin = getCookie("token");
     const expiredTime = getCookie("expire");
 
