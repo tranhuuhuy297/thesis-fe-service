@@ -1,24 +1,29 @@
 <template>
-  <div
-    class="d-flex"
-    v-for="(builderType, index) in styleStore.listBuilderType"
-    :key="index"
-  >
-    <v-btn
-      :text="builderType.name"
-      :variant="
-        selectedBuilderType?.name === builderType.name ? 'elevated' : 'outlined'
-      "
-      :color="selectedBuilderType?.name === builderType.name ? 'info' : ''"
-      @click="selectedBuilderType = builderType"
+  <div class="d-flex">
+    <div
+      v-for="(builderType, index) in styleStore.listBuilderType"
+      :key="index"
+      class="mr-1"
     >
-    </v-btn>
+      <v-btn
+        :text="builderType.name"
+        :variant="
+          selectedBuilderType?.name === builderType.name
+            ? 'elevated'
+            : 'outlined'
+        "
+        size="small"
+        :color="selectedBuilderType?.name === builderType.name ? 'info' : ''"
+        @click="selectedBuilderType = builderType"
+      >
+      </v-btn>
+    </div>
   </div>
   <div v-if="selectedBuilderType" class="d-flex flex-wrap mt-4">
     <div
       v-for="(image, index) in styleStore.listBuilderValue[selectedBuilderType]"
       :key="`builder_value_${index}`"
-      class="pointer w-25 img"
+      class="pointer w-25 img pa-1"
       @click="
         isShowWeight = true;
         selectedValue = image;

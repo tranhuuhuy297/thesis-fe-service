@@ -12,16 +12,18 @@
       <v-icon icon="mdi-link-variant"></v-icon>
     </template>
   </v-text-field>
-  <!-- <div class="mt-4 d-flex align-center">
+  <div class="mt-4 d-flex align-center">
     <v-btn
       text="Upload"
       variant="elevated"
       color="info"
       prepend-icon="mdi-upload"
       class="mr-2 text-none"
+      :loading="isLoadingUpload"
+      @click="handleSelectFile"
     >
     </v-btn>
-  </div> -->
+  </div>
   <div
     v-if="listImageLink.length > 0"
     class="d-flex mt-4"
@@ -70,9 +72,19 @@
       </v-card-actions>
     </v-card>
   </v-dialog>
+  <v-file-input
+    v-model.trim="file"
+    id="file"
+    style="display: none"
+  ></v-file-input>
 </template>
 
 <script setup>
+import Compressor from "compressorjs";
+
+const config = useRuntimeConfig();
+const baseURL = `${config.public.baseURL}`;
+
 const imageLink = ref("");
 const listImageLink = ref([]);
 function handleAddImage() {
@@ -105,6 +117,51 @@ watch(
 defineExpose({ handleReset });
 function handleReset() {
   listImageLink.value = [];
+}
+
+const file = ref(null);
+function handleSelectFile() {
+  document.getElementById("file").click();
+}
+
+watch(
+  () => file.value,
+  (val) => {
+    if (val) {
+      isLoadingUpload.value = true;
+      const formData = new FormData();
+      let image = null;
+      new Compressor(file.value[0], {
+        quality: 0.8,
+        success(result) {
+          image = new File([result], `${file.value[0].name}`);
+          formData.append("image", image);
+          handleUploadImage(formData);
+        },
+        error(err) {
+          console.log(err.message);
+          isLoadingUpload.value = false;
+        },
+      });
+    }
+  }
+);
+
+const isLoadingUpload = ref(false);
+
+async function handleUploadImage(formData) {
+  const { data } = await useFetch(`${baseURL}/upload`, {
+    method: "POST",
+    body: formData,
+  });
+  if (!data.value) return;
+  isLoadingUpload.value = false;
+  const { result, code, msg } = data.value;
+  if (code === CODE_SUCCESS) {
+    useNuxtApp().$toast.success("Upload image successfully!");
+    file.value = null;
+    listImageLink.value.unshift(result?.image_src);
+  }
 }
 </script>
 

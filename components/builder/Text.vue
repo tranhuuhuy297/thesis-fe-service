@@ -87,7 +87,11 @@
         color="success"
       ></v-icon>
     </div>
-    <div v-for="(prompt, idx) in promptGen" :key="`prompt_${idx}`">
+    <div
+      v-for="(prompt, idx) in promptGen"
+      :key="`prompt_${idx}`"
+      class="bg-bg-1"
+    >
       <div
         style="border: 1px solid black"
         class="mb-1 pa-2 px-4 pointer prompt"
@@ -115,7 +119,7 @@ async function handleGenerate() {
   useNuxtApp().$toast.info("This task might take about 30 seconds");
   promptGen.value = [];
   isLoadingGenerate.value = true;
-  const { data } = await useFetch(`${baseURL}/generate`, {
+  const { data } = await useFetch(`${baseURL}/prompt-generate`, {
     method: "POST",
     body: {
       user_id: userStore.id,
@@ -132,7 +136,10 @@ async function handleGenerate() {
 }
 
 function handlePushToText(prompt) {
-  listText.value.push({ ...textTemplate, value: prompt });
+  // listText.value.push({ ...textTemplate, value: prompt });
+  for (const word of prompt.split(",")) {
+    listText.value.push({ ...textTemplate, value: word.trim() });
+  }
 }
 
 const textTemplate = { value: "", weight: 1 };

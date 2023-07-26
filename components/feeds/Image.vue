@@ -25,98 +25,98 @@
   </div>
   <v-dialog v-model.trim="isShowDialog" width="auto">
     <v-card>
-      <v-card-text class="mb-2">
-        <div class="mt-4 d-flex w-100">
-          <div class="bg-bg-1 rounded d-flex justify-center align-center pa-2">
-            <v-img
-              :src="`${selected?.image_src}`"
-              style="height: 75vh; width: auto"
-              :lazy-src="`${selected?.image_src}`"
-            ></v-img>
-          </div>
-          <v-divider vertical class="mx-4"></v-divider>
+      <v-card-text class="mb-2 d-flex">
+        <div
+          class="bg-bg-1 rounded d-flex justify-center align-center pa-2"
+          style="max-width: 40vw; min-width: 30vw"
+        >
+          <v-img
+            :src="`${selected?.image_src}`"
+            style="height: 75vh; width: auto"
+            :lazy-src="`${selected?.image_src}`"
+          ></v-img>
+        </div>
+        <v-divider vertical class="mx-4"></v-divider>
 
-          <div
-            class="d-flex flex-column"
-            style="max-width: 40vw; min-width: 30vw"
+        <div
+          class="d-flex flex-column"
+          style="max-width: 40vw; min-width: 30vw"
+        >
+          <span
+            class="pointer--link pointer text-success font-weight-bold"
+            @click="navigateTo({ path: `/user/${selected?.user_id}` })"
           >
-            <span
-              class="pointer--link pointer mb-2 text-success font-weight-bold"
-              @click="navigateTo({ path: `/user/${selected?.user_id}` })"
-            >
-              @{{ username }}
-            </span>
-            <div class="mb-4 bg-bg-1 rounded pa-2">
-              {{ selected?.prompt }}
-            </div>
-            <div class="d-flex align-center justify-space-between">
-              <div class="d-flex align-end mr-2">
-                <v-icon
-                  icon="mdi-heart"
-                  color="primary-2"
-                  class="mr-1"
-                ></v-icon>
-                <span style="font-size: 12px">{{ numberUpvote }}</span>
-              </div>
-            </div>
-            <v-divider class="my-2"></v-divider>
-            <div class="d-flex align-center justify-space-between">
-              <v-btn
-                :prepend-icon="isUpvote ? 'mdi-heart' : 'mdi-heart-outline'"
-                text="Upvote"
-                class="text-none text-text-1"
-                :color="isUpvote ? 'primary-2' : ''"
-                :variant="isUpvote ? 'flat' : 'text'"
-                size="large"
-                @click="handleUpvote"
-              ></v-btn>
-              <v-btn
-                prepend-icon="mdi-content-copy"
-                color="success"
-                text="Copy"
-                class="text-none text-text-1"
-                variant="flat"
-                size="large"
-                @click="handleCopyPrompt"
-              ></v-btn>
-            </div>
-            <v-divider class="my-2"></v-divider>
-            <v-progress-circular
-              v-if="isLoadingSameImage"
-              indeterminate
-              color="success"
-            ></v-progress-circular>
-            <div class="d-flex flex-wrap" v-if="listSameImage.length > 0">
-              <div
-                v-for="(img, idx) in listSameImage"
-                :key="`${idx}_img`"
-                class="pa-1"
-                style="width: 25%"
-                @click="
-                  selected = img;
-                  handleShowSameImage(img);
-                "
-              >
-                <v-img
-                  :src="`${img.image_src}`"
-                  :lazy-src="`${img.image_src}`"
-                  class="img pointer"
-                ></v-img>
-              </div>
-            </div>
-            <v-pagination
-              v-if="listSameImage.length > 0"
-              v-model="pageSame"
-              :length="lengthSame"
-              density="comfortable"
-              class="mt-1"
-              active-color="primary"
-              prev-icon="mdi-menu-left"
-              next-icon="mdi-menu-right"
-              variant="flat"
-              :total-visible="5"
-            ></v-pagination>
+            @{{ username }}
+          </span>
+          <div class="mb-2 text-text-2 font-italic" style="font-size: 12px">
+            {{ create_time }}
           </div>
+          <div class="mb-4 bg-bg-1 rounded pa-2">
+            {{ selected?.prompt }}
+          </div>
+          <div class="d-flex align-center justify-space-between">
+            <div class="d-flex align-end mr-2">
+              <v-icon icon="mdi-heart" color="primary-2" class="mr-1"></v-icon>
+              <span style="font-size: 12px">{{ numberUpvote }}</span>
+            </div>
+          </div>
+          <v-divider class="my-2"></v-divider>
+          <div class="d-flex align-center justify-space-between">
+            <v-btn
+              :prepend-icon="isUpvote ? 'mdi-heart' : 'mdi-heart-outline'"
+              text="Upvote"
+              class="text-none text-text-1"
+              :color="isUpvote ? 'primary-2' : ''"
+              :variant="isUpvote ? 'flat' : 'text'"
+              size="large"
+              @click="handleUpvote"
+            ></v-btn>
+            <v-btn
+              prepend-icon="mdi-content-copy"
+              color="success"
+              text="Copy"
+              class="text-none text-text-1"
+              variant="flat"
+              size="large"
+              @click="handleCopyPrompt"
+            ></v-btn>
+          </div>
+          <v-divider class="my-2"></v-divider>
+          <v-progress-circular
+            v-if="isLoadingSameImage"
+            indeterminate
+            color="success"
+          ></v-progress-circular>
+          <div class="d-flex flex-wrap" v-if="listSameImage.length > 0">
+            <div
+              v-for="(img, idx) in listSameImage"
+              :key="`${idx}_img`"
+              class="pa-1"
+              style="width: 25%"
+              @click="
+                selected = img;
+                handleShowSameImage(img);
+              "
+            >
+              <v-img
+                :src="`${img.image_src}`"
+                :lazy-src="`${img.image_src}`"
+                class="img pointer"
+              ></v-img>
+            </div>
+          </div>
+          <v-pagination
+            v-if="listSameImage.length > 0"
+            v-model="pageSame"
+            :length="lengthSame"
+            density="comfortable"
+            class="mt-1"
+            active-color="primary"
+            prev-icon="mdi-menu-left"
+            next-icon="mdi-menu-right"
+            variant="flat"
+            :total-visible="5"
+          ></v-pagination>
         </div>
       </v-card-text>
     </v-card>
@@ -340,6 +340,13 @@ watch(
     handleGetListSameImage(selected.value.prompt);
   }
 );
+
+const create_time = computed(() => {
+  const date = new Date(props?.prompt?.create_time * 1000);
+  return `${date.getHours()}:${date.getMinutes()}, ${date.getDate()}/${
+    date.getMonth() + 1
+  }/${date.getFullYear()}`;
+});
 </script>
 
 <style scoped></style>

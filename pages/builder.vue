@@ -175,7 +175,10 @@
     <v-card>
       <v-card-text class="mb-2">
         <div class="mt-4 d-flex w-100">
-          <div class="bg-bg-1 rounded d-flex justify-center align-center pa-2">
+          <div
+            class="bg-bg-1 rounded d-flex justify-center align-center pa-2"
+            style="max-width: 40vw; min-width: 30vw"
+          >
             <v-img
               :src="`${selectedSuggestion.image_src}`"
               style="height: 75vh; width: auto"
@@ -188,13 +191,16 @@
             style="max-width: 40vw; min-width: 30vw"
           >
             <span
-              class="pointer--link pointer mb-2 text-success font-weight-bold"
+              class="pointer--link pointer text-success font-weight-bold"
               @click="
                 navigateTo({ path: `/user/${selectedSuggestion.user_id}` })
               "
             >
               @{{ username }}
             </span>
+            <div class="mb-2 text-text-2 font-italic" style="font-size: 12px">
+              {{ create_time }}
+            </div>
             <div class="mb-4 bg-bg-1 rounded pa-2">
               {{ selectedSuggestion.prompt }}
             </div>
@@ -418,17 +424,11 @@ async function handleGenerate() {
     return;
   }
   isLoadingGenerate.value = true;
-  const { data } = await useFetch(`${baseURL}/prompt`, {
+  const { data } = await useFetch(`${baseURL}/generate`, {
     method: "POST",
     body: {
       user_id: userStore.id,
       prompt: prompt.value,
-    },
-    params: {
-      user_id: userStore.id,
-    },
-    query: {
-      generate_image: true,
     },
     headers: {
       Authorization: `Bearer ${getCookie("token")}`,
@@ -524,6 +524,13 @@ watch(
     handleGetListImage(selectedSuggestion.value.prompt);
   }
 );
+
+const create_time = computed(() => {
+  const date = new Date(selectedSuggestion.value.create_time * 1000);
+  return `${date.getHours()}:${date.getMinutes()}, ${date.getDate()}/${
+    date.getMonth() + 1
+  }/${date.getFullYear()}`;
+});
 </script>
 
 <style scoped>

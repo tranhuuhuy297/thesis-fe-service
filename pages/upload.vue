@@ -72,6 +72,7 @@
         <div class="d-flex mt-4 w-100">
           <div
             class="d-flex rounded justify-center align-center bg-bg-1 rounded pa-2"
+            style="max-width: 40vw; min-width: 30vw"
           >
             <v-btn
               v-if="!file"
