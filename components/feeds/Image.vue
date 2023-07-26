@@ -41,11 +41,14 @@
             style="max-width: 40vw; min-width: 30vw"
           >
             <span
-              class="pointer--link pointer mb-2 text-success font-weight-bold"
+              class="pointer--link pointer text-success font-weight-bold"
               @click="navigateTo({ path: `/user/${selected?.user_id}` })"
             >
               @{{ username }}
             </span>
+            <div class="mb-2 text-text-2 font-italic" style="font-size: 12px">
+              {{ create_time }}
+            </div>
             <div class="mb-4 bg-bg-1 rounded pa-2">
               {{ selected?.prompt }}
             </div>
@@ -340,6 +343,13 @@ watch(
     handleGetListSameImage(selected.value.prompt);
   }
 );
+
+const create_time = computed(() => {
+  const date = new Date(props?.prompt?.create_time * 1000);
+  return `${date.getHours()}:${date.getMinutes()}, ${date.getDate()}/${
+    date.getMonth() + 1
+  }/${date.getFullYear()}`;
+});
 </script>
 
 <style scoped></style>
