@@ -115,7 +115,7 @@ async function handleGenerate() {
   useNuxtApp().$toast.info("This task might take about 30 seconds");
   promptGen.value = [];
   isLoadingGenerate.value = true;
-  const { data } = await useFetch(`${baseURL}/generate`, {
+  const { data } = await useFetch(`${baseURL}/prompt-generate`, {
     method: "POST",
     body: {
       user_id: userStore.id,
