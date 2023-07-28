@@ -421,7 +421,7 @@ async function handleGenerate() {
     return;
   }
   isLoadingGenerate.value = true;
-  const { data } = await useFetch(`${baseURL}/generate`, {
+  const { data } = await useFetch(`${baseURL}/prompt-generate`, {
     method: "POST",
     body: {
       user_id: userStore.id,
