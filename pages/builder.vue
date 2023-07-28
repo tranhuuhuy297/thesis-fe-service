@@ -421,17 +421,11 @@ async function handleGenerate() {
     return;
   }
   isLoadingGenerate.value = true;
-  const { data } = await useFetch(`${baseURL}/prompt`, {
+  const { data } = await useFetch(`${baseURL}/generate`, {
     method: "POST",
     body: {
       user_id: userStore.id,
       prompt: prompt.value,
-    },
-    params: {
-      user_id: userStore.id,
-    },
-    query: {
-      generate_image: true,
     },
     headers: {
       Authorization: `Bearer ${getCookie("token")}`,
