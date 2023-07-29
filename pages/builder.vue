@@ -175,7 +175,10 @@
     <v-card>
       <v-card-text class="mb-2">
         <div class="mt-4 d-flex w-100">
-          <div class="bg-bg-1 rounded d-flex justify-center align-center pa-2">
+          <div
+            class="bg-bg-1 rounded d-flex justify-center align-center pa-2"
+            style="max-width: 40vw; min-width: 30vw"
+          >
             <v-img
               :src="`${selectedSuggestion.image_src}`"
               style="height: 75vh; width: auto"

@@ -14,6 +14,7 @@ const config = useRuntimeConfig();
 const baseURL = `${config.public.baseURL}`;
 
 async function handleGetUser() {
+  if (!userStore.id) return;
   const { data } = await useFetch(`${baseURL}/user/${userStore.id}`, {
     method: "GET",
   });
